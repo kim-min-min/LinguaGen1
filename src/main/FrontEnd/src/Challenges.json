@@ -1,0 +1,231 @@
+[
+    {
+      "title": "책갈피 마스터",
+      "description": "주제/제목 찾기 유형을 100회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "핵심 요약 전문가",
+      "description": "주제/제목 찾기 유형을 500회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "주제의 달인",
+      "description": "주제/제목 찾기 유형을 1000회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "핵심 파악의 달인",
+      "description": "요지 파악 유형을 100회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "논지 분석가",
+      "description": "요지 파악 유형을 500회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "문장 해석 마스터",
+      "description": "요지 파악 유형을 1000회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "탐정급 세부 찾기",
+      "description": "세부 정보 찾기 유형을 100회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "텍스트 분석가",
+      "description": "세부 정보 찾기 유형을 500회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "세부 사항 전문가",
+      "description": "세부 정보 찾기 유형을 1000회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "추론의 시작",
+      "description": "지칭 추론 유형을 100회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "참조 탐정",
+      "description": "지칭 추론 유형을 500회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "텍스트 탐정 마스터",
+      "description": "지칭 추론 유형을 1000회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "단어의 달인",
+      "description": "어휘 추론 유형을 100회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "어휘 추론 전문가",
+      "description": "어휘 추론 유형을 500회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "어휘 마스터",
+      "description": "어휘 추론 유형을 1000회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "청취의 시작",
+      "description": "주제/제목 파악 유형을 100회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "핵심 청취 전문가",
+      "description": "주제/제목 파악 유형을 500회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "귀로 주제를 잡다",
+      "description": "주제/제목 파악 유형을 1000회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "세부 청취 마스터",
+      "description": "세부 정보 듣기 유형을 100회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "세부사항 청취 전문가",
+      "description": "세부 정보 듣기 유형을 500회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "전문 청취자",
+      "description": "세부 정보 듣기 유형을 1000회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "화자의 마음을 읽다",
+      "description": "화자의 태도/의견 추론 유형을 100회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "의도 파악 전문가",
+      "description": "화자의 태도/의견 추론 유형을 500회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "심리학자급 청취자",
+      "description": "화자의 태도/의견 추론 유형을 1000회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "강의 구조 이해의 달인",
+      "description": "대화/강의 구조 파악 유형을 100회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "대화 분석가",
+      "description": "대화/강의 구조 파악 유형을 500회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "논리적 청취자",
+      "description": "대화/강의 구조 파악 유형을 1000회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "청취의 미묘한 차이",
+      "description": "함축적 의미 추론 유형을 100회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "함축적 의미 마스터",
+      "description": "함축적 의미 추론 유형을 500회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "문법의 기본",
+      "description": "문법 문제 유형을 100회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "문법 마스터",
+      "description": "문법 문제 유형을 500회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "문법 달인",
+      "description": "문법 문제 유형을 1000회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "단어 탐색자",
+      "description": "어휘 문제 유형을 100회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "어휘 챔피언",
+      "description": "어휘 문제 유형을 500회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "어휘 거장",
+      "description": "어휘 문제 유형을 1000회 달성",
+      "src": "",
+      "unlocked": true
+    },
+    {
+      "title": "스피킹 도전자",
+      "description": "말하기 문제 유형을 100회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "영어 말하기 전문가",
+      "description": "말하기 문제 유형을 500회 달성",
+      "src": "",
+      "unlocked": false
+    },
+    {
+      "title": "영어 토론의 달인",
+      "description": "말하기 문제 유형을 1000회 달성",
+      "src": "",
+      "unlocked": true
+    }
+  ]
+  
