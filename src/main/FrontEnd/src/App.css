@@ -1,0 +1,615 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.scene-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: transparent;
+  overflow: hidden;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-450%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-450%);
+  }
+}
+
+.dice-container {
+  transition: transform 0.5s ease-out; /* 전체 transition 시간을 0.5초로 줄임 */
+  background-color: transparent;
+}
+
+.dice-container.slide-down {
+  transform: translateY(-25%) !important;
+}
+
+.dice-container.slide-up {
+  transform: translateY(-600%) !important;
+}
+
+/* 내려오는 순서 유지 */
+.dice-0.slide-down { transition-delay: 1.2s; }
+.dice-1.slide-down { transition-delay: 1.5s; }
+.dice-2.slide-down { transition-delay: 0.7s; }
+.dice-3.slide-down { transition-delay: 0.2s; }
+.dice-4.slide-down { transition-delay: 0.4s; }
+.dice-5.slide-down { transition-delay: 1.0s; }
+
+/* 올라가는 순서를 내려오는 순서의 반대로 설정 */
+.dice-0.slide-up { transition-delay: 0.5s; }
+.dice-1.slide-up { transition-delay: 0.7s; }
+.dice-2.slide-up { transition-delay: 1.3s; }
+.dice-3.slide-up { transition-delay: 1.9s; }
+.dice-4.slide-up { transition-delay: 1.5s; }
+.dice-5.slide-up { transition-delay: 0.9s; }
+
+.title-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 1s ease-out, transform 1s ease-out;
+  transition-delay: 2.3s;
+}
+
+.title-container.fade-in {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+.title-container.fade-out {
+  opacity: 0;
+  transform: translate(-50%, -100%);
+  transition: opacity 1s ease-out, transform 3s ease-out; /* 2초에서 3초로 변경 */
+}
+
+.title-container h3 {
+  font-weight: bold;
+  font-size: 100px;
+  margin-bottom: 25px;
+  color: black;
+}
+
+.title-container button {
+  padding: 10px 20px;
+  font-weight: bold;
+  font-size: 24px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.title-container button:hover {
+  background-color: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.title-container button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+canvas {
+  background-color: transparent !important;
+}
+
+.dice-container > div {
+  background-color: transparent !important;
+}
+
+/* 추가할 CSS */
+.dice-container > div > div {
+  background-color: transparent !important;
+}
+
+.dice-container > div > div > canvas {
+  background-color: transparent !important;
+}
+
+/* LoginPage 페이드인 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.login-page-container {
+  animation: fadeIn 1s ease-out;
+}
+
+/* DemoPlay Container Styles */
+.demo-play-container {
+  display: flex;
+  flex-direction: column;
+  width: 100vw; /* 화면 전체 너비 */
+  height: 100vh; /* 화면 전체 높이 */
+  justify-content: space-between;
+  margin: 0;
+}
+
+.demo-play-container.fade-in {
+  opacity: 1;
+}
+
+.demo-play-container.fade-out {
+  opacity: 0;
+}
+
+
+.header-container {
+  display: flex;
+  justify-content: center; /* 가운데 정렬 */
+  align-items: center;
+  width: 100%; /* 전체 너비 사용 */
+}
+
+.demo-header {
+  width: 60%; /* 60% 너비 */
+  padding: 1rem;
+  background-color: #fff;
+  text-align: center; /* 가운데 정렬 */
+}
+
+.demo-main {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.demo-footer {
+  padding: 1rem;
+  background-color: #fff;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+}
+
+.question-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.question-content {
+  margin-bottom: 2rem;
+  text-align: center;
+  width: 700px;
+  font-size: 24px;
+}
+.answer-content{
+  margin-top : 200px;
+  text-align: center;
+  width: 700px;
+  font-size: 24px;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.message.fade-in {
+  opacity: 1;
+}
+
+.message.fade-out {
+  opacity: 0;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.option {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px; /* 또는 원하는 높이 */
+}
+
+.option:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.option.selected {
+  background-color: #e0e0e0;
+}
+
+.option.correct {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.option-text {
+  text-align: center;
+}
+
+.result {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.result.correct {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.result.incorrect {
+  background-color: #f44336;
+  color: white;
+}
+
+.fill-blank-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.fill-blank-container .question-content {
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.fill-blank-input {
+  display: inline-block;
+  width: 150px;
+  border: none;
+  border-bottom: 2px solid #000;
+  font-size: 1.2rem;
+  outline: none;
+  padding: 0 5px;
+  text-align: left;
+  background-color: transparent;
+}
+
+.fill-blank-input:focus {
+  border-color: #4CAF50;
+}
+
+/* 기존 스타일은 그대로 유지 */
+
+/* 반응형 스타일 (678px 미만) */
+@media (max-width: 677px) {
+  .demo-play-container {
+    padding: 0.5rem;
+  }
+
+  .header-container {
+    padding: 0.5rem;
+  }
+
+  .demo-header {
+    width: 90%;
+    padding: 0.5rem;
+  }
+
+  .demo-main {
+    padding: 1rem;
+  }
+
+  .content-container {
+    width: 100%;
+  }
+
+  .question-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .question-content, .answer-content {
+    width: 100%;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .options-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    top: 100px;
+  }
+
+  .option {
+    height: auto;
+    min-height: 50px;
+    padding: 0.5rem;
+  }
+
+  .fill-blank-container {
+    top: 150px;
+  }
+
+  .fill-blank-container .question-content {
+    font-size: 1rem;
+  }
+
+  .fill-blank-input {
+    width: 100px;
+    font-size: 1rem;
+  }
+
+  .navigation-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .navigation-buttons button {
+    width: 100%;
+  }
+}
+
+.check-answer-button {
+  background-color: #4CAF50;
+  color: white;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 45px;
+}
+
+.check-answer-button:hover {
+  background-color: #45a049;
+}
+
+.check-answer-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.option.incorrect {
+  background-color: #f44336;
+  color: white;
+}
+
+.welcome-message-1, .welcome-message-2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 1s ease-in-out; /* 1.5초에서 1초로 변경 */
+}
+
+.welcome-message-1.fade-in, .welcome-message-2.fade-in {
+  opacity: 1;
+}
+
+.welcome-message-1.fade-out, .welcome-message-2.fade-out {
+  opacity: 0;
+}
+
+.goodbye-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 2s ease-in-out; /* 1초에서 2초로 변경 */
+}
+
+.goodbye-message.fade-in {
+  opacity: 1;
+}
+
+.goodbye-message.fade-out {
+  opacity: 0;
+}
+
+.demo-play-container {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.demo-play-container.fade-in {
+  opacity: 1;
+}
+
+.demo-play-container.fade-out {
+  opacity: 0;
+}
+
+.final-message-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.final-message {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px 40px;
+  border-radius: 10px;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.final-message.fade-in {
+  opacity: 1;
+}
+
+.Texthover li {
+  position: relative;
+  cursor: pointer;
+}
+
+.Texthover li::after,
+.Texthover li::before {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background-color: #000;
+  transition: width 0.3s ease-in-out;
+}
+
+.Texthover li::before {
+  left: 50%;
+}
+
+.Texthover li::after {
+  right: 50%;
+}
+
+.Texthover li:hover::before,
+.Texthover li:hover::after {
+  width: 50%;
+}
+
+.shadow-top {
+  box-shadow: inset 0 10px 15px -3px rgba(0, 0, 0, 0.1), inset 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease; /* 기본 애니메이션 */
+}
+
+.btnAnimation {
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  font-size: 16px;
+  padding: 10px;
+  margin: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnPush {
+  padding: 10px 20px;
+}
+
+.btnLightBlue.btnPush {
+  box-shadow: 0px 5px 0px 0px #bdcdcd;
+}
+
+.btnPush:hover {
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+.btnLightBlue.btnPush:hover {
+  box-shadow: 0px 0px 0px 0px #bdcdcd;
+}
+
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 8px solid;
+  border-color: #000 #0000;
+  animation: l1 1s infinite;
+}
+@keyframes l1 {to{transform: rotate(.5turn)}}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  overflow-y: auto;
+}
+ 
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cfcdcd88;
+  border-radius: 20px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f3f2f2;
+  border-radius: 20px;
+}
+
+@font-face {
+  font-family: 'InterBold';
+  src: url('/Inter-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face{
+  font-family: 'InterRegular';
+  src: url('/Inter-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* header에 폰트 적용 */
+.InterBold {
+  font-family: 'InterBold', sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+svg {
+  fill: #ddd;
+}
+
+hello {
+  background: linear-gradient(30deg, #c850c0, #ffcc70);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
