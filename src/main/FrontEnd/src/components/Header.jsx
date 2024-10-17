@@ -13,6 +13,10 @@ const Header = () => {
     navigate('/main');
   };
 
+  const handleDailyQuizClick = () => {
+    navigate('/dailyQuiz');
+  }
+
 
   return (
     <header className='w-full h-16 flex items-center justify-between pt-4 mb-4 pb-4 border-b-2 border-gray-300 shadow-md bg-white'>
@@ -25,7 +29,7 @@ const Header = () => {
       <HoverCardContent className='w-34'> 챗봇 이용하기</HoverCardContent>
     </HoverCard>
     <HoverCard>  
-      <HoverCardTrigger><img src={dayily} alt="dayily" style={{ width: '35px', height: '35px', marginRight: '20px' }} /></HoverCardTrigger>
+      <HoverCardTrigger><img src={dayily} alt="dayily" style={{ width: '35px', height: '35px', marginRight: '20px' }} onClick={handleDailyQuizClick}/></HoverCardTrigger>
       <HoverCardContent className='w-34'> 데일리 퀴즈</HoverCardContent>
     </HoverCard>
     <HoverCard>  
