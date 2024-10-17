@@ -155,7 +155,7 @@ const Community = () => {
     <div className='w-full h-full flex flex-col overflow-y-scroll custom-scrollbar'>
       <Header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }} />
       <div className='w-full flex flex-col justify-center items-center my-12' style={{ height: '350px' }}>
-        <Link to='/community'><h1 className='select-none'>Community</h1></Link>
+        <Link to='/community' onClick={() => handleTabClick('')}><h1 className='select-none'>Community</h1></Link>
       </div>
       <div className='w-full h-auto flex justify-center items-center'>
         <div className='w-full h-full mt-12 mb-18 flex grid-cols-2 justify-center'>
@@ -189,9 +189,9 @@ const Community = () => {
             {/* 조건부 렌더링: 선택된 탭에 따라 컴포넌트를 렌더링 */}
             {activeTab === '' && <DefaultBoard handleTabClick={handleTabClick} />} {/* DefaultBoard에 handleTabClick 전달 */}
             {activeTab === 'Notice' && <Notice handleTabClick={handleTabClick}/>}
-            {activeTab === 'FreeBoard' && <FreeBoard />}
-            {activeTab === 'ExchangeLearningTips' && <ExchangeLearningTips />}
-            {activeTab === 'ClubBoard' && <ClubBoard />}
+            {activeTab === 'FreeBoard' && <FreeBoard handleTabClick={handleTabClick}/>}
+            {activeTab === 'ExchangeLearningTips' && <ExchangeLearningTips handleTabClick={handleTabClick}/>}
+            {activeTab === 'ClubBoard' && <ClubBoard handleTabClick={handleTabClick}/>}
             {activeTab === 'Writing' && <Writing />} {/* 글쓰기 탭 */}
           </div>
         </div>

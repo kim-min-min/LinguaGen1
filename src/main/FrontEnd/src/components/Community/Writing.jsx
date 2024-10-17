@@ -82,7 +82,7 @@ const Writing = () => {
           <FormItem>
             <FormLabel>내용 입력</FormLabel>
             <FormControl>
-              <Textarea placeholder="내용을 입력하세요" style={{ width: '450px', height: '450px' }} />
+              <Textarea placeholder="내용을 입력하세요" style={{ width: '650px', height: '550px' }} />
             </FormControl>
             <FormMessage />
           </FormItem>

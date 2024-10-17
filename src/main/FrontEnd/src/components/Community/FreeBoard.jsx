@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/pagination';
 import { Button } from '@/components/ui/button';
 
-const FreeBoard = () => {
+const FreeBoard = ({ handleTabClick }) => {
   // 카페 게시판 형식의 데이터셋
   const data = Array.from({ length: 30 }, (_, i) => ({
     id: i + 1,
@@ -46,7 +46,12 @@ const FreeBoard = () => {
       <p className="font-bold text-xl">자유 게시판</p>
       <div className="mt-8 w-full h-full flex flex-col bg-transparent flex-grow"> {/* flex-grow 추가 */}
         <div className="w-full h-20 border-b-2 border-gray-300 flex justify-end items-center gap-4">
-        <Button className='bg-green-300 text-gray-500 font-bold hover:bg-green-400'>글쓰기</Button>
+        <Button
+            className='bg-green-300 text-gray-500 font-bold hover:bg-green-400'
+            onClick={() => handleTabClick('Writing')} // 글쓰기 클릭 시 activeTab을 Writing으로 변경
+          >
+            글쓰기
+          </Button>
           <Separator className="h-8" orientation="vertical" />
           <Select onValueChange={handleItemsPerPageChange}>
             <SelectTrigger className="w-[100px]">
