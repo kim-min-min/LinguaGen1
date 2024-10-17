@@ -29,10 +29,10 @@ const Header = () => {
       <HoverCardContent className='w-34'> 챗봇 이용하기</HoverCardContent>
     </HoverCard>
     <HoverCard>  
-      <HoverCardTrigger><img src={dayily} alt="dayily" style={{ width: '35px', height: '35px', marginRight: '20px' }} onClick={handleDailyQuizClick}/></HoverCardTrigger>
+      <HoverCardTrigger><img src={dayily} alt="dayily" style={{ width: '35px', height: '35px', marginRight: '20px', cursor : 'pointer' }} onClick={handleDailyQuizClick}/></HoverCardTrigger>
       <HoverCardContent className='w-34'> 데일리 퀴즈</HoverCardContent>
     </HoverCard>
-    <HoverCard>  
+    <HoverCard> 
       <HoverCardTrigger><img src={Trophy} alt="Trophy" style={{ width: '35px', height: '35px' }} /></HoverCardTrigger>
       <HoverCardContent className='w-34'> 랭킹 페이지</HoverCardContent>
     </HoverCard>
