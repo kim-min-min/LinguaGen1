@@ -7,6 +7,7 @@ import './styles/global.css';  // 전역 CSS import
 import DashBoard from './components/DashBoard/DashBoard';
 import MyPage from './components/MyPage/MyPage';
 import Community from './components/Community/Community';
+import DailyQuiz from './components/DailyQuiz';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/dashboard" element={<DashBoard />} />
         <Route path='/mypage' element={<MyPage />} />
         <Route path='/community' element={<Community />} />
+        <Route path='/dailyQuiz' element={<DailyQuiz />} />
       </Routes>
     </Router>
   );
