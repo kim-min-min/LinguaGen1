@@ -21,12 +21,14 @@ configurations {
 
 repositories {
 	mavenCentral()
+	flatDir {
+		dirs 'libs'  // libs 폴더를 의존성 검색 경로에 추가
+	}
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -34,7 +36,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	implementation 'com.oracle.database.jdbc:ojdbc11:11.2.0.2.0'
+	implementation 'org.hibernate.orm:hibernate-core:6.2.12.Final'
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()
