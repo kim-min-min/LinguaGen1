@@ -11,9 +11,8 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Button } from '@/components/ui/button';
-import Writing from './Writing'; // Writing 컴포넌트 임포트
 
-const Notice = ({ handleTabClick }) => {
+const Notice = ({ handleTabClick, setSelectedItem }) => {
   // 카페 게시판 형식의 데이터셋
   const data = Array.from({ length: 30 }, (_, i) => ({
     id: i + 1,
@@ -36,16 +35,20 @@ const Notice = ({ handleTabClick }) => {
     setCurrentPage(page); // 페이지 변경
   };
 
-  // 아이템 개수 변경 핸들러
   const handleItemsPerPageChange = (value) => {
     setItemsPerPage(parseInt(value, 10)); // 선택된 값을 숫자로 변환 후 설정
     setCurrentPage(1); // 페이지가 바뀌면 첫 페이지로 돌아감
   };
 
+  const handleRowClick = (item) => {
+    setSelectedItem(item); // 선택한 데이터를 설정
+    handleTabClick('DetailView'); // 상세보기 페이지로 이동
+  };
+
   return (
-    <div className="w-full bg-white rounded-md flex flex-col p-12 justify-start items-center min-h-screen"> {/* min-height 설정 */}
+    <div className="w-full bg-white rounded-md flex flex-col p-12 justify-start items-center min-h-screen">
       <p className="font-bold text-xl">공지사항</p>
-      <div className="mt-8 w-full h-full flex flex-col bg-transparent flex-grow"> {/* flex-grow 추가 */}
+      <div className="mt-8 w-full h-full flex flex-col bg-transparent flex-grow">
         <div className="w-full h-20 border-b-2 border-gray-300 flex justify-end items-center gap-4">
           <Button
             className='bg-green-300 text-gray-500 font-bold hover:bg-green-400'
@@ -80,7 +83,7 @@ const Notice = ({ handleTabClick }) => {
           </TableHeader>
           <TableBody>
             {selectedData.map((item) => (
-              <TableRow key={item.id}>
+              <TableRow key={item.id} onClick={() => handleRowClick(item)} className="cursor-pointer">
                 <TableCell className="font-medium text-center h-14">{item.id}</TableCell>
                 <TableCell>{item.title}</TableCell>
                 <TableCell className="text-center">{item.author}</TableCell>
