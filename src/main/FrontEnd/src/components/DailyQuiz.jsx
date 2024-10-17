@@ -160,6 +160,7 @@ const HintText = styled.p`
 const DailyQuiz = () => {
     const [currentAttempt, setCurrentAttempt] = useState(1);
     const [currentInputIndex, setCurrentInputIndex] = useState(0);
+    const [keyboardStatus, setKeyboardStatus] = useState({});
     const [inputs, setInputs] = useState(
         Array.from({ length: 6 }, () => Array(5).fill(""))
     );
@@ -211,7 +212,7 @@ const DailyQuiz = () => {
         return result;
     };
 
-    // 수정된 deleteLastChar 함수
+    /*// 수정된 deleteLastChar 함수
     const deleteLastChar = () => {
         const currentRow = currentAttempt - 1;
 
@@ -254,6 +255,32 @@ const DailyQuiz = () => {
                 lastInput.focus();
             }
         }
+    };*/
+
+    const deleteLastChar = () => {
+        const currentRow = currentAttempt - 1;
+        let newInputIndex = currentInputIndex;
+
+        if (currentInputIndex > 0) {
+            newInputIndex = currentInputIndex - 1;
+        } else if (currentInputIndex === 0 && inputs[currentRow].some(input => input !== "")) {
+            // 현재 행의 마지막 입력된 글자를 찾습니다.
+            newInputIndex = inputs[currentRow].findLastIndex(input => input !== "");
+        }
+
+        if (newInputIndex >= 0) {
+            const updatedInputs = [...inputs];
+            updatedInputs[currentRow][newInputIndex] = "";
+            setInputs(updatedInputs);
+            setCurrentInputIndex(newInputIndex);
+
+            // 포커스 이동 및 스타일 업데이트
+            const inputElement = document.getElementById(`input-${currentRow}-${newInputIndex}`);
+            if (inputElement) {
+                inputElement.classList.remove('input-active');
+                inputElement.focus();
+            }
+        }
     };
 
     const submitGuess = async () => {
@@ -283,6 +310,8 @@ const DailyQuiz = () => {
                 }
             });
 
+            updateKeyboardStatus(guess, result);
+
             if (result.every(status => status === "correct")) {
                 alert("축하합니다! 정답을 맞추셨습니다!");
                 setIsGameOver(true);
@@ -292,6 +321,13 @@ const DailyQuiz = () => {
             } else {
                 setCurrentAttempt(currentAttempt + 1);
                 setCurrentInputIndex(0);
+                // 다음 줄의 첫 번째 입력 칸으로 포커스 이동
+                setTimeout(() => {
+                    const nextInput = document.getElementById(`input-${currentAttempt}-0`);
+                    if (nextInput) {
+                        nextInput.focus();
+                    }
+                }, 0);
             }
         } catch (error) {
             console.error('제출 오류:', error);
@@ -300,16 +336,44 @@ const DailyQuiz = () => {
     };
 
     useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (isGameOver) return;
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                submitGuess();
+            } else if (event.key === "Backspace") {
+                event.preventDefault();
+                deleteLastChar();
+            } else if (/^[A-Za-z]$/.test(event.key)) {
+                event.preventDefault();
+                handleKeyInput(event.key.toUpperCase());
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [isGameOver, currentAttempt, currentInputIndex, inputs]);
+
+    useEffect(() => {
+        // 컴포넌트가 마운트될 때 첫 번째 입력 칸에 포커스 설정
+        const firstInput = document.getElementById('input-0-0');
+        if (firstInput) {
+            firstInput.focus();
+        }
+    }, []);
+
+    useEffect(() => {
         // currentAttempt가 변경될 때마다 실행
         if (!isGameOver) {
-            const nextInput = document.getElementById(`input-${currentAttempt}-0`);
+            const nextInput = document.getElementById(`input-${currentAttempt - 1}-0`);
             if (nextInput) {
                 nextInput.focus();
             }
         }
     }, [currentAttempt, isGameOver]);
-
-
 
     const handleKeyInput = (key) => {
         if (isGameOver) return;
@@ -322,35 +386,31 @@ const DailyQuiz = () => {
             // 입력 후 포커스 자동 이동
             const currentRow = currentAttempt - 1;
             handleInputChange(key, currentRow, currentInputIndex);
-            if (currentInputIndex < 4) {
+/*            if (currentInputIndex < 4) {
+                setCurrentInputIndex(currentInputIndex + 1);
+            }*/
+            if (currentInputIndex < 5) {
+                handleInputChange(key, currentRow, currentInputIndex);
                 setCurrentInputIndex(currentInputIndex + 1);
             }
         }
     };
 
-    // 키보드 이벤트 처리
-    useEffect(() => {
-        const handleKeyDown = (event) => {
-            if (isGameOver) return;
-
-            if (event.key === "Enter") {
-                event.preventDefault();
-                submitGuess();
-            } else if (event.key === "Backspace") {
-                event.preventDefault();
-                deleteLastChar();
+    const updateKeyboardStatus = (guess, result) => {
+        const newStatus = { ...keyboardStatus };
+        guess.split('').forEach((letter, index) => {
+            const status = result[index];
+            if (status === 'correct' || (status === 'present' && newStatus[letter] !== 'correct') ||
+                (status === 'absent' && !['correct', 'present'].includes(newStatus[letter]))) {
+                newStatus[letter] = status;
             }
-        };
-
-        document.addEventListener("keydown", handleKeyDown);
-        return () => {
-            document.removeEventListener("keydown", handleKeyDown);
-        };
-    }, [isGameOver, currentAttempt, currentInputIndex]);
+        });
+        setKeyboardStatus(newStatus);
+    };
 
     const fetchHint = async () => {
         try {
-            /*const response = await axios.post(
+            const response = await axios.post(
                 '/api/get-hint',  // 여기는 예를 들어 스프링 포트번호가 8083이면 83, 82면 82 를 넣으면 됩니다.
                 {}, // POST 요청 시 보낼 데이터가 없을 경우 빈 객체를 보냅니다.
                 {
@@ -359,8 +419,7 @@ const DailyQuiz = () => {
                     },
                     withCredentials: true,  // 쿠키와 인증 관련 정보를 포함하여 요청
                 }
-            );*/
-            const response = await axios.post('http:localhost:8085/api/get-hint');
+            );
             setHintText(response.data.hint);  // 서버에서 받은 힌트를 상태로 설정
             setHintVisible(true);  // 힌트 보이기 설정
         } catch (error) {
@@ -406,6 +465,7 @@ const DailyQuiz = () => {
                                 <KeyboardItem
                                     key={`${char}-${index}`}
                                     onClick={() => handleKeyInput(char)}
+                                    className={keyboardStatus[char] || ''}
                                 >
                                     {char}
                                 </KeyboardItem>
@@ -417,6 +477,7 @@ const DailyQuiz = () => {
                             <KeyboardItem
                                 key={`${char}-${index}`}
                                 onClick={() => handleKeyInput(char)}
+                                className={keyboardStatus[char] || ''}
                             >
                                 {char}
                             </KeyboardItem>
@@ -428,6 +489,7 @@ const DailyQuiz = () => {
                             <KeyboardItem
                                 key={`${char}-${index}`}
                                 onClick={() => handleKeyInput(char)}
+                                className={keyboardStatus[char] || ''}
                             >
                                 {char}
                             </KeyboardItem>
