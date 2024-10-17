@@ -157,8 +157,6 @@ const HintText = styled.p`
   transition: opacity 0.3s ease;
 `;
 
-const targetWord = "APPLE";
-
 const DailyQuiz = () => {
     const [currentAttempt, setCurrentAttempt] = useState(1);
     const [currentInputIndex, setCurrentInputIndex] = useState(0);
@@ -258,41 +256,46 @@ const DailyQuiz = () => {
         }
     };
 
-
-
-
-    const submitGuess = () => {
+    const submitGuess = async () => {
         if (inputs[currentAttempt - 1].some(input => input === "")) {
             alert("모든 칸에 글자를 입력해주세요.");
             return;
         }
 
-        const guess = inputs[currentAttempt - 1];
-        const result = checkGuess(guess);
+        const guess = inputs[currentAttempt - 1].join('');
 
-        result.forEach((status, index) => {
-            const inputElement = document.getElementById(`input-${currentAttempt - 1}-${index}`);
-            if (inputElement) {
-                inputElement.classList.add(status); // 상태에 따라 클래스 추가
-            }
-        });
-
-        if (result.every(status => status === "correct")) {
-            alert("축하합니다! 정답을 맞추셨습니다!");
-            setIsGameOver(true);
-        } else if (currentAttempt >= 6) {
-            alert("게임 오버! 모든 시도를 사용하셨습니다.");
-            setIsGameOver(true);
-        } else {
-            // 상태 업데이트가 완료된 후에 포커스를 다음 줄 첫 번째 칸으로 이동
-            setCurrentAttempt(currentAttempt + 1);
-            setCurrentInputIndex(0);
-            setTimeout(() => {
-                const nextInput = document.getElementById(`input-${currentAttempt}-0`);
-                if (nextInput) {
-                    nextInput.focus();
+        try {
+            const response = await axios.post("/api/check-guess", {
+                guess: guess,
+                attemptNumber: currentAttempt
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
                 }
-            }, 0); // 상태 업데이트 후에 포커스 이동 보장
+            });
+            const result = response.data.result; // 백엔드에서 반환한 결과
+
+            // 결과에 따라 UI 업데이트
+            result.forEach((status, index) => {
+                const inputElement = document.getElementById(`input-${currentAttempt - 1}-${index}`);
+                if (inputElement) {
+                    inputElement.classList.add(status);
+                }
+            });
+
+            if (result.every(status => status === "correct")) {
+                alert("축하합니다! 정답을 맞추셨습니다!");
+                setIsGameOver(true);
+            } else if (currentAttempt >= 6) {
+                alert("게임 오버! 모든 시도를 사용하셨습니다.");
+                setIsGameOver(true);
+            } else {
+                setCurrentAttempt(currentAttempt + 1);
+                setCurrentInputIndex(0);
+            }
+        } catch (error) {
+            console.error('제출 오류:', error);
+            alert('답안을 제출하는 데 실패했습니다.');
         }
     };
 
@@ -347,8 +350,8 @@ const DailyQuiz = () => {
 
     const fetchHint = async () => {
         try {
-            const response = await axios.post(
-                'http://localhost:8083/api/hints',  // 여기는 예를 들어 스프링 포트번호가 8083이면 83, 82면 82 를 넣으면 됩니다.
+            /*const response = await axios.post(
+                '/api/get-hint',  // 여기는 예를 들어 스프링 포트번호가 8083이면 83, 82면 82 를 넣으면 됩니다.
                 {}, // POST 요청 시 보낼 데이터가 없을 경우 빈 객체를 보냅니다.
                 {
                     headers: {
@@ -356,8 +359,8 @@ const DailyQuiz = () => {
                     },
                     withCredentials: true,  // 쿠키와 인증 관련 정보를 포함하여 요청
                 }
-            );
-
+            );*/
+            const response = await axios.post('http:localhost:8085/api/get-hint');
             setHintText(response.data.hint);  // 서버에서 받은 힌트를 상태로 설정
             setHintVisible(true);  // 힌트 보이기 설정
         } catch (error) {
