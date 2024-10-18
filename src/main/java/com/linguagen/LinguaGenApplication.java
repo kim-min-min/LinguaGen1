@@ -10,4 +10,5 @@ public class LinguaGenApplication {
 		SpringApplication.run(LinguaGenApplication.class, args);
 	}
 
+
 }
