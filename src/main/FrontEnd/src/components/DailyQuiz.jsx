@@ -157,6 +157,16 @@ const HintText = styled.p`
   transition: opacity 0.3s ease;
 `;
 
+const BackgroundVideo = styled.video`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 비디오가 화면에 맞도록 커버되도록 설정 */
+  z-index: -1; /* 다른 요소 뒤에 배치 */
+`;
+
 const DailyQuiz = () => {
     const [currentAttempt, setCurrentAttempt] = useState(1);
     const [currentInputIndex, setCurrentInputIndex] = useState(0);
@@ -386,9 +396,9 @@ const DailyQuiz = () => {
             // 입력 후 포커스 자동 이동
             const currentRow = currentAttempt - 1;
             handleInputChange(key, currentRow, currentInputIndex);
-/*            if (currentInputIndex < 4) {
-                setCurrentInputIndex(currentInputIndex + 1);
-            }*/
+            /*            if (currentInputIndex < 4) {
+                            setCurrentInputIndex(currentInputIndex + 1);
+                        }*/
             if (currentInputIndex < 5) {
                 handleInputChange(key, currentRow, currentInputIndex);
                 setCurrentInputIndex(currentInputIndex + 1);
@@ -430,7 +440,10 @@ const DailyQuiz = () => {
 
 
     return (
-        <div className="h-full w-full">
+        <div className="h-full w-full relative">
+            <BackgroundVideo autoPlay muted loop>
+                <source src='src/assets/video/MainBackground.mp4' type='video/mp4' />
+            </BackgroundVideo>
             <Header />
             <div className="flex flex-col justify-start items-center w-full h-full mb-12">
                 <h1 className="mb-12 font-bold">Daily Quiz</h1>

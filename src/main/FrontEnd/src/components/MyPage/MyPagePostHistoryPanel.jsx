@@ -91,7 +91,7 @@ const MyPagePostHistoryPanel = () => {
             <div className='pb-10 w-full text-center font-bold text-xl'>
                 <p>게시글 내역</p>
             </div>
-            <div className='grid grid-cols-3 gap-4 items-start justify-start w-full mt-4'>
+            <div className='grid grid-cols-3 gap-4 items-start justify-start w-full mt-4 px-8'>
                 {cards.map((card) => (
                     <Card
                         key={card.id}

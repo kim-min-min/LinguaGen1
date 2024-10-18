@@ -78,6 +78,16 @@ const Item = styled.div`
   transition: color 0.3s ease; /* 부드러운 색상 전환 애니메이션 */
 `;
 
+const BackgroundVideo = styled.video`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 비디오가 화면에 맞도록 커버되도록 설정 */
+  z-index: -1; /* 다른 요소 뒤에 배치 */
+`;
+
 const boardData = [
   {
     title: '공지사항',
@@ -171,6 +181,9 @@ const Community = () => {
 
   return (
     <div className='w-full h-full flex flex-col overflow-y-scroll custom-scrollbar'>
+      <BackgroundVideo autoPlay muted loop>
+        <source src='src/assets/video/CommunityBackground.mp4' type='video/mp4' />
+      </BackgroundVideo>
       <Header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }} />
       <div className='w-full flex flex-col justify-center items-center my-12' style={{ height: '350px' }}>
         <Link to='/community' onClick={() => handleTabClick('')}>
