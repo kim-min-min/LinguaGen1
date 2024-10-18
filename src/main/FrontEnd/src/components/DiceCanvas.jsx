@@ -5,8 +5,8 @@ import Dice from './Dice';
 
 function DiceCanvas({ letter, rotationSpeed, isLeaving }) {
   return (
-    <Canvas camera={{ position: [0, 0, 1.5], fov: 50 }} style={{ background: '#f9f9f9' }}>
-      <color attach="background" args={['#f9f9f9']} />
+    <Canvas camera={{ position: [0, 0, 1.5], fov: 50 }} style={{ background: 'transparent' }}>
+      <color attach="background" args={['transParent']} />
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
       <Dice letter={letter} rotationSpeed={rotationSpeed} isLeaving={isLeaving} />
