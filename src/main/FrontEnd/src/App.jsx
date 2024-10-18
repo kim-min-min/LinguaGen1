@@ -8,6 +8,7 @@ import DashBoard from './components/DashBoard/DashBoard';
 import MyPage from './components/MyPage/MyPage';
 import Community from './components/Community/Community';
 import DailyQuiz from './components/DailyQuiz';
+import User from './components/test/User';
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
         <Route path='/mypage' element={<MyPage />} />
         <Route path='/community' element={<Community />} />
         <Route path='/dailyQuiz' element={<DailyQuiz />} />
+        <Route path="/users/:id" element={<User />} />
+
       </Routes>
     </Router>
   );
