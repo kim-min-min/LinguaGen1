@@ -21,8 +21,19 @@ const MainPageContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
+  position : relative;
   align-items: center;
   animation: ${fadeInAnimation} 1s forwards;
+`;
+
+const BackgroundVideo = styled.video`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 비디오가 화면에 맞도록 커버되도록 설정 */
+  z-index: -1; /* 다른 요소 뒤에 배치 */
 `;
 
 function MainPage() {
@@ -56,6 +67,9 @@ function MainPage() {
 
   return (
     <MainPageContainer>
+      <BackgroundVideo autoPlay muted loop>
+        <source src='src/assets/video/MainBackground.mp4' type='video/mp4'/>
+      </BackgroundVideo>
       <Header />
       <main className='w-full h-full flex flex-col lg:flex-row items-center justify-center lg:gap-12 lg:overflow-hidden overflow-scroll'>
         {/* 좌측 메뉴바 */}

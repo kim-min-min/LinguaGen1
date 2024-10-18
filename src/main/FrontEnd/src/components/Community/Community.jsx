@@ -12,6 +12,7 @@ import Writing from './Writing';
 import DetailView from './DetailView';
 
 const SearchBox = styled.div`
+  margin-top : 15px;
   width: fit-content;  // fit-content로 크기 자동 조절
   height: fit-content;
   position: relative;  // 부모 요소에 position: relative 추가
@@ -66,6 +67,7 @@ const SearchButton = styled.button`
 
 const Item = styled.div`
   display: list-item;
+  margin-left : 15px;
   list-style-position: inside;
   padding: 14px;
   font-weight: bold;
@@ -76,6 +78,16 @@ const Item = styled.div`
     color: ${({ isActive }) => (isActive ? '#334155' : 'black')}; /* hover 상태에서 색상 변경 */
   }
   transition: color 0.3s ease; /* 부드러운 색상 전환 애니메이션 */
+`;
+
+const BackgroundVideo = styled.video`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 비디오가 화면에 맞도록 커버되도록 설정 */
+  z-index: -1; /* 다른 요소 뒤에 배치 */
 `;
 
 const boardData = [
@@ -171,6 +183,9 @@ const Community = () => {
 
   return (
     <div className='w-full h-full flex flex-col overflow-y-scroll custom-scrollbar'>
+      <BackgroundVideo autoPlay muted loop>
+        <source src='src/assets/video/CommunityBackground.mp4' type='video/mp4' />
+      </BackgroundVideo>
       <Header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }} />
       <div className='w-full flex flex-col justify-center items-center my-12' style={{ height: '350px' }}>
         <Link to='/community' onClick={() => handleTabClick('')}>
@@ -179,8 +194,8 @@ const Community = () => {
       </div>
       <div className='w-full h-auto flex justify-center items-center'>
         <div className='w-full h-full mt-12 mb-18 flex grid-cols-2 justify-center'>
-          <div className='w-1/6 h-full flex flex-col justify-center items-start p-8'>
-            <div className='col-span-2 w-full h-24'>
+          <div className='w-1/6 h-96 flex flex-col justify-start items-start m-8 border-2 border-gray-300 rounded-lg' style={{ backdropFilter: 'blur(15px)', background: 'rgba(255, 255, 255, 0.2' }}>
+            <div className='col-span-2 w-full h-24 pt-2 pl-4'>
               <SearchBox>
                 <SearchInput ref={inputRef} type="text" placeholder="Search..." />
                 <SearchButton onClick={() => inputRef.current.focus()}>
@@ -188,7 +203,7 @@ const Community = () => {
                 </SearchButton>
               </SearchBox>
             </div>
-            <div className='w-full h-full'>
+            <div className='w-full h-auto my-8'>
               {/* 탭 항목 클릭 가능하게 설정 */}
               <Item isActive={activeTab === 'Notice'} onClick={() => handleTabClick('Notice')}>
                 공지사항

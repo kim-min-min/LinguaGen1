@@ -135,10 +135,8 @@ const BadgePanel = () => {
   }, [activeTab]); // activeTab이 바뀔 때마다 데이터를 다시 불러옴
 
   return (
-    <div className='flex flex-col items-center justify-start w-full pt-20 pl-24'>
-      <div className='w-full'>
-        <h4 className='font-bold'>뱃지</h4>
-      </div>
+    <div className='flex flex-col items-center justify-start w-full mt-20 ml-24 border-2 border-gray-300 rounded-lg' style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2', height : 'auto'}}>
+      <div className='w-full'><h4 className='font-bold h-14 pt-8 pl-4' style={{ fontSize: '24px' }}>뱃지</h4></div>
 
       {/* Switch 탭 구현 */}
       <SwitchContainer>

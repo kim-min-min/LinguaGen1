@@ -42,7 +42,7 @@ const MyPagePointUsingHistoryPanel = () => {
 
   return (
     <>
-      <div className="pb-10 w-full text-center font-bold text-xl">
+      <div className="pb-10 w-full text-center font-bold text-xl px-4">
         <p>포인트 내역</p>
       </div>
       <Table>
