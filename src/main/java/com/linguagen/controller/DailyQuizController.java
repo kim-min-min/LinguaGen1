@@ -28,7 +28,7 @@ public class DailyQuizController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/get-hint")
+    @PostMapping("/get-hint")
     public ResponseEntity<Map<String, Object>> getHint() {
         Map<String, Object> response = new HashMap<>();
         response.put("hint", service.getHint());
