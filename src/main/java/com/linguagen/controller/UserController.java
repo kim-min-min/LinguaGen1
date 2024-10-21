@@ -70,4 +70,10 @@ public class UserController {
         userService.logout(session);
         return "로그아웃 되었습니다.";
     }
+
+    // 등급과 경험치로 정렬된 모든 사용자 목록을 반환하는 API
+    @GetMapping("/all")
+    public List<USERS> getAllUsersWithRank() {
+        return userService.getAllUsersByRanking();
+    }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './Header';
 
 const RankingPage = () => {
@@ -14,8 +14,30 @@ const RankingPage = () => {
     const [filteredData, setFilteredData] = useState(initialRankingData);
     const [searchTerm, setSearchTerm] = useState('');
     const [sortConfig, setSortConfig] = useState({ key: 'rank', direction: 'ascending' });
+    const [users, setUsers] = useState([]); // User data from the server
+    const [error, setError] = useState(null); // Error handling
 
     const tierOrder = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Challenger'];
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch('http://localhost:8085/api/users/all');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                setUsers(data); // Set fetched data to users state
+                setRankingData(data); // Update ranking data with fetched users
+                setFilteredData(data); // Ensure the displayed data reflects the fetched data
+            } catch (err) {
+                setError('데이터를 불러오는데 실패했습니다.');
+                console.error('Fetch error:', err);
+            }
+        };
+
+        fetchUsers(); // Fetch user data on component mount
+    }, []);
 
     const getFontSize = (rank) => {
         if (rank === 1) return 'text-3xl';
@@ -56,7 +78,7 @@ const RankingPage = () => {
 
     const handleSearch = () => {
         if (searchTerm.trim() === '') {
-            setFilteredData(rankingData);  // 검색어가 없으면 전체 데이터를 다시 보여줍니다.
+            setFilteredData(rankingData);
         } else {
             const filtered = rankingData.filter((user) =>
                 user.nickname.toLowerCase().includes(searchTerm.toLowerCase())
@@ -70,6 +92,10 @@ const RankingPage = () => {
             handleSearch();
         }
     };
+
+    if (error) {
+        return <p>{error}</p>;
+    }
 
     return (
         <div className='h-screen w-full overflow-y-scroll'>
@@ -90,38 +116,38 @@ const RankingPage = () => {
                             placeholder="닉네임 을 검색해 보세요"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyPress={handleKeyPress}  // Enter 키 이벤트 핸들러
+                            onKeyPress={handleKeyPress}
                             className="h-8 border-2 border-gray-400 rounded-md pl-2"
                         />
                         <img
                             src="src/assets/imgs/magnifier.png"
                             alt="검색"
-                            onClick={handleSearch}  // 클릭 이벤트로 검색 실행
+                            onClick={handleSearch}
                             className="w-8 h-8 mx-8 cursor-pointer"
                         />
                     </div>
                     <div className="h-auto w-full p-12">
                         <table className="w-full">
                             <thead>
-                                <tr className="text-left border-b-2 border-gray-300 select-none">
-                                    <th className='cursor-pointer' onClick={() => handleSort('rank')}>순위</th>
-                                    <th className='cursor-pointer'>닉네임</th>
-                                    <th className='cursor-pointer' onClick={() => handleSort('tier')}>티어</th>
-                                    <th className='cursor-pointer' onClick={() => handleSort('playtime')}>플레이타임</th>
-                                </tr>
+                            <tr className="text-left border-b-2 border-gray-300 select-none">
+                                <th className='cursor-pointer' onClick={() => handleSort('rank')}>순위</th>
+                                <th className='cursor-pointer'>닉네임</th>
+                                <th className='cursor-pointer' onClick={() => handleSort('tier')}>티어</th>
+                                <th className='cursor-pointer' onClick={() => handleSort('playtime')}>플레이타임</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                {filteredData.map((user) => (
-                                    <tr
-                                        key={user.rank}
-                                        className={`border-b border-gray-300 ${getFontColor(user.rank)} ${getFontSize(user.rank)}`}
-                                    >
-                                        <td>{user.rank}</td>
-                                        <td>{user.nickname}</td>
-                                        <td>{user.tier}</td>
-                                        <td>{user.playtime}</td>
-                                    </tr>
-                                ))}
+                            {filteredData.map((user, index) => (
+                                <tr
+                                    key={user.id || index}
+                                    className={`border-b border-gray-300 ${getFontColor(user.rank)} ${getFontSize(user.rank)}`}
+                                >
+                                    <td>{index + 1}</td>
+                                    <td>{user.nickname}</td>
+                                    <td>{user.tier || user.grade}</td>
+                                    <td>{user.playtime || `${user.exp} XP`}</td>
+                                </tr>
+                            ))}
                             </tbody>
                         </table>
                     </div>
