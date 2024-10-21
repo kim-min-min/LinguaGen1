@@ -24,6 +24,7 @@ function App() {
         <Route path='/dailyQuiz' element={<DailyQuiz />} />
         <Route path="/users/:id" element={<User />} />
         <Route path='/ranking' element={<RankingPage />} />
+        <Route path='/Test' element={<User />} />
 
       </Routes>
     </Router>
