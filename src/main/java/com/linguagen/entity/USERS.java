@@ -16,20 +16,23 @@ import java.util.List;
 public class USERS {
 
     @Id
-    @Column(nullable = false, length = 255)
+    @Column( length = 255)
     private String id;
 
-    @Column(nullable = false, length = 255)
+    @Column( length = 255)
     private String password;
+
+    @Column( length = 255)
+    private String phone;
 
     @Column(length = 100)
     private String nickname;
 
     @Temporal(TemporalType.DATE)
-    @Column(nullable = false)
+    @Column()
     private Date birthDate;
 
-    @Column(nullable = false, length = 255)
+    @Column( length = 255)
     private String address;
 
     @Column(columnDefinition = "SET('Sports', 'Music')")
@@ -41,15 +44,15 @@ public class USERS {
     @Column(length = 50)
     private String tempGrade;
 
-    @Column(nullable = false, length = 50)
+    @Column( length = 50)
     private String grade;
 
     private Integer tier;
 
-    @Column(nullable = false)
+    @Column()
     private Integer exp;
 
-    @Column(nullable = false)
+    @Column()
     private Integer points;
 
     @Column(length = 255)

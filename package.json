@@ -1,0 +1,12 @@
+{
+  "name": "linguagen",
+  "version": "1.0.0",
+  "description": "English Learning Platform Utilizing Generative AI (생성형AI를 활용한 영어 학습 플랫폼)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

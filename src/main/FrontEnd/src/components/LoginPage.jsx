@@ -16,6 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import axios from "axios";
 
 function LoginPage() {
 
@@ -37,16 +38,29 @@ function LoginPage() {
     password: "test"
   };
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (id === validUser.id && password === validUser.password) {
-      setIsLoggedIn(true);
-      setError("");
-      navigate('/main');
-    } else {
-      setError("아이디 또는 비밀번호가 올바르지 않습니다.");
+  const handleLogin = async (e) => {
+    e.preventDefault(); // 폼 제출 기본 동작 방지
+
+    try {
+      const response = await axios.post(
+          'http://localhost:8085/api/users/login', // API 엔드포인트
+          { id, password }, // 요청 데이터 (아이디와 비밀번호)
+          { withCredentials: true } // 세션 쿠키 포함
+      );
+
+      // 응답이 성공적인 경우 처리
+      if (response.status === 200 && response.data === '로그인 성공') {
+        alert('로그인 성공!');
+        navigate('/main'); // 메인 페이지로 이동
+      } else {
+        setError('아이디 또는 비밀번호가 잘못되었습니다.');
+      }
+    } catch (err) {
+      console.error('에러 발생:', err);
+      setError('로그인 중 오류가 발생했습니다.'); // 에러 메시지 출력
     }
   };
+
 
   const handleSignupToggle = () => {
     setShowSignup(!showSignup); // 회원가입 폼 표시 토글
@@ -135,8 +149,45 @@ function LoginPage() {
   );
 }
 
+
+
+
 // Signup 컴포넌트
 function Signup({ onSignupToggle, onNextSignup }) {
+
+  const [formData, setFormData] = useState({
+    id: '',
+    password: '',
+    confirmPassword: '',
+    phone: '',
+    address: '',
+    detailedAddress: '',
+  });
+
+  const [error, setError] = useState(''); // 에러 메시지 상태
+
+  // 입력값 변경 처리
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // 유효성 검사
+  const validate = () => {
+    if (formData.password !== formData.confirmPassword) {
+      setError('비밀번호가 일치하지 않습니다.');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validate()) {
+      onNextSignup(formData); // 폼 데이터 전달
+    }
+  };
+
   return (
     <div className="mx-auto grid w-[350px] gap-6">
       <div className="grid gap-2 text-center">
@@ -145,12 +196,12 @@ function Signup({ onSignupToggle, onNextSignup }) {
       <form className="grid gap-4">
         <div className="grid gap-2">
           <Label htmlFor="email">이메일</Label>
-          <Input id="email" type="email" placeholder="example@example.com" required />
+          <Input name="id" type="email" placeholder="example@example.com" required />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">비밀번호</Label>
           <Input
-            id="password"
+              name="password"
             type="password"
             placeholder="대문자, 소문자 포함 8자리 이상"
             required
@@ -158,18 +209,18 @@ function Signup({ onSignupToggle, onNextSignup }) {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="confirm-password">비밀번호 확인</Label>
-          <Input id="confirm-password" type="password" placeholder="비밀번호 확인" required />
+          <Input name="confirm-password" type="password" placeholder="비밀번호 확인" required />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="phone">전화번호</Label>
-          <Input id="phone" type="tel" placeholder="전화번호 입력" required />
+          <Input name="phone" type="tel" placeholder="전화번호 입력" required />
         </div>
         <div className="grid gap-2">
           <div className="flex gap-2">
-            <Input id="address" type="text" placeholder="주소" />
+            <Input name="address" type="text" placeholder="주소" />
             <Button variant="outline">주소 검색</Button>
           </div>
-          <Input id="detailed-address" type="text" placeholder="상세 주소" />
+          <Input name="detailed-address" type="text" placeholder="상세 주소" />
         </div>
         <Button type="button" className="w-full" onClick={onNextSignup}>
           Next
@@ -185,8 +236,11 @@ function Signup({ onSignupToggle, onNextSignup }) {
 }
 
 // SignupNext 컴포넌트
-function SignupNext({ onPreviousSignup }) {
+function SignupNext({formData, onPreviousSignup }) {
   const [sliderValue, setSliderValue] = useState(33); // 초기 값 33
+  const [selectedInterests, setSelectedInterests] = useState([]); // 관심사 선택 상태
+
+
 
   const getTier = () => {
     if (sliderValue < 49) return "Bronze";
@@ -194,19 +248,57 @@ function SignupNext({ onPreviousSignup }) {
     return "Gold";
   };
 
+  // ToggleGroup에서 선택된 항목 업데이트
+  const handleInterestChange = (interest) => {
+    setSelectedInterests((prev) =>
+        prev.includes(interest)
+            ? prev.filter((item) => item !== interest) // 이미 선택된 경우 제거
+            : [...prev, interest] // 선택된 경우 추가
+    );
+  };
+
+  // 회원가입 완료 처리
+  const handleSignupComplete = async () => {
+    try {
+      const fullAddress = `${formData.address} ${formData.detailedAddress}`; // 주소 합치기
+
+      const { id, password, phone } = formData; // formData에서 분해
+
+
+
+      const response = await axios.post('http://localhost:8085/api/users', {
+        id,
+        password,
+        phone,
+        address: fullAddress,
+        interestSet: selectedInterests.join(','), // 배열을 문자열로 변환
+        tier: getTier(),
+      });
+
+      if (response.status === 201) {
+        alert('회원가입이 완료되었습니다!');
+      } else {
+        alert('회원가입에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('회원가입 중 오류 발생:', error);
+      alert('회원가입 중 오류가 발생했습니다.');
+    }
+  };
+
   return (
     <div className="flex justify-center items-center w-2/3 h-auto">
       <div className='w-full h-auto p-12 flex flex-col justify-center items-center mt-16'>
         <p className='font-bold text-xl'>좋아하는 관심사를 골라주세요</p>
         <ToggleGroup type="multiple" variant='outline' className='grid grid-cols-6 mt-12 gap-4'>
-          <ToggleGroupItem value='movie' className='col-span-2'>영화</ToggleGroupItem>
-          <ToggleGroupItem value='dailySpeech' className='col-span-2'>일상회화</ToggleGroupItem>
-          <ToggleGroupItem value='travel' className='col-span-2'>여행</ToggleGroupItem>
-          <ToggleGroupItem value='business' className='col-start-2 col-span-2'>비지니스</ToggleGroupItem>
-          <ToggleGroupItem value='drama' className='col-start-4 col-span-2'>드라마</ToggleGroupItem>
-          <ToggleGroupItem value='anime' className='col-span-2'>애니</ToggleGroupItem>
-          <ToggleGroupItem value='normal' className='col-start-3 col-span-2'>일반</ToggleGroupItem>
-          <ToggleGroupItem value='literature' className='col-start-5 col-span-2'>문학</ToggleGroupItem>
+          <ToggleGroupItem value='movie' className='col-span-2' onClick={() => handleInterestChange('movie')}>영화</ToggleGroupItem>
+          <ToggleGroupItem value='dailySpeech' className='col-span-2' onClick={() => handleInterestChange('dailySpeech')}>일상회화</ToggleGroupItem>
+          <ToggleGroupItem value='travel' className='col-span-2' onClick={() => handleInterestChange('travel')}>여행</ToggleGroupItem>
+          <ToggleGroupItem value='business' className='col-start-2 col-span-2' onClick={() => handleInterestChange('business')}>비지니스</ToggleGroupItem>
+          <ToggleGroupItem value='drama' className='col-start-4 col-span-2' onClick={() => handleInterestChange('drama')}>드라마</ToggleGroupItem>
+          <ToggleGroupItem value='anime' className='col-span-2' onClick={() => handleInterestChange('anime')}>애니</ToggleGroupItem>
+          <ToggleGroupItem value='normal' className='col-start-3 col-span-2' onClick={() => handleInterestChange('normal')}>일반</ToggleGroupItem>
+          <ToggleGroupItem value='literature' className='col-start-5 col-span-2' onClick={() => handleInterestChange('literature')}>문학</ToggleGroupItem>
         </ToggleGroup>
 
         <div className='mt-20 flex flex-col justify-center items-center w-full'>
@@ -268,7 +360,7 @@ function SignupNext({ onPreviousSignup }) {
           </div>
           <div className='w-full h-auto flex flex-row justify-center gap-4'>
             <Button onClick={onPreviousSignup}>이전</Button>
-            <Button>가입 완료</Button>
+            <Button onClick={handleSignupComplete}>가입 완료</Button>
           </div>
         </div>
       </div>
