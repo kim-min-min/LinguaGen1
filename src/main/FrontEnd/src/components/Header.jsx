@@ -36,7 +36,7 @@ const Header = () => {
       <HoverCardContent className='w-34'> 데일리 퀴즈</HoverCardContent>
     </HoverCard>
     <HoverCard> 
-      <HoverCardTrigger><img src={Trophy} alt="Trophy" style={{ width: '35px', height: '35px' }} onClick={handleRankingClick} /></HoverCardTrigger>
+      <HoverCardTrigger><img src={Trophy} alt="Trophy" style={{ width: '35px', height: '35px', cursor : 'pointer' }} onClick={handleRankingClick} /></HoverCardTrigger>
       <HoverCardContent className='w-34'> 랭킹 페이지</HoverCardContent>
     </HoverCard>
     </div>
