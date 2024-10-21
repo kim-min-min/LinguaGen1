@@ -16,60 +16,48 @@ import java.util.List;
 public class USERS {
 
     @Id
-    @Column( length = 255)
-    private String id;
+    @Column(length = 50, nullable = false)
+    private String id; // 회원 아이디 (Primary Key)
 
-    @Column( length = 255)
-    private String password;
+    @Column(length = 100, nullable = false)
+    private String password; // 비밀번호
 
-    @Column( length = 255)
-    private String phone;
-
-    @Column(length = 100)
-    private String nickname;
+    @Column(length = 50)
+    private String nickname; // 닉네임 (NULL 허용)
 
     @Temporal(TemporalType.DATE)
     @Column()
-    private Date birthDate;
+    private Date birthDate; // 생년월일
 
-    @Column( length = 255)
-    private String address;
+    @Column(length = 1000)
+    private String address; // 주소
 
-    @Column(columnDefinition = "SET('Sports', 'Music')")
-    private String interestSet;
-
-    @Transient
-    private List<String> interest;
-
-    @Column(length = 50)
-    private String tempGrade;
-
-    @Column( length = 50)
-    private String grade;
-
-    private Integer tier;
-
-    @Column()
-    private Integer exp;
-
-    @Column()
-    private Integer points;
+    @Column(length = 13)
+    private String tell; // 전화번호
 
     @Column(length = 255)
-    private String clubsId;
+    private String objective; // 학습 목표
 
-    @PostLoad
-    private void postLoad() {
-        if (interestSet != null && !interestSet.isEmpty()) {
-            interest = Arrays.asList(interestSet.split(","));
-        }
-    }
+    @Column(length = 50)
+    private String tempGrade; // 임시 등급
 
+    @Column(length = 50)
+    private String grade; // 등급 (NULL 허용)
+
+    private Byte tier; // 티어 (TINYINT, NULL 허용)
+
+    private Byte exp; // 경험치 (TINYINT, NULL 허용)
+
+    private Integer points; // 포인트 (NULL 허용)
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column()
+    private Date joinDate; // 가입 일자
+
+    // 엔티티 저장 전 현재 시간 설정
     @PrePersist
-    @PreUpdate
-    private void prePersistOrUpdate() {
-        if (interest != null && !interest.isEmpty()) {
-            interestSet = String.join(",", interest);
-        }
+    protected void onCreate() {
+        this.joinDate = new Date();
     }
+
 }

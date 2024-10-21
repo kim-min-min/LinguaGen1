@@ -275,6 +275,7 @@ function Signup({ onSignupToggle, onNextSignup }) {
 
 // SignupNext 컴포넌트
 function SignupNext({ formData, onPreviousSignup }) {
+  const navigate = useNavigate();
   const [sliderValue, setSliderValue] = useState(33); // 초기 값 33
   const [selectedInterests, setSelectedInterests] = useState([]); // 관심사 선택 상태
 
@@ -293,37 +294,55 @@ function SignupNext({ formData, onPreviousSignup }) {
     );
   };
 
-  // 회원가입 완료 처리
+
+
+// 회원가입 완료 처리
   const handleSignupComplete = async () => {
     try {
-      const fullAddress = `${formData.address} ${formData.detailedAddress}`; // 주소 합치기
+      // 주소 합치기
+      const fullAddress = `${formData.address} ${formData.detailedAddress}`.trim();
 
-      // completeFormData 객체에 모든 데이터를 모아줍니다.
+      // completeFormData 객체에 모든 필수 데이터를 모아줍니다.
       const completeFormData = {
         id: formData.id,
         password: formData.password,
-        phone: formData.phone,
+        name: formData.name, // 예시로 이름 추가
+        phone: formData.phone, // 전화번호 필드 추가
         address: fullAddress,
-        interestSet: selectedInterests.join(','), // 배열을 문자열로 변환
-        tier: getTier(), // Slider 값으로 등급 결정
       };
 
-      // 회원가입 정보를 console.log로 출력
-      console.log("회원가입 정보: ", completeFormData);
+      // 회원가입 정보 로그로 출력
+      console.log("회원가입 정보:", completeFormData);
 
-      // 서버로 데이터를 전송하는 코드 (여기서는 주석 처리)
-      const response = await axios.post('http://localhost:8085/api/users', completeFormData);
+      // axios로 POST 요청 전송
+      const response = await axios.post('http://localhost:8085/api/users', completeFormData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       if (response.status === 201) {
         alert('회원가입이 완료되었습니다!');
+        navigate('/main'); // 메인 페이지로 이동
       } else {
+        console.warn('회원가입 실패:', response.data);
         alert('회원가입에 실패했습니다.');
       }
     } catch (error) {
-      console.error('회원가입 중 오류 발생:', error);
-      alert('회원가입 중 오류가 발생했습니다.');
+      // 오류 처리: 서버와의 통신 문제와 요청 오류를 구분
+      if (error.response) {
+        console.error('회원가입 중 서버 오류 발생:', error.response.data);
+        alert(`회원가입 실패: ${error.response.data.message || '서버 오류'}`);
+      } else if (error.request) {
+        console.error('서버 응답 없음:', error.request);
+        alert('서버와 통신할 수 없습니다. 나중에 다시 시도해주세요.');
+      } else {
+        console.error('회원가입 요청 설정 중 오류 발생:', error.message);
+        alert('회원가입 요청 처리 중 문제가 발생했습니다.');
+      }
     }
   };
+
 
   return (
     <div className="flex justify-center items-center w-2/3 h-auto">
