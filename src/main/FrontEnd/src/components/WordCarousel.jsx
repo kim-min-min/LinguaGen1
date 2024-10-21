@@ -19,6 +19,8 @@ const words = [
 
 const WordCarousel = () => {
   return (
+    <div className='flex flex-col items-center gap-4'>
+      <p style={{fontSize : '24px', fontWeight : 'bold', color : '#f0fdfa'}}>오늘의 단어</p>
     <Carousel className="w-full max-w-xs">
       <CarouselContent>
         {words.map((word, index) => (
@@ -37,6 +39,7 @@ const WordCarousel = () => {
       <CarouselPrevious className="hover:bg-transparent focus:outline-none focus:ring-0" />
       <CarouselNext className="hover:bg-transparent focus:outline-none focus:ring-0" />
     </Carousel>
+    </div>
   )
 }
 
