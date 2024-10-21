@@ -21,7 +21,7 @@ function App() {
         <Route path='/mypage' element={<MyPage />} />
         <Route path='/community' element={<Community />} />
         <Route path='/dailyQuiz' element={<DailyQuiz />} />
-        <Route path="/users/:id" element={<User />} />
+        <Route path='/Test' element={<User />} />
 
       </Routes>
     </Router>

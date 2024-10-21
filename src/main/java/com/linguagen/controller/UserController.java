@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:5173")  // React와 CORS 문제 해결
+@CrossOrigin(origins = "http://localhost:5173" , allowCredentials = "true")  // React와 CORS 문제 해결
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
