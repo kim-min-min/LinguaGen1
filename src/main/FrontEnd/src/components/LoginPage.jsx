@@ -17,6 +17,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import axios from "axios";
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+
 
 function LoginPage() {
 
@@ -34,9 +36,33 @@ function LoginPage() {
   const navigate = useNavigate();
   const { setIsLoggedIn } = useStore();
 
-  const validUser = {
-    id: "test",
-    password: "test"
+  const handleLoginSuccess = async (credentialResponse) => {
+    try {
+      // Google에서 받은 JWT 토큰 디코딩
+      const decoded = jwt_decode(credentialResponse.credential);
+      console.log('Google User Info:', decoded);
+
+      // 토큰을 서버로 전송해 세션 설정 요청 (withCredentials 사용)
+      const response = await axios.post(
+          'http://localhost:8085/api/google-login',
+          { token: credentialResponse.credential },
+          { withCredentials: true } // 서버와의 세션 쿠키 포함 요청
+      );
+
+      if (response.status === 200) {
+        alert('로그인 성공!');
+        navigate('/main'); // 메인 페이지로 이동
+      } else {
+        setError('Google 로그인 처리 중 문제가 발생했습니다.');
+      }
+    } catch (err) {
+      console.error('Google 로그인 중 오류:', err);
+      setError('Google 로그인에 실패했습니다.');
+    }
+  };
+
+  const handleLoginFailure = (error) => {
+    console.error('Google Login Failed:', error);
   };
 
   const handleLogin = async (e) => {
@@ -82,74 +108,88 @@ function LoginPage() {
   }, []);
 
   return (
-    <div
-      style={{ width: '100vw' }}
-      className={`login-page-container w-full h-screen grid lg:grid-cols-2 ${fadeIn ? 'fade-in' : ''} overflow-scroll lg:overflow-hidden`}>
+      <GoogleOAuthProvider clientId="970913932285-p2khbpep1qnkug3d5l2tqht45tc72lc5.apps.googleusercontent.com">
+        <div
+            style={{ width: '100vw' }}
+            className={`login-page-container w-full h-screen grid lg:grid-cols-2 ${
+                fadeIn ? 'fade-in' : ''
+            } overflow-scroll lg:overflow-hidden`}
+        >
+          <div className="flex items-center justify-center py-12 bg-white">
+            {showSignupNext ? (
+                <SignupNext onPreviousSignup={handlePreviousSignup} formData={signupFormData} />
+            ) : showSignup ? (
+                <Signup onSignupToggle={handleSignupToggle} onNextSignup={handleNextSignup} />
+            ) : (
+                <div className="mx-auto grid w-[350px] gap-6">
+                  <div className="grid gap-2 text-center">
+                    <h1 className="text-3xl font-bold">로그인</h1>
+                    <p className="text-sm text-gray-500">
+                      {error && <span className="text-red-500">{error}</span>}
+                    </p>
+                  </div>
+                  <form onSubmit={handleLogin} className="grid gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="id">아이디</Label>
+                      <Input
+                          id="id"
+                          type="text"
+                          placeholder="ID"
+                          required
+                          value={id}
+                          onChange={(e) => setId(e.target.value)}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <div className="flex items-center">
+                        <Label htmlFor="password">비밀번호</Label>
+                        <Link to="/forgot-password" className="ml-auto inline-block text-sm underline">
+                          비밀번호를 잊으셨나요?
+                        </Link>
+                      </div>
+                      <Input
+                          id="password"
+                          type="password"
+                          placeholder="PASSWORD"
+                          required
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
+                    <Button type="submit" className="w-full">
+                      로그인
+                    </Button>
 
-      <div className="flex items-center justify-center py-12 bg-white">
-        {showSignupNext ? (
-          <SignupNext onPreviousSignup={handlePreviousSignup} formData={signupFormData}/>
-        ) : showSignup ? (
-          <Signup onSignupToggle={handleSignupToggle} onNextSignup={handleNextSignup} />
-        ) : (
-          <div className="mx-auto grid w-[350px] gap-6">
-            <div className="grid gap-2 text-center">
-              <h1 className="text-3xl font-bold">로그인</h1>
-              <p className="text-sm text-gray-500">
-                {error && <span className="text-red-500">{error}</span>}
-              </p>
-            </div>
-            <form onSubmit={handleLogin} className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="id">아이디</Label>
-                <Input
-                  id="id"
-                  type="text"
-                  placeholder="ID"
-                  required
-                  value={id}
-                  onChange={(e) => setId(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">비밀번호</Label>
-                  <Link to="/forgot-password" className="ml-auto inline-block text-sm underline">
-                    비밀번호를 잊으셨나요?
-                  </Link>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="PASSWORD"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                로그인
-              </Button>
-              <Button variant="outline" className="w-full">
-                Google 로 로그인하기
-              </Button>
-            </form>
-            <div className="mt-4 text-center text-sm">
-              아직 계정이 없으신가요?{" "}
-              <span onClick={handleSignupToggle} className="underline cursor-pointer">
+                    {/* Google 로그인 버튼 */}
+                    <div className="w-full text-center mt-4">
+                      <GoogleLogin
+                          onSuccess={handleLoginSuccess}
+                          onError={handleLoginFailure}
+                          theme="outline"
+                          size="large"
+                          text="signin_with"
+                      />
+                    </div>
+                  </form>
+
+                  <div className="mt-4 text-center text-sm">
+                    아직 계정이 없으신가요?{' '}
+                    <span onClick={handleSignupToggle} className="underline cursor-pointer">
                 회원가입
               </span>
-            </div>
+                  </div>
+                </div>
+            )}
           </div>
-        )}
-      </div>
 
-      <div className="relative w-full h-full" style={{ backgroundColor: '#12071f' }}>
-        <Stars className="w-full h-full" />
-        <Overlay />
-      </div>
-    </div>
+          <div className="relative w-full h-full" style={{ backgroundColor: '#12071f' }}>
+            <Stars className="w-full h-full" />
+            <Overlay />
+          </div>
+        </div>
+      </GoogleOAuthProvider>
   );
+
 }
 
 
@@ -275,6 +315,7 @@ function Signup({ onSignupToggle, onNextSignup }) {
 
 // SignupNext 컴포넌트
 function SignupNext({ formData, onPreviousSignup }) {
+  const navigate = useNavigate();
   const [sliderValue, setSliderValue] = useState(33); // 초기 값 33
   const [selectedInterests, setSelectedInterests] = useState([]); // 관심사 선택 상태
 
@@ -293,37 +334,55 @@ function SignupNext({ formData, onPreviousSignup }) {
     );
   };
 
-  // 회원가입 완료 처리
+
+
+// 회원가입 완료 처리
   const handleSignupComplete = async () => {
     try {
-      const fullAddress = `${formData.address} ${formData.detailedAddress}`; // 주소 합치기
+      // 주소 합치기
+      const fullAddress = `${formData.address} ${formData.detailedAddress}`.trim();
 
-      // completeFormData 객체에 모든 데이터를 모아줍니다.
+      // completeFormData 객체에 모든 필수 데이터를 모아줍니다.
       const completeFormData = {
         id: formData.id,
         password: formData.password,
-        phone: formData.phone,
+        name: formData.name, // 예시로 이름 추가
+        phone: formData.phone, // 전화번호 필드 추가
         address: fullAddress,
-        interestSet: selectedInterests.join(','), // 배열을 문자열로 변환
-        tier: getTier(), // Slider 값으로 등급 결정
       };
 
-      // 회원가입 정보를 console.log로 출력
-      console.log("회원가입 정보: ", completeFormData);
+      // 회원가입 정보 로그로 출력
+      console.log("회원가입 정보:", completeFormData);
 
-      // 서버로 데이터를 전송하는 코드 (여기서는 주석 처리)
-      const response = await axios.post('http://localhost:8085/api/users', completeFormData);
+      // axios로 POST 요청 전송
+      const response = await axios.post('http://localhost:8085/api/users', completeFormData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       if (response.status === 201) {
         alert('회원가입이 완료되었습니다!');
+        navigate('/main'); // 메인 페이지로 이동
       } else {
+        console.warn('회원가입 실패:', response.data);
         alert('회원가입에 실패했습니다.');
       }
     } catch (error) {
-      console.error('회원가입 중 오류 발생:', error);
-      alert('회원가입 중 오류가 발생했습니다.');
+      // 오류 처리: 서버와의 통신 문제와 요청 오류를 구분
+      if (error.response) {
+        console.error('회원가입 중 서버 오류 발생:', error.response.data);
+        alert(`회원가입 실패: ${error.response.data.message || '서버 오류'}`);
+      } else if (error.request) {
+        console.error('서버 응답 없음:', error.request);
+        alert('서버와 통신할 수 없습니다. 나중에 다시 시도해주세요.');
+      } else {
+        console.error('회원가입 요청 설정 중 오류 발생:', error.message);
+        alert('회원가입 요청 처리 중 문제가 발생했습니다.');
+      }
     }
   };
+
 
   return (
     <div className="flex justify-center items-center w-2/3 h-auto">

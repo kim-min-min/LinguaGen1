@@ -4,6 +4,7 @@ package com.linguagen.service;
 import com.linguagen.entity.USERS;
 import com.linguagen.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,11 +31,23 @@ public class UserService {
     }
 
     // 유저 생성 또는 업데이트
+    @Transactional
     public USERS saveOrUpdateUser(USERS user) {
+        // 유효성 검사 예시
+        if (user.getId() == null || user.getPassword() == null ) {
+            throw new IllegalArgumentException("필수 필드가 누락되었습니다.");
+        }
+
+        // 중복 ID 검사
+        if (userRepository.existsById(user.getId())) {
+            throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
+        }
+
         return userRepository.save(user);
     }
 
     // 유저 삭제
+    @Transactional
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
@@ -61,6 +74,12 @@ public class UserService {
     // 로그아웃 로직: 세션 무효화
     public void logout(HttpSession session) {
         session.invalidate();  // 세션 무효화
+    }
+
+
+    // 등급과 경험치로 정렬된 모든 사용자 목록 반환
+    public List<USERS> getAllUsersByRanking() {
+        return userRepository.findAllByOrderByGradeAscExpDesc();
     }
 
 
