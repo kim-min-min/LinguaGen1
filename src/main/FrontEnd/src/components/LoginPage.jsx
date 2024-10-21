@@ -30,6 +30,7 @@ function LoginPage() {
   const [error, setError] = useState("");
   const [showSignup, setShowSignup] = useState(initialSignupState); // 회원가입 폼 표시 여부
   const [showSignupNext, setShowSignupNext] = useState(false); // SignupNext 표시 여부
+  const [signupFormData, setSignupFormData] = useState({});
   const navigate = useNavigate();
   const { setIsLoggedIn } = useStore();
 
@@ -66,8 +67,10 @@ function LoginPage() {
     setShowSignup(!showSignup); // 회원가입 폼 표시 토글
   };
 
-  const handleNextSignup = () => {
-    setShowSignupNext(true); // Next 버튼 누르면 SignupNext로 이동
+  const handleNextSignup = (formData) => {
+    console.log("Signup formData: ", formData);
+    setSignupFormData(formData); // Signup에서 전달받은 데이터를 저장
+    setShowSignupNext(true); // SignupNext로 이동
   };
 
   const handlePreviousSignup = () => {
@@ -85,7 +88,7 @@ function LoginPage() {
 
       <div className="flex items-center justify-center py-12 bg-white">
         {showSignupNext ? (
-          <SignupNext onPreviousSignup={handlePreviousSignup} />
+          <SignupNext onPreviousSignup={handlePreviousSignup} formData={signupFormData}/>
         ) : showSignup ? (
           <Signup onSignupToggle={handleSignupToggle} onNextSignup={handleNextSignup} />
         ) : (
@@ -193,36 +196,71 @@ function Signup({ onSignupToggle, onNextSignup }) {
       <div className="grid gap-2 text-center">
         <h1 className="text-3xl font-bold">회원가입</h1>
       </div>
-      <form className="grid gap-4">
+      <form className="grid gap-4" onSubmit={handleSubmit}>
         <div className="grid gap-2">
           <Label htmlFor="email">이메일</Label>
-          <Input name="id" type="email" placeholder="example@example.com" required />
+          <Input
+            name="id"
+            type="email"
+            placeholder="example@example.com"
+            value={formData.id}
+            onChange={handleChange} // onChange 핸들러 추가
+            required
+          />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">비밀번호</Label>
           <Input
-              name="password"
+            name="password"
+            value={formData.password}
             type="password"
             placeholder="대문자, 소문자 포함 8자리 이상"
+            onChange={handleChange} // onChange 핸들러 추가
             required
           />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="confirm-password">비밀번호 확인</Label>
-          <Input name="confirm-password" type="password" placeholder="비밀번호 확인" required />
+          <Input
+            name="confirmPassword"
+            type="password"
+            placeholder="비밀번호 확인"
+            value={formData.confirmPassword}
+            onChange={handleChange} // onChange 핸들러 추가
+            required
+          />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="phone">전화번호</Label>
-          <Input name="phone" type="tel" placeholder="전화번호 입력" required />
+          <Input
+            name="phone"
+            type="tel"
+            placeholder="전화번호 입력"
+            value={formData.phone}
+            onChange={handleChange} // onChange 핸들러 추가
+            required
+          />
         </div>
         <div className="grid gap-2">
           <div className="flex gap-2">
-            <Input name="address" type="text" placeholder="주소" />
+            <Input
+              name="address"
+              type="text"
+              value={formData.address}
+              placeholder="주소"
+              onChange={handleChange} // onChange 핸들러 추가
+            />
             <Button variant="outline">주소 검색</Button>
           </div>
-          <Input name="detailed-address" type="text" placeholder="상세 주소" />
+          <Input
+            name="detailedAddress"
+            type="text"
+            value={formData.detailedAddress}
+            placeholder="상세 주소"
+            onChange={handleChange} // onChange 핸들러 추가
+          />
         </div>
-        <Button type="button" className="w-full" onClick={onNextSignup}>
+        <Button onClick={handleSubmit} className="w-full">
           Next
         </Button>
       </form>
@@ -236,11 +274,9 @@ function Signup({ onSignupToggle, onNextSignup }) {
 }
 
 // SignupNext 컴포넌트
-function SignupNext({formData, onPreviousSignup }) {
+function SignupNext({ formData, onPreviousSignup }) {
   const [sliderValue, setSliderValue] = useState(33); // 초기 값 33
   const [selectedInterests, setSelectedInterests] = useState([]); // 관심사 선택 상태
-
-
 
   const getTier = () => {
     if (sliderValue < 49) return "Bronze";
@@ -251,9 +287,9 @@ function SignupNext({formData, onPreviousSignup }) {
   // ToggleGroup에서 선택된 항목 업데이트
   const handleInterestChange = (interest) => {
     setSelectedInterests((prev) =>
-        prev.includes(interest)
-            ? prev.filter((item) => item !== interest) // 이미 선택된 경우 제거
-            : [...prev, interest] // 선택된 경우 추가
+      prev.includes(interest)
+        ? prev.filter((item) => item !== interest) // 이미 선택된 경우 제거
+        : [...prev, interest] // 선택된 경우 추가
     );
   };
 
@@ -262,18 +298,21 @@ function SignupNext({formData, onPreviousSignup }) {
     try {
       const fullAddress = `${formData.address} ${formData.detailedAddress}`; // 주소 합치기
 
-      const { id, password, phone } = formData; // formData에서 분해
-
-
-
-      const response = await axios.post('http://localhost:8085/api/users', {
-        id,
-        password,
-        phone,
+      // completeFormData 객체에 모든 데이터를 모아줍니다.
+      const completeFormData = {
+        id: formData.id,
+        password: formData.password,
+        phone: formData.phone,
         address: fullAddress,
         interestSet: selectedInterests.join(','), // 배열을 문자열로 변환
-        tier: getTier(),
-      });
+        tier: getTier(), // Slider 값으로 등급 결정
+      };
+
+      // 회원가입 정보를 console.log로 출력
+      console.log("회원가입 정보: ", completeFormData);
+
+      // 서버로 데이터를 전송하는 코드 (여기서는 주석 처리)
+      const response = await axios.post('http://localhost:8085/api/users', completeFormData);
 
       if (response.status === 201) {
         alert('회원가입이 완료되었습니다!');
@@ -308,40 +347,40 @@ function SignupNext({formData, onPreviousSignup }) {
               <div className='flex flex-col justify-center items-center'>
                 <TooltipProvider >
                   <Tooltip >
-                  <TooltipTrigger className='bg-transparent'>
-                    <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>브론즈</p>
-                  </TooltipContent>
+                    <TooltipTrigger className='bg-transparent'>
+                      <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>브론즈</p>
+                    </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
                 <p>Bronze</p>
                 <img src="src/assets/imgs/down.png" alt="이미지를 불러올 수 없습니다" className='w-8 h-8 mt-4' />
               </div>
               <div className='flex flex-col justify-center items-center'>
-              <TooltipProvider >
+                <TooltipProvider >
                   <Tooltip >
-                  <TooltipTrigger className='bg-transparent'>
-                    <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>실버</p>
-                  </TooltipContent>
+                    <TooltipTrigger className='bg-transparent'>
+                      <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>실버</p>
+                    </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
                 <p>Silver</p>
                 <img src="src/assets/imgs/down.png" alt="이미지를 불러올 수 없습니다" className='w-8 h-8 mt-4' />
               </div>
               <div className='flex flex-col justify-center items-center'>
-              <TooltipProvider >
+                <TooltipProvider >
                   <Tooltip >
-                  <TooltipTrigger className='bg-transparent'>
-                    <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>골드</p>
-                  </TooltipContent>
+                    <TooltipTrigger className='bg-transparent'>
+                      <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>골드</p>
+                    </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
                 <p>Gold</p>
@@ -367,5 +406,6 @@ function SignupNext({formData, onPreviousSignup }) {
     </div>
   );
 }
+
 
 export default LoginPage;
