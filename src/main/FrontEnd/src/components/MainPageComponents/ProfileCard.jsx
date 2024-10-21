@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { HoverCard, HoverCardContent, HoverCardTrigger} from "@/components/ui/hover-card";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -76,11 +76,11 @@ function ProfileCard() {
                   비밀번호를 잊어버리셨나요?
                 </Link>
               </div>
-              <Input 
-                id="password" 
-                type="password" 
-                required 
-                placeholder="비밀번호" 
+              <Input
+                id="password"
+                type="password"
+                required
+                placeholder="비밀번호"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -93,9 +93,9 @@ function ProfileCard() {
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            아이디가 없으신가요? 
-            <br/>
-            <Link to="/signup" className="underline">
+            아이디가 없으신가요?
+            <br />
+            <Link to="/login?signup=true" className="underline">
               회원가입 하기
             </Link>
           </div>
@@ -125,11 +125,11 @@ function ProfileCard() {
             </ContextMenuContent>
           </ContextMenu>
           <HoverCard>
-            <HoverCardTrigger style={{textDecoration: "none", color: "gray", fontWeight: "bold", cursor: "default"}}>Tier</HoverCardTrigger>
+            <HoverCardTrigger style={{ textDecoration: "none", color: "gray", fontWeight: "bold", cursor: "default" }}>Tier</HoverCardTrigger>
             <HoverCardContent className="w-80">
               <div className="flex justify-between space-x-4 flex-col h-64 items-center">
                 <Avatar className="w-36 h-36">
-                  <AvatarImage src={BronzeTier}/>
+                  <AvatarImage src={BronzeTier} />
                   <AvatarFallback>VC</AvatarFallback>
                 </Avatar>
                 <div className="space-y-1">
@@ -151,17 +151,17 @@ function ProfileCard() {
           </HoverCard>
         </div>
       </CardHeader>
-      <Separator className="w-full bg-gray-300"/>
+      <Separator className="w-full bg-gray-300" />
       <CardContent className="flex flex-col items-center justify-center h-60 gap-12">
         <ul className="flex flex-col items-center justify-center gap-12 Texthover font-bold">
           <li>
-            <Link to="/mypage" style={{fontWeight : 'bold'}}>마이페이지</Link>
+            <Link to="/mypage" style={{ fontWeight: 'bold' }}>마이페이지</Link>
           </li>
           <li>
-            <Link to="/dashboard" style={{fontWeight : 'bold'}}>대쉬보드</Link>
+            <Link to="/dashboard" style={{ fontWeight: 'bold' }}>대쉬보드</Link>
           </li>
           <li>
-            <Link to="/community" style={{fontWeight : 'bold'}}>커뮤니티</Link>
+            <Link to="/community" style={{ fontWeight: 'bold' }}>커뮤니티</Link>
           </li>
         </ul>
       </CardContent>

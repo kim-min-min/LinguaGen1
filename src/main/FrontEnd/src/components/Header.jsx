@@ -17,6 +17,9 @@ const Header = () => {
     navigate('/dailyQuiz');
   }
 
+  const handleRankingClick = () => {
+    navigate('/ranking');
+  }
 
   return (
     <header className='w-full h-16 flex items-center justify-between pt-4 mb-4 pb-4 border-b-2 border-gray-300 shadow-md bg-white'>
@@ -33,7 +36,7 @@ const Header = () => {
       <HoverCardContent className='w-34'> 데일리 퀴즈</HoverCardContent>
     </HoverCard>
     <HoverCard> 
-      <HoverCardTrigger><img src={Trophy} alt="Trophy" style={{ width: '35px', height: '35px' }} /></HoverCardTrigger>
+      <HoverCardTrigger><img src={Trophy} alt="Trophy" style={{ width: '35px', height: '35px' }} onClick={handleRankingClick} /></HoverCardTrigger>
       <HoverCardContent className='w-34'> 랭킹 페이지</HoverCardContent>
     </HoverCard>
     </div>
