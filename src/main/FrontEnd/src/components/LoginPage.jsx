@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate,useLocation } from 'react-router-dom';
+
 import { Button } from "@components/ui/button";
 import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
@@ -17,12 +18,16 @@ import {
 } from "@/components/ui/tooltip"
 
 function LoginPage() {
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const initialSignupState = searchParams.get('signup') === 'true';
   // 로그인 관련 상태 관리
   const [fadeIn, setFadeIn] = useState(false);
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [showSignup, setShowSignup] = useState(false); // 회원가입 폼 표시 여부
+  const [showSignup, setShowSignup] = useState(initialSignupState); // 회원가입 폼 표시 여부
   const [showSignupNext, setShowSignupNext] = useState(false); // SignupNext 표시 여부
   const navigate = useNavigate();
   const { setIsLoggedIn } = useStore();
@@ -212,7 +217,7 @@ function SignupNext({ onPreviousSignup }) {
                 <TooltipProvider >
                   <Tooltip >
                   <TooltipTrigger className='bg-transparent'>
-                    <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-4 h-4 mb-4' />
+                    <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>브론즈</p>
@@ -226,7 +231,7 @@ function SignupNext({ onPreviousSignup }) {
               <TooltipProvider >
                   <Tooltip >
                   <TooltipTrigger className='bg-transparent'>
-                    <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-4 h-4 mb-4' />
+                    <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>실버</p>
@@ -240,7 +245,7 @@ function SignupNext({ onPreviousSignup }) {
               <TooltipProvider >
                   <Tooltip >
                   <TooltipTrigger className='bg-transparent'>
-                    <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-4 h-4 mb-4' />
+                    <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>골드</p>
