@@ -22,9 +22,12 @@ const Tab = styled.div`
   font-size: 16px;
   padding: 8px 0;
   cursor: pointer;
-  color: ${({ isActive }) => (isActive ? '#334155' : '#afb9c9')};
+  color: ${({ isActive }) => (isActive ? '#bbf7d0' : 'black')};
   transition: color 0.3s ease;
   user-select: none;
+    &:hover {
+    color: ${({ isActive }) => (isActive ? '#bbf7d0' : '#bbf7d0')}; /* hover 상태에서 색상 변경 */
+  }
 `;
 
 const Slider = styled.div`
