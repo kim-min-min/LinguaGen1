@@ -5,6 +5,7 @@ import DiceCanvas from './DiceCanvas';
 import '../App.css';
 import DemoPlay from './DemoPlay';
 import useStore from '../store/useStore';
+import DungeonCanvas from './Game/DungeonCanvas';
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -95,7 +96,7 @@ function LandingPage() {
   };
 
   if (showDemo) {
-    return <DemoPlay />;
+    return <DungeonCanvas />;
   }
 
   return (
