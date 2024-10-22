@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import DungeonImage from '../../assets/CanvasImage/Dungeon.jpg';
+import DungeonImage from '../../assets/CanvasImage/Mountain.png';
 import HP_Full from '../../assets/CanvasImage/HP_Full.png';
 import HP_Empty from '../../assets/CanvasImage/HP_Empty.png';
 import GameProgressPage from './GameProgressPage';
@@ -25,7 +25,7 @@ const knightTakeHitSprites = importAll(import.meta.glob('../../assets/CanvasImag
 const knightDeathSprites = importAll(import.meta.glob('../../assets/CanvasImage/knight_death_*.png', { eager: true }));
 const knightSpAttackSprites = importAll(import.meta.glob('../../assets/CanvasImage/knight_sp_atk_*.png', { eager: true }));
 
-const DungeonCanvas = () => {
+const MountainCanvas = () => {
   const canvasRef = useRef(null);
   const [bossState, setBossState] = useState('idle');
   const [knightState, setKnightState] = useState('idle');
@@ -404,4 +404,4 @@ const DungeonCanvas = () => {
   );
 };
 
-export default DungeonCanvas;
+export default MountainCanvas;

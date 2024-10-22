@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion'; // framer-motion 라이브러리 사용
 
 
 const questions = [
@@ -24,7 +25,7 @@ const questions = [
         options: ["The cat was angry", "The cat was content", "The cat was hungry", "The cat was sleeping"],
         correctAnswer: 1
     },
-    // 빈칸 채우기 문제 1
+    // 빈칸 ���우기 문제 1
     {
         type: 'fillInTheBlank',
         question: "The sun _____ in the east and sets in the west.",
@@ -36,7 +37,7 @@ const questions = [
         question: "Water _____ at 100 degrees Celsius at sea level.",
         answer: "boils"
     },
-    // 빈칸 채우기 문제 3
+    // 빈칸 채우 문제 3
     {
         type: 'fillInTheBlank',
         question: "The Earth _____ around the Sun.",
@@ -81,6 +82,9 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
     const [isSliding, setIsSliding] = useState(false);
     const [slideDirection, setSlideDirection] = useState('left');
     const [gameOverAnimation, setGameOverAnimation] = useState(false);
+    const [feedback, setFeedback] = useState(null);
+    const [selectedAnswer, setSelectedAnswer] = useState(null);
+    const [showFeedback, setShowFeedback] = useState(false);
 
     const colors = ['#FF0000', '#FFA500', '#FFFF00', '#00FF00']; // 빨, 주, 노, 초
 
@@ -94,23 +98,31 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
             isCorrect = answer.toLowerCase() === currentQuestion.answer.toLowerCase();
         }
 
-        if (isCorrect) {
-            onCorrectAnswer();
-        } else {
-            onWrongAnswer();
-        }
-
-        setIsSliding(true);
-        setSlideDirection('left');
+        setSelectedAnswer(answer);
+        setFeedback(isCorrect);
+        setShowFeedback(true);
 
         setTimeout(() => {
-            setCurrentQuestionIndex((prevIndex) => (prevIndex + 1) % questions.length);
-            setUserAnswer('');
-            setSlideDirection('right');
-        }, 500);
+            if (isCorrect) {
+                onCorrectAnswer();
+            } else {
+                onWrongAnswer();
+            }
 
-        setTimeout(() => {
-            setIsSliding(false);
+            setIsSliding(true);
+            setSlideDirection('left');
+
+            setTimeout(() => {
+                setCurrentQuestionIndex((prevIndex) => (prevIndex + 1) % questions.length);
+                setUserAnswer('');
+                setSlideDirection('right');
+                setSelectedAnswer(null);
+                setShowFeedback(false);
+            }, 500);
+
+            setTimeout(() => {
+                setIsSliding(false);
+            }, 1000);
         }, 1000);
     }, [currentQuestion, onCorrectAnswer, onWrongAnswer]);
 
@@ -126,6 +138,12 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
         }
     }, [isGameOver]);
 
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleAnswer(userAnswer);
+        }
+    };
+
     const renderQuestion = () => {
         switch (currentQuestion.type) {
             case 'multipleChoice':
@@ -135,8 +153,8 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                         <div className='flex flex-col justify-center items-center' style={{ width: '33%', padding: '10px', borderRight: '3px solid #ccc', fontSize: '24px' }}>
                             <h2>{currentQuestion.question}</h2>
                             {currentQuestion.type === 'listening' && (
-                                <button onClick={() => new Audio(currentQuestion.audioSrc).play()}>
-                                    Play Audio
+                                <button className='mt-8' onClick={() => new Audio(currentQuestion.audioSrc).play()}>
+                                    <img src="src/assets/imgs/promotion.png" alt="" className='w-8 h-8'/>
                                 </button>
                             )}
                         </div>
@@ -151,10 +169,11 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                                 transition: 'all 0.5s ease',
                                 transform: `translateX(${isSliding ? (slideDirection === 'left' ? '-100%' : '100%') : '0'})`,
                                 opacity: isSliding ? 0 : 1,
+                                position: 'relative',
                             }}
                         >
                             {currentQuestion.options.map((option, index) => (
-                                <button
+                                <motion.button
                                     key={index}
                                     onClick={() => handleAnswer(index)}
                                     style={{
@@ -165,22 +184,42 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                                         border: 'none',
                                         borderRadius: '10px',
                                         cursor: 'pointer',
-                                        transition: 'all 0.3s ease',
                                         display: 'flex',
                                         justifyContent: 'center',
                                         alignItems: 'center',
+                                        position: 'relative',
+                                        overflow: 'hidden',
                                     }}
-                                    onMouseEnter={(e) => {
-                                        e.target.style.transform = 'scale(1.05)';
-                                        e.target.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.target.style.transform = 'scale(1)';
-                                        e.target.style.boxShadow = 'none';
-                                    }}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
                                 >
                                     {option}
-                                </button>
+                                    <AnimatePresence>
+                                        {showFeedback && selectedAnswer === index && (
+                                            <motion.div
+                                                initial={{ x: '-100%' }}
+                                                animate={{ x: 0 }}
+                                                exit={{ x: '100%' }}
+                                                transition={{ duration: 0.3 }}
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    fontSize: '48px',
+                                                    color: 'white',
+                                                }}
+                                            >
+                                                {feedback ? 'O' : 'X'}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </motion.button>
                             ))}
                         </div>
                     </>
@@ -190,23 +229,58 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                     <div
                         className='flex flex-col justify-center items-center'
                         style={{
-
                             width: '100%',
                             padding: '10px',
                             transition: 'all 0.5s ease',
                             transform: `translateY(${isSliding ? (slideDirection === 'left' ? '100%' : '-100%') : '0'})`,
                             opacity: isSliding ? 0 : 1,
+                            position: 'relative',
                         }}
                     >
                         <h2>{currentQuestion.question}</h2>
-                        <input
-                            type="text"
-                            className='my-8 border-2'
-                            value={userAnswer}
-                            onChange={(e) => setUserAnswer(e.target.value)}
-                            style={{ fontSize: '18px', padding: '8px', marginRight: '10px' }}
-                        />
-                        <button className='hover:bg-gray-200 duration-500' onClick={() => handleAnswer(userAnswer)}>Submit</button>
+                        <div style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <input
+                                type="text"
+                                className='my-8 border-2'
+                                value={userAnswer}
+                                onChange={(e) => setUserAnswer(e.target.value)}
+                                onKeyPress={handleKeyPress}
+                                style={{ fontSize: '18px', padding: '8px', marginRight: '10px' }}
+                            />
+                            <motion.button
+                                className='hover:bg-gray-200 duration-500 h-12'
+                                onClick={() => handleAnswer(userAnswer)}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                Submit
+                            </motion.button>
+                            <AnimatePresence>
+                                {showFeedback && (
+                                    <motion.div
+                                        initial={{ x: '-100%' }}
+                                        animate={{ x: 0 }}
+                                        exit={{ x: '100%' }}
+                                        transition={{ duration: 0.3 }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            width: '100%',
+                                            height: '100%',
+                                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            fontSize: '48px',
+                                            color: 'white',
+                                        }}
+                                    >
+                                        {feedback ? 'O' : 'X'}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </div>
                 );
             default:

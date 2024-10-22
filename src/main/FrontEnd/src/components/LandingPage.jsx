@@ -1,11 +1,14 @@
-import React, { useRef, useMemo, useEffect } from 'react';
+import React, { useRef, useMemo, useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TypeAnimation } from 'react-type-animation';
 import DiceCanvas from './DiceCanvas';
 import '../App.css';
-import DemoPlay from './DemoPlay';
 import useStore from '../store/useStore';
 import DungeonCanvas from './Game/DungeonCanvas';
+import RuinsCanvas from './Game/RuinsCanvas';
+import MountainCanvas from './Game/MountainCanvas';
+
+const canvases = [DungeonCanvas, RuinsCanvas, MountainCanvas];
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -27,6 +30,10 @@ function LandingPage() {
     setShowWelcomeMessage1,
     setShowWelcomeMessage2,
   } = useStore();
+
+  const [selectedCanvas, setSelectedCanvas] = useState(null);
+
+  const [showLoader, setShowLoader] = useState(false);
 
   const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
   const positions = [
@@ -61,22 +68,13 @@ function LandingPage() {
     setTimeout(() => setStartTyping(true), 3400);
   }, [setIsLoaded, setStartTyping]);
 
-  const handleStartClick = () => {
-    setIsLeaving(true);
-    const maxSlideUpDelay = Math.max(...[0.5, 0.7, 1.3, 1.9, 1.5, 0.9]) * 1000;
-    const slideUpDuration = 500;
-    const totalSlideUpTime = maxSlideUpDelay + slideUpDuration + 200;
+  const selectRandomCanvas = useCallback(() => {
+    const randomCanvas = canvases[Math.floor(Math.random() * canvases.length)];
+    setSelectedCanvas(() => randomCanvas);
+    setShowDemo(true);
+  }, [setShowDemo]);
 
-    setTimeout(() => {
-      showWelcomeMessages();
-    }, totalSlideUpTime);
-  };
-
-  const handleLoginClick = () => {
-    navigate('/login');
-  };
-
-  const showWelcomeMessages = () => {
+  const showWelcomeMessages = useCallback(() => {
     setWelcomeMessage1('링구아젠에 오신걸 환영합니다.');
     setTimeout(() => setShowWelcomeMessage1(true), 100);
     
@@ -89,14 +87,37 @@ function LandingPage() {
         
         setTimeout(() => {
           setShowWelcomeMessage2(false);
-          setTimeout(() => setShowDemo(true), 1000);
+          setTimeout(selectRandomCanvas, 1000);
         }, 3000);
       }, 1000);
     }, 3000);
+  }, [setWelcomeMessage1, setShowWelcomeMessage1, setWelcomeMessage2, setShowWelcomeMessage2, selectRandomCanvas]);
+
+  const handleStartClick = useCallback(() => {
+    setIsLeaving(true);
+    const maxSlideUpDelay = Math.max(...[0.5, 0.7, 1.3, 1.9, 1.5, 0.9]) * 1000;
+    const slideUpDuration = 500;
+    const totalSlideUpTime = maxSlideUpDelay + slideUpDuration + 200;
+
+    setTimeout(showWelcomeMessages, totalSlideUpTime);
+  }, [setIsLeaving, showWelcomeMessages]);
+
+  const handleLoginClick = useCallback(() => {
+    navigate('/login');
+  }, [navigate]);
+
+  const handleLoadComplete = () => {
+    setShowLoader(false);
+    setShowDemo(true);
   };
 
-  if (showDemo) {
-    return <DungeonCanvas />;
+  if (showLoader) {
+    return <PageLoader onLoadComplete={handleLoadComplete} />;
+  }
+
+  if (showDemo && selectedCanvas) {
+    const SelectedCanvas = selectedCanvas;
+    return <SelectedCanvas />;
   }
 
   return (
