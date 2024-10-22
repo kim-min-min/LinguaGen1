@@ -43,6 +43,7 @@ const BackgroundVideo = styled.video`
 function MainPage() {
   const [marginTop, setMarginTop] = useState('1000px'); // 기본적으로 반응형일 때 marginTop 1000px 설정
   const [fadeIn, setFadeIn] = useState(false);
+  const [selectedGame, setSelectedGame] = useState('');
   const { setIsLoggedIn } = useStore();
   const navigate = useNavigate();
 
@@ -68,6 +69,8 @@ function MainPage() {
     handleResize();
     window.addEventListener('resize', handleResize);
 
+    // 페이드 인 효과 시작
+    setTimeout(() => setFadeIn(true), 100);
     // 컴포넌트 언마운트 시 리스너 제거
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -83,13 +86,13 @@ function MainPage() {
       <main className='w-full h-full flex flex-col lg:flex-row items-center justify-center lg:gap-12 lg:overflow-hidden overflow-scroll'>
         {/* 좌측 메뉴바 */}
         <div className='flex justify-start lg:justify-center h-full order-3 lg:order-1 lg:mt-0 mt-14 lg:mb-0 mb-14'>
-          <PracticeMenubar />
+          <PracticeMenubar setSelectedGame={setSelectedGame}/>
         </div>
 
         {/* 메인 컨테이너 */}
         <div className='w-full lg:w-5/12 h-full order-4 lg:order-2'>
           <div className='border-x-2 h-full shadow-xl flex items-center justify-start flex-col'>
-            <MainContainer />
+            <MainContainer selectedGame={selectedGame}/>
           </div>
         </div>
 
