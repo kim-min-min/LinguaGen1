@@ -45,7 +45,6 @@ function MainPage() {
   const [fadeIn, setFadeIn] = useState(false);
   const [selectedGame, setSelectedGame] = useState('');
   const { setIsLoggedIn } = useStore();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
