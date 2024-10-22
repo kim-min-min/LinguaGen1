@@ -69,6 +69,8 @@ function MainPage() {
     handleResize();
     window.addEventListener('resize', handleResize);
 
+    // 페이드 인 효과 시작
+    setTimeout(() => setFadeIn(true), 100);
     // 컴포넌트 언마운트 시 리스너 제거
     return () => {
       window.removeEventListener('resize', handleResize);
