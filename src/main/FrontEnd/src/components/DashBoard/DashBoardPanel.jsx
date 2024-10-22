@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 
 import {
     Card,
@@ -9,11 +9,19 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 
-import BronzeTier from '../../assets/imgs/Tiers/Bronze Tier.png'
 import WeeklyLearning from '../WeeklyLearning';
 import HeatMap from '../HeatMap'
 import CustomLineChart from '../CustomLineChart'
 import CustomRadicalChart from '../CustomRadicalChart';
+
+import BronzeTier from "../../assets/imgs/Tiers/Bronze Tier.png";
+import SilverTier from "../../assets/imgs/Tiers/Silver Tier.png";
+import GoldTier from "../../assets/imgs/Tiers/Gold Tier.png";
+import PlatinumTier from "../../assets/imgs/Tiers/Platinum Tier.png";
+import DiamondTier from "../../assets/imgs/Tiers/Diamond Tier.png";
+import ChellengerTier from "../../assets/imgs/Tiers/Chellenger Tier.png";
+import axios from "axios";
+
 
 const MistakeWord = [
     {
@@ -55,7 +63,63 @@ const MistakeWord = [
 
 ]
 
+const gradeNames = {
+    1: "Bronze",
+    2: "Silver",
+    3: "Gold",
+    4: "Platinum",
+    5: "Diamond",
+    6: "Chellenger"
+};
+
+const tierImages = {
+    1: BronzeTier,
+    2: SilverTier,
+    3 : GoldTier,
+    4 : PlatinumTier,
+    5 : DiamondTier,
+    6 : ChellengerTier
+};
+
+
 const DashBoardPanel = () => {
+    const [userInfo, setUserInfo] = useState(null);
+    const [userExp, setUserExp] = useState(0);
+    const [userGrade, setUserGrade] = useState(null);
+    const [userGradeString, setUserGradeString] = useState(null);
+    const [userTier, setUserTier] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const user = sessionStorage.getItem('user');
+            if (user) {
+                setIsLoggedIn(true);
+                const userData = JSON.parse(user);
+                try {
+                    // 사용자 정보 가져오기
+                    const userResponse = await axios.get(`http://localhost:8085/api/users/${userData.id}`, {withCredentials: true});
+                    setUserInfo(userResponse.data);
+
+                    // 사용자의 등급 정보 가져오기
+                    const gradeResponse = await axios.get(`http://localhost:8085/api/grade/${userData.id}`, {withCredentials: true});
+                    const numericGrade = gradeResponse.data.grade;
+                    setUserGrade(numericGrade);
+                    setUserGradeString(gradeNames[numericGrade] || "알 수 없음");
+                    setUserTier(gradeResponse.data.tier);
+                    setUserExp(gradeResponse.data.exp);
+                } catch (error) {
+                    console.error('사용자 정보를 가져오는 중 오류 발생:', error);
+                }
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
+    const nextTierExp = 100;
+    const remainingExp = nextTierExp - userExp;
+
     return (
         <div className='flex flex-col items-center justify-start w-auto mt-20 ml-24 p-4 border-2 border-gray-300 rounded-lg'
             style={{ backdropFilter: 'blur(15px)', background: 'rgba(255, 255, 255, 0.2', height: 'auto' }}
@@ -76,16 +140,20 @@ const DashBoardPanel = () => {
                         </Card>
                         <Card className='w-full h-74'>
                             <CardHeader className='flex flex-row justify-between items-center'>
-                                <CardTitle className='text-md'> 현재 티어 - Bronze 4</CardTitle>
+                                <CardTitle className='text-md'> 현재 티어 - {userGradeString && userTier ? `${userGradeString} ${userTier}` : '로딩 중...'}</CardTitle>
                             </CardHeader>
                             <CardContent className='flex flex-row items-center'>
-                                <img src={BronzeTier} alt='Bronze Tier' className='w-20 h-20' />
-                                <p className='font-bold text-md ml-10'> Bronze 3 까지 남은 포인트 : 1000</p>
+                                <img src={tierImages[userGrade]} alt='Tier img' className='w-20 h-20'/>
+                                <p className='font-bold text-md ml-10'>
+                                    {userTier === 1
+                                        ? `다음 ${gradeNames[userGrade + 1]} 4 까지 남은 포인트: ${remainingExp > 0 ? remainingExp : 0}`
+                                        : `다음 ${gradeNames[userGrade]} ${userTier - 1} 까지 남은 포인트: ${remainingExp > 0 ? remainingExp : 0}`}
+                                </p>
                             </CardContent>
                         </Card>
                     </div>
-                    <div className='flex w-1/2' style={{ height: '345px' }}>
-                        <WeeklyLearning />
+                    <div className='flex w-1/2' style={{height: '345px'}}>
+                        <WeeklyLearning/>
                     </div>
                 </div>
                 <div className='flex pt-8' style={{ width: '945px' }}>
