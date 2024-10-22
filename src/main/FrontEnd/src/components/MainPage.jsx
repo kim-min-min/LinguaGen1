@@ -43,8 +43,10 @@ const BackgroundVideo = styled.video`
 function MainPage() {
   const [marginTop, setMarginTop] = useState('1000px'); // 기본적으로 반응형일 때 marginTop 1000px 설정
   const [fadeIn, setFadeIn] = useState(false);
-  const { setIsLoggedIn } = useStore();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
+  const setIsLoggedIn = useStore((state) => state.setIsLoggedIn);
 
   useEffect(() => {
     const handleResize = () => {
@@ -56,13 +58,14 @@ function MainPage() {
       }
     };
 
-    // 로그인 상태 확인
     const user = sessionStorage.getItem('user');
     if (user) {
-      setIsLoggedIn(true); // 로그인 상태 유지
+      setIsLoggedIn(true);
     } else {
-      setIsLoggedIn(false); // 로그아웃 상태로 설정
+      setIsLoggedIn(false);
     }
+
+    setLoading(false); // 로딩 해제
 
     // 초기 화면 크기 체크 및 리스너 등록
     handleResize();
@@ -72,7 +75,7 @@ function MainPage() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [setIsLoggedIn]);
+  }, [setIsLoggedIn, navigate]);
 
   return (
     <MainPageContainer>

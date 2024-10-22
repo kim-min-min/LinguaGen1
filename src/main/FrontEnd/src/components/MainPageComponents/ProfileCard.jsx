@@ -26,14 +26,22 @@ function ProfileCard() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { isLoggedIn, setIsLoggedIn } = useStore();
+  const [loading, setLoading] = useState(true); // 로딩 상태 추가
 
+  // 상태를 selector 함수를 사용하여 가져옵니다.
+  const isLoggedIn = useStore((state) => state.isLoggedIn);
+  const setIsLoggedIn = useStore((state) => state.setIsLoggedIn);
+
+  // 세션에서 로그인 상태 확인 및 갱신
   useEffect(() => {
     const user = sessionStorage.getItem('user');
     if (user) {
-      setIsLoggedIn(true); // 로그인 상태 갱신
+      setIsLoggedIn(true); // 로그인 상태 유지
+    } else {
+      setIsLoggedIn(false); // 로그아웃 상태 설정
     }
-  }, [setIsLoggedIn]); // 컴포넌트 렌더링 시 실행
+    setLoading(false); // 상태 확인 완료 후 로딩 해제
+  }, [setIsLoggedIn]);
 
 
 
@@ -62,12 +70,23 @@ function ProfileCard() {
     }
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    sessionStorage.removeItem('user'); // 세션에서 사용자 정보 삭제
-    // 필요한 경우 추가적인 로그아웃 로직을 여기에 구현할 수 있습니다.
-    // 예: 로컬 스토리지 클리어, 서버에 로그아웃 요청 등
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://localhost:8085/api/users/logout', {}, { withCredentials: true });
+
+      // 클라이언트 세션 정보 삭제
+      sessionStorage.clear(); // 세션 스토리지 완전히 삭제
+      setIsLoggedIn(false);
+      navigate('/main'); // 홈 화면으로 이동
+    } catch (err) {
+      console.error('로그아웃 실패:', err);
+    }
   };
+
+  // 로딩 중일 때 로딩 화면 표시
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
 
   if (!isLoggedIn) {

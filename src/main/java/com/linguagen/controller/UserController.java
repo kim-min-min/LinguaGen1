@@ -2,6 +2,8 @@ package com.linguagen.controller;
 
 import com.linguagen.entity.USERS;
 import com.linguagen.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,9 +68,17 @@ public class UserController {
 
     // 로그아웃 요청 처리
     @PostMapping("/logout")
-    public String logout(HttpSession session) {
-        userService.logout(session);
-        return "로그아웃 되었습니다.";
+    public ResponseEntity<String> logout(HttpSession session, HttpServletResponse response) {
+        session.invalidate(); // 세션 무효화
+
+        // JSESSIONID 쿠키 삭제
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0); // 쿠키 만료 설정
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok("로그아웃 되었습니다.");
     }
 
     // 등급과 경험치로 정렬된 모든 사용자 목록을 반환하는 API
