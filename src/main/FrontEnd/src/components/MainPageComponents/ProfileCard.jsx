@@ -21,19 +21,21 @@ import useStore from '../../store/useStore';
 import "../../App.css";
 
 function ProfileCard() {
-  const { isLoggedIn, setIsLoggedIn } = useStore();
+
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { isLoggedIn, setIsLoggedIn } = useStore();
 
-  // 세션에서 사용자 정보 확인하여 로그인 상태 설정
   useEffect(() => {
     const user = sessionStorage.getItem('user');
     if (user) {
-      setIsLoggedIn(true);
+      setIsLoggedIn(true); // 로그인 상태 갱신
     }
-  }, [setIsLoggedIn]);
+  }, [setIsLoggedIn]); // 컴포넌트 렌더링 시 실행
+
+
 
   const handleLogin = async (e) => {
     e.preventDefault(); // 폼 제출 기본 동작 방지
@@ -66,6 +68,7 @@ function ProfileCard() {
     // 필요한 경우 추가적인 로그아웃 로직을 여기에 구현할 수 있습니다.
     // 예: 로컬 스토리지 클리어, 서버에 로그아웃 요청 등
   };
+
 
   if (!isLoggedIn) {
     return (
