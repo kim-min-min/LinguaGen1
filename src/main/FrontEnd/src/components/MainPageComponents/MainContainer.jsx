@@ -6,10 +6,15 @@ import useStore from '../../store/useStore';
 import '../../App.css';
 import Word3D from '../Word3D';  // Word3D 컴포넌트 임포트
 
-const MainContainer = () => {
+const MainContainer = ({ selectedGame }) => {
   const { cards, loading, loadMoreCards, isLoggedIn } = useStore();
   const containerRef = useRef(null);
   const [overscrollShadow, setOverscrollShadow] = useState(0);
+
+  const handleStartGame = () => {
+    console.log(selectedGame);
+    
+  };
 
   // 예시 단어 목록 (실제로는 API나 상태에서 가져와야 합니다)
   const wrongWords = [
@@ -54,10 +59,11 @@ const MainContainer = () => {
         // 로그인한 경우의 UI
         <>
           <div className="w-full flex justify-center mb-4 mt-4">
-            <Button className="w-40 h-14 text-white rounded-md font-bold text-xl hover:scale-125 transition-all duration-500">
+            <Button onClick={handleStartGame} className="w-40 h-14 text-white rounded-md font-bold text-xl hover:scale-125 transition-all duration-500">
               게임 시작하기
             </Button>
           </div>
+          {selectedGame && <p>선택된 게임 유형 : {selectedGame}</p>}
           <div
             ref={containerRef}
             className="w-full h-[calc(100vh-200px)] pb-20 overflow-y-auto flex justify-center border-t-2 pt-12 relative custom-scrollbar"
