@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import DungeonImage from '../../assets/CanvasImage/Dungeon.jpg';
 import HP_Full from '../../assets/CanvasImage/HP_Full.png';
@@ -40,6 +39,11 @@ const DungeonCanvas = () => {
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const totalQuestions = 10;
   const [isExitHovered, setIsExitHovered] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [isGameClear, setIsGameClear] = useState(false);
+  const [gameOverOpacity, setGameOverOpacity] = useState(0);
+  const [gameClearOpacity, setGameClearOpacity] = useState(0);
+  const fadeIntervalRef = useRef(null);
 
   // 이미지 로드 함수 추가
   const loadImages = useCallback((sprites) => {
@@ -183,7 +187,7 @@ const DungeonCanvas = () => {
     drawHealthBar(ctx, 10, 10, knightHP); // 기사 체력 바 (왼쪽)
     drawHealthBar(ctx, canvas.width - 160, 10, bossHP); // 보스 체력 바 (오른쪽)
 
-    // 텍스트 그리기
+    // 텍스트 기
     if (fontLoadedRef.current) {
       ctx.font = '30px AntiquityPrint';
       ctx.fillStyle = 'white';
@@ -198,10 +202,26 @@ const DungeonCanvas = () => {
       ctx.textAlign = 'center';
       ctx.fillStyle = isExitHovered ? 'orange' : 'white';
       ctx.fillText('Exit', canvas.width / 30, 85);
+
+      // GameOver 텍스트 그리기
+      if (isGameOver) {
+        ctx.font = '48px AntiquityPrint';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = `rgba(255, 0, 0, ${gameOverOpacity})`;
+        ctx.fillText('Game Over', canvas.width / 2, canvas.height / 1.7);
+      }
+
+      // GameClear 텍스트 그리기
+      if (isGameClear) {
+        ctx.font = '48px AntiquityPrint';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = `rgba(0, 255, 0, ${gameClearOpacity})`;
+        ctx.fillText('Game Clear', canvas.width / 2, canvas.height / 1.7);
+      }
     }
 
     animationRef.current = requestAnimationFrame(animate);
-  }, [bossState, bossFrameIndex, knightState, knightFrameIndex, bossHP, knightHP, drawHealthBar, currentQuestion, isExitHovered]);
+  }, [bossState, bossFrameIndex, knightState, knightFrameIndex, bossHP, knightHP, drawHealthBar, currentQuestion, isExitHovered, isGameOver, gameOverOpacity, isGameClear, gameClearOpacity]);
 
   const handleMouseMove = useCallback((event) => {
     const canvas = canvasRef.current;
@@ -234,8 +254,33 @@ const DungeonCanvas = () => {
     return () => {
       cancelAnimationFrame(animationRef.current);
       canvas.removeEventListener('mousemove', handleMouseMove);
+      if (fadeIntervalRef.current) {
+        cancelAnimationFrame(fadeIntervalRef.current);
+      }
     };
   }, [animate, handleMouseMove]);
+
+  useEffect(() => {
+    if (isGameOver || isGameClear) {
+      let opacity = 0;
+      const fadeIn = () => {
+        opacity += 1;
+        if (opacity <= 1) {
+          if (isGameOver) setGameOverOpacity(opacity);
+          if (isGameClear) setGameClearOpacity(opacity);
+          fadeIntervalRef.current = requestAnimationFrame(fadeIn);
+        }
+      };
+
+      fadeIn();
+    }
+
+    return () => {
+      if (fadeIntervalRef.current) {
+        cancelAnimationFrame(fadeIntervalRef.current);
+      }
+    };
+  }, [isGameOver, isGameClear]);
 
   const handleBossAttack = useCallback(() => {
     if (bossState === 'idle' && knightHP > 0) {
@@ -247,10 +292,10 @@ const DungeonCanvas = () => {
         setKnightHP(prev => {
           const newHP = Math.max(0, prev - 1);
           if (newHP === 0) {
-            setTimeout(() => {
-              setKnightState('death');
-              setKnightFrameIndex(0);
-            }, 1000);
+            setKnightState('death');
+            setKnightFrameIndex(0);
+            setIsGameOver(true);
+            console.log('Game Over set to true'); // 디버깅용 로그 추가
           }
           return newHP;
         });
@@ -275,6 +320,7 @@ const DungeonCanvas = () => {
             setTimeout(() => {
               setBossState('death');
               setBossFrameIndex(0);
+              setIsGameClear(true);  // 보스가 죽으면 Game Clear
             }, 1000);
           }
           return newHP;
@@ -297,18 +343,46 @@ const DungeonCanvas = () => {
     incrementQuestion();
   }, [handleBossAttack, incrementQuestion]);
 
+  const handleRestart = useCallback(() => {
+    setIsGameOver(false);
+    setIsGameClear(false);
+    setKnightHP(5);
+    setBossHP(5);
+    setKnightState('idle');
+    setBossState('idle');
+    setCurrentQuestion(1);
+    setGameOverOpacity(0);
+    setGameClearOpacity(0);
+  }, []);
+
+  const handleMainMenu = useCallback(() => {
+    // 메인 메뉴로 이동하는 로직
+    // 예: 라우터를 사용한다면 history.push('/main') 등
+    console.log('메인 메뉴로 이동');
+  }, []);
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%', height: '60vh' }}>
         <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
       </div>
       <div style={{ height: '40vh' }}>
-        <GameProgressPage 
-          onCorrectAnswer={handleCorrectAnswer}
-          onWrongAnswer={handleWrongAnswer}
-          currentQuestion={currentQuestion}
-          totalQuestions={totalQuestions}
-        />
+        {!isGameOver && !isGameClear && (
+          <GameProgressPage 
+            onCorrectAnswer={handleCorrectAnswer}
+            onWrongAnswer={handleWrongAnswer}
+            currentQuestion={currentQuestion}
+            totalQuestions={totalQuestions}
+          />
+        )}
+        {(isGameOver || isGameClear) && (
+          <GameProgressPage 
+            isGameOver={isGameOver}
+            isGameClear={isGameClear}
+            onRestart={handleRestart}
+            onMainMenu={handleMainMenu}
+          />
+        )}
       </div>
     </div>
   );
