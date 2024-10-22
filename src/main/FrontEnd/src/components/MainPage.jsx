@@ -58,11 +58,11 @@ function MainPage() {
     };
 
     // 로그인 상태 확인
-    const user = sessionStorage.getItem('user');
+    const user = JSON.parse(sessionStorage.getItem('user'));
     if (user) {
-      setIsLoggedIn(true); // 로그인 상태 유지
+      setIsLoggedIn(true);
     } else {
-      setIsLoggedIn(false); // 로그아웃 상태로 설정
+      setIsLoggedIn(false);
     }
 
     // 초기 화면 크기 체크 및 리스너 등록

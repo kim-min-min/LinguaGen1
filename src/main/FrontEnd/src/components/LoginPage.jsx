@@ -67,25 +67,19 @@ function LoginPage() {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // 폼 제출 기본 동작 방지
-
+    e.preventDefault();
     try {
-      const response = await axios.post(
-          'http://localhost:8085/api/users/login', // API 엔드포인트
-          { id, password }, // 요청 데이터 (아이디와 비밀번호)
-          { withCredentials: true } // 세션 쿠키 포함
-      );
-
-      // 응답이 성공적인 경우 처리
+      const response = await axios.post('http://localhost:8085/api/users/login', { id, password }, { withCredentials: true });
       if (response.status === 200 && response.data === '로그인 성공') {
-        alert('로그인 성공!');
-        navigate('/main'); // 메인 페이지로 이동
+        sessionStorage.setItem('user', JSON.stringify({ id })); // 세션에 사용자 정보 저장
+        setIsLoggedIn(true);
+        navigate('/main');
       } else {
         setError('아이디 또는 비밀번호가 잘못되었습니다.');
       }
     } catch (err) {
       console.error('에러 발생:', err);
-      setError('로그인 중 오류가 발생했습니다.'); // 에러 메시지 출력
+      setError('로그인 중 오류가 발생했습니다.');
     }
   };
 
@@ -469,3 +463,4 @@ function SignupNext({ formData, onPreviousSignup }) {
 
 
 export default LoginPage;
+
