@@ -6,6 +6,10 @@ import MainContainer from './MainPageComponents/MainContainer';
 import WordCarousel from './WordCarousel';
 import '../App.css'; // App.css 파일을 import 합니다.
 import Header from './Header';
+import useStore from '../store/useStore.js';
+import { useNavigate } from 'react-router-dom';
+
+
 
 const fadeInAnimation = keyframes`
   from {
@@ -39,31 +43,36 @@ const BackgroundVideo = styled.video`
 function MainPage() {
   const [marginTop, setMarginTop] = useState('1000px'); // 기본적으로 반응형일 때 marginTop 1000px 설정
   const [fadeIn, setFadeIn] = useState(false);
+  const { setIsLoggedIn } = useStore();
+  const navigate = useNavigate();
 
-  // 화면 크기에 따른 marginTop 값 업데이트
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024) { // lg 크기 이상일 때
+      // 화면 크기에 따라 marginTop 설정
+      if (window.innerWidth >= 1024) {
         setMarginTop('0px');
       } else {
         setMarginTop('1087px');
       }
     };
 
-    // 페이지 로드 시 한 번 실행
+    // 로그인 상태 확인
+    const user = sessionStorage.getItem('user');
+    if (user) {
+      setIsLoggedIn(true); // 로그인 상태 유지
+    } else {
+      setIsLoggedIn(false); // 로그아웃 상태로 설정
+    }
+
+    // 초기 화면 크기 체크 및 리스너 등록
     handleResize();
-
-    // 윈도우 크기 변화에 따라 실행
     window.addEventListener('resize', handleResize);
-
-    // 페이드 인 효과 시작
-    setTimeout(() => setFadeIn(true), 100);
 
     // 컴포넌트 언마운트 시 리스너 제거
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [setIsLoggedIn]);
 
   return (
     <MainPageContainer>
