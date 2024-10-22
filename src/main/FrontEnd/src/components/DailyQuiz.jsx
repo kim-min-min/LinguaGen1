@@ -302,7 +302,7 @@ const DailyQuiz = () => {
         const guess = inputs[currentAttempt - 1].join('');
 
         try {
-            const response = await axios.post("/api/check-guess", {
+            const response = await axios.post("http://localhost:8085/api/check-guess", {
                 guess: guess,
                 attemptNumber: currentAttempt
             }, {
@@ -421,7 +421,7 @@ const DailyQuiz = () => {
     const fetchHint = async () => {
         try {
             const response = await axios.post(
-                '/api/get-hint',  // 여기는 예를 들어 스프링 포트번호가 8083이면 83, 82면 82 를 넣으면 됩니다.
+                'http://localhost:8085/api/get-hint',  // 여기는 예를 들어 스프링 포트번호가 8083이면 83, 82면 82 를 넣으면 됩니다.
                 {}, // POST 요청 시 보낼 데이터가 없을 경우 빈 객체를 보냅니다.
                 {
                     headers: {

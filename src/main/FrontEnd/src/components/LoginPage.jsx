@@ -17,6 +17,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import axios from "axios";
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+
 
 function LoginPage() {
 
@@ -34,9 +36,33 @@ function LoginPage() {
   const navigate = useNavigate();
   const { setIsLoggedIn } = useStore();
 
-  const validUser = {
-    id: "test",
-    password: "test"
+  const handleLoginSuccess = async (credentialResponse) => {
+    try {
+      // Google에서 받은 JWT 토큰 디코딩
+      const decoded = jwt_decode(credentialResponse.credential);
+      console.log('Google User Info:', decoded);
+
+      // 토큰을 서버로 전송해 세션 설정 요청 (withCredentials 사용)
+      const response = await axios.post(
+          'http://localhost:8085/api/google-login',
+          { token: credentialResponse.credential },
+          { withCredentials: true } // 서버와의 세션 쿠키 포함 요청
+      );
+
+      if (response.status === 200) {
+        alert('로그인 성공!');
+        navigate('/main'); // 메인 페이지로 이동
+      } else {
+        setError('Google 로그인 처리 중 문제가 발생했습니다.');
+      }
+    } catch (err) {
+      console.error('Google 로그인 중 오류:', err);
+      setError('Google 로그인에 실패했습니다.');
+    }
+  };
+
+  const handleLoginFailure = (error) => {
+    console.error('Google Login Failed:', error);
   };
 
   const handleLogin = async (e) => {
@@ -82,74 +108,88 @@ function LoginPage() {
   }, []);
 
   return (
-    <div
-      style={{ width: '100vw' }}
-      className={`login-page-container w-full h-screen grid lg:grid-cols-2 ${fadeIn ? 'fade-in' : ''} overflow-scroll lg:overflow-hidden`}>
+      <GoogleOAuthProvider clientId="970913932285-p2khbpep1qnkug3d5l2tqht45tc72lc5.apps.googleusercontent.com">
+        <div
+            style={{ width: '100vw' }}
+            className={`login-page-container w-full h-screen grid lg:grid-cols-2 ${
+                fadeIn ? 'fade-in' : ''
+            } overflow-scroll lg:overflow-hidden`}
+        >
+          <div className="flex items-center justify-center py-12 bg-white">
+            {showSignupNext ? (
+                <SignupNext onPreviousSignup={handlePreviousSignup} formData={signupFormData} />
+            ) : showSignup ? (
+                <Signup onSignupToggle={handleSignupToggle} onNextSignup={handleNextSignup} />
+            ) : (
+                <div className="mx-auto grid w-[350px] gap-6">
+                  <div className="grid gap-2 text-center">
+                    <h1 className="text-3xl font-bold">로그인</h1>
+                    <p className="text-sm text-gray-500">
+                      {error && <span className="text-red-500">{error}</span>}
+                    </p>
+                  </div>
+                  <form onSubmit={handleLogin} className="grid gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="id">아이디</Label>
+                      <Input
+                          id="id"
+                          type="text"
+                          placeholder="ID"
+                          required
+                          value={id}
+                          onChange={(e) => setId(e.target.value)}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <div className="flex items-center">
+                        <Label htmlFor="password">비밀번호</Label>
+                        <Link to="/forgot-password" className="ml-auto inline-block text-sm underline">
+                          비밀번호를 잊으셨나요?
+                        </Link>
+                      </div>
+                      <Input
+                          id="password"
+                          type="password"
+                          placeholder="PASSWORD"
+                          required
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
+                    <Button type="submit" className="w-full">
+                      로그인
+                    </Button>
 
-      <div className="flex items-center justify-center py-12 bg-white">
-        {showSignupNext ? (
-          <SignupNext onPreviousSignup={handlePreviousSignup} formData={signupFormData}/>
-        ) : showSignup ? (
-          <Signup onSignupToggle={handleSignupToggle} onNextSignup={handleNextSignup} />
-        ) : (
-          <div className="mx-auto grid w-[350px] gap-6">
-            <div className="grid gap-2 text-center">
-              <h1 className="text-3xl font-bold">로그인</h1>
-              <p className="text-sm text-gray-500">
-                {error && <span className="text-red-500">{error}</span>}
-              </p>
-            </div>
-            <form onSubmit={handleLogin} className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="id">아이디</Label>
-                <Input
-                  id="id"
-                  type="text"
-                  placeholder="ID"
-                  required
-                  value={id}
-                  onChange={(e) => setId(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">비밀번호</Label>
-                  <Link to="/forgot-password" className="ml-auto inline-block text-sm underline">
-                    비밀번호를 잊으셨나요?
-                  </Link>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="PASSWORD"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                로그인
-              </Button>
-              <Button variant="outline" className="w-full">
-                Google 로 로그인하기
-              </Button>
-            </form>
-            <div className="mt-4 text-center text-sm">
-              아직 계정이 없으신가요?{" "}
-              <span onClick={handleSignupToggle} className="underline cursor-pointer">
+                    {/* Google 로그인 버튼 */}
+                    <div className="w-full text-center mt-4">
+                      <GoogleLogin
+                          onSuccess={handleLoginSuccess}
+                          onError={handleLoginFailure}
+                          theme="outline"
+                          size="large"
+                          text="signin_with"
+                      />
+                    </div>
+                  </form>
+
+                  <div className="mt-4 text-center text-sm">
+                    아직 계정이 없으신가요?{' '}
+                    <span onClick={handleSignupToggle} className="underline cursor-pointer">
                 회원가입
               </span>
-            </div>
+                  </div>
+                </div>
+            )}
           </div>
-        )}
-      </div>
 
-      <div className="relative w-full h-full" style={{ backgroundColor: '#12071f' }}>
-        <Stars className="w-full h-full" />
-        <Overlay />
-      </div>
-    </div>
+          <div className="relative w-full h-full" style={{ backgroundColor: '#12071f' }}>
+            <Stars className="w-full h-full" />
+            <Overlay />
+          </div>
+        </div>
+      </GoogleOAuthProvider>
   );
+
 }
 
 

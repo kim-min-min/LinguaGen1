@@ -1,15 +1,9 @@
 package com.linguagen.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
+@Data
 public class GuessRequestDto {
-
-    @Getter
-    @Setter
     private String guess;
-
-    @Getter
-    @Setter
     private int attemptNumber;
 }

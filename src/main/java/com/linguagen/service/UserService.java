@@ -77,4 +77,10 @@ public class UserService {
     }
 
 
+    // 등급과 경험치로 정렬된 모든 사용자 목록 반환
+    public List<USERS> getAllUsersByRanking() {
+        return userRepository.findAllByOrderByGradeAscExpDesc();
+    }
+
+
 }
