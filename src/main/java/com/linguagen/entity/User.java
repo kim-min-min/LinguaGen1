@@ -24,13 +24,13 @@ public class User {
     @Column(name = "nickname", length = 50)
     private String nickname;
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date")
     private java.sql.Date birthDate;
 
     @Column(name = "address", length = 1000)
     private String address;
 
-    @Column(name = "tell", nullable = false, length = 13)
+    @Column(name = "tell", length = 13)
     private String tell;
 
     @Column(name = "objective", length = 255)
@@ -39,7 +39,7 @@ public class User {
     @Column(name = "points")
     private Integer points;
 
-    @Column(name = "join_date", nullable = false)
+    @Column(name = "join_date")
     private LocalDateTime joinDate;
 
     // 엔티티 저장 전 현재 시간 설정

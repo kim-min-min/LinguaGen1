@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
+import _ from 'lodash'; // lodash 라이브러리 사용 (npm install lodash)
 
 const RankingPage = () => {
     const initialRankingData = [
@@ -22,7 +23,7 @@ const RankingPage = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch('http://localhost:8085/api/users/all');
+                const response = await fetch('http://localhost:8085/api/grade/all');
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -53,27 +54,22 @@ const RankingPage = () => {
         return 'text-black';
     };
 
-    const handleSort = (key) => {
-        let direction = 'ascending';
-        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-            direction = 'descending';
-        }
-        setSortConfig({ key, direction });
+    const handleSort = () => {
+        const groupedData = _.groupBy(filteredData, 'grade'); // grade(등급)별로 그룹화
 
-        const sortedData = [...filteredData].sort((a, b) => {
-            if (key === 'tier') {
-                const tierA = tierOrder.indexOf(a.tier);
-                const tierB = tierOrder.indexOf(b.tier);
-                return direction === 'ascending' ? tierA - tierB : tierB - tierA;
-            } else if (key === 'playtime') {
-                const playtimeA = parseInt(a.playtime.replace('h', ''));
-                const playtimeB = parseInt(b.playtime.replace('h', ''));
-                return direction === 'ascending' ? playtimeA - playtimeB : playtimeB - playtimeA;
-            } else {
-                return direction === 'ascending' ? a[key] - b[key] : b[key] - a[key];
-            }
+        // 각 그룹을 playtime 순으로 정렬합니다.
+        const sortedGroups = Object.keys(groupedData).map((grade) => {
+            const sortedGroup = [...groupedData[grade]].sort((a, b) => {
+                const playtimeA = parseInt(a.playtime.replace('h', '')) || 0;
+                const playtimeB = parseInt(b.playtime.replace('h', '')) || 0;
+                return playtimeB - playtimeA; // 내림차순 정렬
+            });
+            return sortedGroup;
         });
-        setFilteredData(sortedData);
+
+        // 그룹들을 평탄화하여 단일 배열로 만듭니다.
+        const sortedData = sortedGroups.flat();
+        setFilteredData(sortedData); // 정렬된 데이터를 업데이트
     };
 
     const handleSearch = () => {
@@ -131,8 +127,8 @@ const RankingPage = () => {
                             <thead>
                             <tr className="text-left border-b-2 border-gray-300 select-none">
                                 <th className='cursor-pointer' onClick={() => handleSort('rank')}>순위</th>
-                                <th className='cursor-pointer'>닉네임</th>
-                                <th className='cursor-pointer' onClick={() => handleSort('tier')}>티어</th>
+                                <th className='cursor-pointer'>아이디</th>
+                                <th className='cursor-pointer' onClick={() => handleSort('tier')}>계급</th>
                                 <th className='cursor-pointer' onClick={() => handleSort('playtime')}>플레이타임</th>
                             </tr>
                             </thead>
@@ -140,11 +136,11 @@ const RankingPage = () => {
                             {filteredData.map((user, index) => (
                                 <tr
                                     key={user.id || index}
-                                    className={`border-b border-gray-300 ${getFontColor(user.rank)} ${getFontSize(user.rank)}`}
+                                    className={`border-b border-gray-300 ${getFontColor(index + 1)} ${getFontSize(index + 1)}`}
                                 >
                                     <td>{index + 1}</td>
-                                    <td>{user.nickname}</td>
-                                    <td>{user.tier || user.grade}</td>
+                                    <td>{user.userId}</td>
+                                    <td>{user.grade}</td>
                                     <td>{user.playtime || `${user.exp} XP`}</td>
                                 </tr>
                             ))}

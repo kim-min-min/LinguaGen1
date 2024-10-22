@@ -1,6 +1,7 @@
 package com.linguagen.service;
 
 
+import com.linguagen.entity.Grade;
 import com.linguagen.entity.User;
 import com.linguagen.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
@@ -76,10 +77,7 @@ public class UserService {
     }
 
 
-    // 등급과 경험치로 정렬된 모든 사용자 목록 반환
-//    public List<User> getAllUsersByRanking() {
-//        return userRepository.findAllByOrderByGradeAscExpDesc();
-//    }
+
 
 
 }

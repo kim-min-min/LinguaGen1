@@ -1,10 +1,13 @@
 package com.linguagen.controller;
 
 import com.linguagen.dto.GradeDTO;
+import com.linguagen.entity.Grade;
 import com.linguagen.service.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/grade")
@@ -32,5 +35,11 @@ public class GradeController {
     public ResponseEntity<GradeDTO> updateGrade(@RequestBody GradeDTO gradeDTO) {
         GradeDTO updatedGrade = gradeService.updateGrade(gradeDTO);
         return ResponseEntity.ok(updatedGrade);
+    }
+
+    //    // 등급과 경험치로 정렬된 모든 사용자 목록을 반환하는 API
+    @GetMapping("/all")
+    public List<Grade> getAllUsersWithRank() {
+        return gradeService.getAllUsersByRanking();
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,4 +18,7 @@ public interface GradeRepository extends JpaRepository<Grade, Integer> {
     GradeDTO findGradeDTOByUserId(@Param("userId") String userId);
 
     Optional<Grade> findByUserId(String userId);
+
+    // 네이티브 쿼리를 사용하여 등급별 랭킹 조회
+    List<Grade> findAllByOrderByGradeAscExpDesc();
 }

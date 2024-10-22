@@ -1,5 +1,6 @@
 package com.linguagen.controller;
 
+import com.linguagen.entity.Grade;
 import com.linguagen.entity.User;
 import com.linguagen.service.UserService;
 import jakarta.servlet.http.Cookie;
@@ -81,9 +82,5 @@ public class UserController {
         return ResponseEntity.ok("로그아웃 되었습니다.");
     }
 
-//    // 등급과 경험치로 정렬된 모든 사용자 목록을 반환하는 API
-//    @GetMapping("/all")
-//    public List<User> getAllUsersWithRank() {
-//        return userService.getAllUsersByRanking();
-//    }
+
 }

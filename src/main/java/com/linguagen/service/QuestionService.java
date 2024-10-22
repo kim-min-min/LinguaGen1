@@ -1,5 +1,6 @@
 package com.linguagen.service;
 
+import com.linguagen.entity.Grade;
 import com.linguagen.entity.Question;
 import com.linguagen.repository.QuestionRepository;
 import org.springframework.stereotype.Service;
@@ -26,4 +27,5 @@ public class QuestionService {
             return null;
         }
     }
+
 }
