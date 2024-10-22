@@ -111,12 +111,16 @@ const SubMenu = styled.div`
   }
 `;
 
-const PracticeMenubar = () => {
+const PracticeMenubar = ({ setSelectedGame }) => {
   const [openMenu, setOpenMenu] = useState(null);
 
   const toggleMenu = (menuId) => {
     setOpenMenu(openMenu === menuId ? null : menuId);
   };
+
+  const handleMenuClick = (value) => {
+    setSelectedGame(value);
+  }
 
   return (
     <Wrapper>
@@ -124,43 +128,43 @@ const PracticeMenubar = () => {
         <Item>
           <Btn onClick={() => toggleMenu('reading')}><i className="fas fa-book"></i>리딩 유형</Btn>
           <SubMenu isOpen={openMenu === 'reading'}>
-            <a href="">주제/제목 찾기</a>
-            <a href="">요지 파악</a>
-            <a href="">세부 정보 찾기</a>
-            <a href="">지칭 추론</a>
-            <a href="">어휘추론</a>
+            <a onClick={() => handleMenuClick('주제/제목 찾기')}>주제/제목 찾기</a>
+            <a onClick={() => handleMenuClick('요지 파악')}>요지 파악</a>
+            <a onClick={() => handleMenuClick('세부 정보 찾기')}>세부 정보 찾기</a>
+            <a onClick={() => handleMenuClick('지칭 추론')}>지칭 추론</a>
+            <a onClick={() => handleMenuClick('어휘추론')}>어휘추론</a>
           </SubMenu>
         </Item>
         <Item>
           <Btn onClick={() => toggleMenu('listening')}><i className="fas fa-headphones"></i>리스닝 유형</Btn>
           <SubMenu isOpen={openMenu === 'listening'}>
-            <a href="">주제/제목 파악</a>
-            <a href="">세부 정보 듣기</a>
-            <a href="">화자의 태도/의견 추론</a>
-            <a href="">대화/강의 구조 파악</a>
-            <a href="">함축적 의미 추론</a>
+            <a onClick={() => handleMenuClick('주제/제목 파악')}>주제/제목 파악</a>
+            <a onClick={() => handleMenuClick('세부 정보 듣기')}>세부 정보 듣기</a>
+            <a onClick={() => handleMenuClick('화자의 태도/의견 추론')}>화자의 태도/의견 추론</a>
+            <a onClick={() => handleMenuClick('대화/강의 구조 파악')}>대화/강의 구조 파악</a>
+            <a onClick={() => handleMenuClick('함축적 의미 추론')}>함축적 의미 추론</a>
           </SubMenu>
         </Item>
         <Item>
           <Btn onClick={() => toggleMenu('others')}><i className="fas fa-ellipsis-h"></i>기타 유형</Btn>
           <SubMenu isOpen={openMenu === 'others'}>
-            <a href="">문법 문제</a>
-            <a href="">어휘 문제</a>
-            <a href="">말하기 문제</a>
-            <a href="">쓰기 문제</a>
+            <a onClick={() => handleMenuClick('문법 문제')}>문법 문제</a>
+            <a onClick={() => handleMenuClick('어휘 문제')}>어휘 문제</a>
+            <a onClick={() => handleMenuClick('말하기 문제')}>말하기 문제</a>
+            <a onClick={() => handleMenuClick('쓰기 문제')}>쓰기 문제</a>
           </SubMenu>
         </Item>
         <Item>
           <Btn onClick={() => toggleMenu('methods')}><i className="fas fa-question-circle"></i>문제 푸는 방법</Btn>
           <SubMenu isOpen={openMenu === 'methods'}>
-            <a href="">빈칸 채우기</a>
-            <a href="">사지선다</a>
-            <a href="">True/False/Not Given</a>
-            <a href="">문장 삽입</a>
-            <a href="">짝짓기</a>
-            <a href="">글의 순서 배열</a>
-            <a href="">오류찾기</a>
-            <a href="">답답형</a>
+            <a onClick={() => handleMenuClick('빈칸 채우기')}>빈칸 채우기</a>
+            <a onClick={() => handleMenuClick('사지선다')}>사지선다</a>
+            <a onClick={() => handleMenuClick('True/False/Not Given')}>True/False/Not Given</a>
+            <a onClick={() => handleMenuClick('문장 삽입')}>문장 삽입</a>
+            <a onClick={() => handleMenuClick('짝짓기')}>짝짓기</a>
+            <a onClick={() => handleMenuClick('글의 순서 배열')}>글의 순서 배열</a>
+            <a onClick={() => handleMenuClick('오류찾기')}>오류찾기</a>
+            <a onClick={() => handleMenuClick('답답형')}>답답형</a>
           </SubMenu>
         </Item>
       </MainMenu>
