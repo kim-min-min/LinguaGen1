@@ -6,6 +6,8 @@ import com.linguagen.repository.GradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GradeService {
 
@@ -36,5 +38,10 @@ public class GradeService {
         return new GradeDTO(savedGrade.getIdx(), savedGrade.getUserId(),
                 savedGrade.getGrade(), savedGrade.getTier(),
                 savedGrade.getExp(), savedGrade.getUpdatedAt());
+    }
+
+    // 등급과 경험치로 정렬된 모든 사용자 목록 반환
+    public List<Grade> getAllUsersByRanking() {
+        return gradeRepository.findAllByOrderByGradeAscExpDesc();
     }
 }
