@@ -1,7 +1,10 @@
 package com.linguagen.controller;
 
-import com.linguagen.entity.USERS;
+
+import com.linguagen.entity.User;
 import com.linguagen.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +26,15 @@ public class UserController {
 
     // 모든 유저 조회
     @GetMapping
-    public ResponseEntity<List<USERS>> getAllUsers() {
-        List<USERS> users = userService.getAllUsers();
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     // ID로 유저 조회
     @GetMapping("/{id}")
-    public ResponseEntity<USERS> getUserById(@PathVariable String id) {
-        USERS user = userService.getUserById(id);
+    public ResponseEntity<User> getUserById(@PathVariable String id) {
+        User user = userService.getUserById(id);
         if (user != null) {
             return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
@@ -41,8 +44,8 @@ public class UserController {
 
     // 유저 생성 또는 업데이트
     @PostMapping
-    public ResponseEntity<USERS> saveOrUpdateUser(@RequestBody USERS user) {
-        USERS savedUser = userService.saveOrUpdateUser(user);
+    public ResponseEntity<User> saveOrUpdateUser(@RequestBody User user) {
+        User savedUser = userService.saveOrUpdateUser(user);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
@@ -55,7 +58,7 @@ public class UserController {
     
     // 로그인
     @PostMapping("/login")
-    public String login(@RequestBody USERS user, HttpSession session) {
+    public String login(@RequestBody User user, HttpSession session) {
         boolean isAuthenticated = userService.login(user, session);
         if (isAuthenticated) {
             return "로그인 성공";
@@ -66,14 +69,18 @@ public class UserController {
 
     // 로그아웃 요청 처리
     @PostMapping("/logout")
-    public String logout(HttpSession session) {
-        userService.logout(session);
-        return "로그아웃 되었습니다.";
+    public ResponseEntity<String> logout(HttpSession session, HttpServletResponse response) {
+        session.invalidate(); // 세션 무효화
+
+        // JSESSIONID 쿠키 삭제
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0); // 쿠키 만료 설정
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok("로그아웃 되었습니다.");
     }
 
-    // 등급과 경험치로 정렬된 모든 사용자 목록을 반환하는 API
-    @GetMapping("/all")
-    public List<USERS> getAllUsersWithRank() {
-        return userService.getAllUsersByRanking();
-    }
+
 }

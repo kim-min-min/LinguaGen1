@@ -24,8 +24,14 @@ const useStore = create((set, get) => ({
   fadeOut: false,
   showGoodbyeMessage: false,
 
+
+  isLoggedIn: false,
+  setIsLoggedIn: (status) => set({ isLoggedIn: status }),
+
   // PracticeMenubar 상태
   selectedCard: null,
+
+
 
   setSelectedCard: (index) => set({ selectedCard: index }),
 
@@ -119,8 +125,6 @@ const useStore = create((set, get) => ({
     }, 1000);
   },
 
-  isLoggedIn: false,
-  setIsLoggedIn: (loggedIn) => set({ isLoggedIn: loggedIn }),
 
 
 }));
