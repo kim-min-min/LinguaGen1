@@ -1,18 +1,19 @@
 package com.linguagen.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@Table(name = "DAILY_QUIZ")
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "DAILY_QUIZ")
 public class DailyQuiz {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DAILY_QUIZ_SEQ")
-    @SequenceGenerator(name = "DAILY_QUIZ_SEQ", sequenceName = "DAILY_QUIZ_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
