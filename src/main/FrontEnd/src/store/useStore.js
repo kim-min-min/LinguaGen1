@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+
+
 const useStore = create((set, get) => ({
   // 기존 상태들 유지
   isLoaded: false,
@@ -118,7 +120,9 @@ const useStore = create((set, get) => ({
   },
 
   isLoggedIn: false,
-  setIsLoggedIn: (status) => set({ isLoggedIn: status }),
+  setIsLoggedIn: (loggedIn) => set({ isLoggedIn: loggedIn }),
+
+
 }));
 
 
