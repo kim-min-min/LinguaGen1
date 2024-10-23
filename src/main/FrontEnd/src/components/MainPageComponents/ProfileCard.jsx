@@ -209,7 +209,7 @@ function ProfileCard() {
           </Avatar>
           <div className="mr-4 flex flex-col gap-8">
             <ContextMenu>
-              <ContextMenuTrigger className="text-lg font-bold">USERNAME</ContextMenuTrigger>
+              <ContextMenuTrigger className="text-lg font-bold">{userInfo.id}</ContextMenuTrigger>
               <ContextMenuContent>
                 <ContextMenuItem>수정하기</ContextMenuItem>
                 <ContextMenuItem onClick={handleLogout}>로그아웃</ContextMenuItem>
