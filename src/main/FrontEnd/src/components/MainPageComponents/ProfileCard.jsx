@@ -210,7 +210,7 @@ function ProfileCard() {
           <div className="mr-4 flex flex-col gap-8">
             <ContextMenu>
               <ContextMenuTrigger className="text-lg font-bold">
-                {userInfo ? userInfo.id : 'USERNAME'}
+                {userInfo ? (userInfo.nickname ? userInfo.nickname : userInfo.id) : 'USERNAME'}
               </ContextMenuTrigger>
               <ContextMenuContent>
                 <ContextMenuItem>수정하기</ContextMenuItem>
