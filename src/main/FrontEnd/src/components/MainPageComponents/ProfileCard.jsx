@@ -233,7 +233,7 @@ function ProfileCard() {
                       {userGradeString && userTier ? `${userGradeString} ${userTier}` : '로딩 중...'}
                     </h4>
                     <h3 className="text-md text-center">
-                      {userInfo ? `${userInfo.points}pt.` : '로딩 중...'}
+                      보유 포인트 : {userInfo ? `${userInfo.points}pt` : '로딩 중...'}
                     </h3>
                     <h2 className="text-sm text-center">
                       {userGradeString ? getGradeMessage(userGradeString) : '로딩 중...'}

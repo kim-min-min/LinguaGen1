@@ -143,7 +143,11 @@ const DashBoardPanel = () => {
                                 <CardTitle className='text-md'> 현재 티어 - {userGradeString && userTier ? `${userGradeString} ${userTier}` : '로딩 중...'}</CardTitle>
                             </CardHeader>
                             <CardContent className='flex flex-row items-center'>
-                                <img src={tierImages[userGrade]} alt='Tier img' className='w-20 h-20'/>
+                                <img
+                                    src={userTier === 1 ? tierImages[userGrade + 1] : tierImages[userGrade]}
+                                    alt='Tier img'
+                                    className='w-20 h-20'
+                                />
                                 <p className='font-bold text-md ml-10'>
                                     {userTier === 1
                                         ? `다음 ${gradeNames[userGrade + 1]} 4 까지 남은 포인트: ${remainingExp > 0 ? remainingExp : 0}`
