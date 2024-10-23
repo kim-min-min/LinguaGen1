@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Header from '../Header'; // Assuming Header is already imported
 import '@fortawesome/fontawesome-free/css/all.min.css'; // Font Awesome CSS 추가
@@ -7,7 +7,7 @@ import Notice from './Notice'; // 공지사항 컴포넌트 임포트
 import FreeBoard from './FreeBoard'; // 자유게시판 컴포넌트 임포트
 import ExchangeLearningTips from './ExchangeLearningTips'; // 학습 팁 교환 컴포넌트 임포트
 import ClubBoard from './ClubBoard'; // 동아리 게시판 컴포넌트 임포트
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Writing from './Writing';
 import DetailView from './DetailView';
 
@@ -173,12 +173,21 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
 };
 
 const Community = () => {
-  const [activeTab, setActiveTab] = useState(''); // 기본 컴포넌트는 ''로 설정
+  const [activeTab, setActiveTab] = useState('');
   const inputRef = useRef(null);
   const [selectedItem, setSelectedItem] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // URL 경로를 기반으로 activeTab 설정
+    const path = location.pathname.split('/')[2];
+    setActiveTab(path ? path.charAt(0).toUpperCase() + path.slice(1) : '');
+  }, [location.pathname]);
 
   const handleTabClick = (title) => {
     setActiveTab(title);
+    window.history.replaceState(null, '', `/community/${title.toLowerCase()}`); // URL 변경
   };
 
   return (
@@ -204,7 +213,6 @@ const Community = () => {
               </SearchBox>
             </div>
             <div className='w-full h-auto my-8'>
-              {/* 탭 항목 클릭 가능하게 설정 */}
               <Item isActive={activeTab === 'Notice'} onClick={() => handleTabClick('Notice')}>
                 공지사항
               </Item>
@@ -227,8 +235,8 @@ const Community = () => {
             {activeTab === 'FreeBoard' && <FreeBoard handleTabClick={handleTabClick} />}
             {activeTab === 'ExchangeLearningTips' && <ExchangeLearningTips handleTabClick={handleTabClick} />}
             {activeTab === 'ClubBoard' && <ClubBoard handleTabClick={handleTabClick} />}
-            {activeTab === 'Writing' && <Writing />} {/* 글쓰기 탭 */}
-            {activeTab === 'DetailView' && <DetailView selectedItem={selectedItem} handleTabClick={handleTabClick} />} {/* 상세보기 페이지 */}
+            {activeTab === 'Writing' && <Writing />}
+            {activeTab === 'DetailView' && <DetailView selectedItem={selectedItem} handleTabClick={handleTabClick} />}
           </div>
         </div>
       </div>
