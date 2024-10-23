@@ -39,7 +39,7 @@ const PageLoader = ({ onLoadComplete }) => {
     canvas.height = window.innerHeight;
 
     const frameInterval = 100;
-    const totalLoadingTime = 3000; // 총 로딩 시간 5초
+    const totalLoadingTime = 3000; // 총 로딩 시간 3초
     const startTime = performance.now();
 
     const font = new FontFace('AntiquityPrint', 'url(src/assets/CanvasImage/font/Antiquity-print.ttf)');
