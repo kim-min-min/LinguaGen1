@@ -27,10 +27,10 @@ public class User {
     @Column(name = "birth_date")
     private java.sql.Date birthDate;
 
-    @Column(name = "address", length = 1000)
+    @Column(name = "address", nullable = false, length = 1000)
     private String address;
 
-    @Column(name = "tell", length = 13)
+    @Column(name = "tell", nullable = false, length = 13)
     private String tell;
 
     @Column(name = "objective", length = 255)

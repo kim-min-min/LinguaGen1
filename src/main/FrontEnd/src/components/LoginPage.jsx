@@ -197,7 +197,7 @@ function Signup({ onSignupToggle, onNextSignup }) {
     id: '',
     password: '',
     confirmPassword: '',
-    phone: '',
+    tell: '',
     address: '',
     detailedAddress: '',
   });
@@ -298,6 +298,9 @@ function Signup({ onSignupToggle, onNextSignup }) {
         <Button onClick={handleSubmit} className="w-full">
           Next
         </Button>
+
+        {/* 에러 메시지 출력 */}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
       </form>
       <div className="mt-4 text-center text-sm">
         <span onClick={onSignupToggle} className="underline cursor-pointer">
@@ -342,7 +345,7 @@ function SignupNext({ formData, onPreviousSignup }) {
         id: formData.id,
         password: formData.password,
         name: formData.name, // 예시로 이름 추가
-        phone: formData.phone, // 전화번호 필드 추가
+        tell: formData.phone, // 전화번호 필드 추가
         address: fullAddress,
       };
 
@@ -367,7 +370,7 @@ function SignupNext({ formData, onPreviousSignup }) {
       // 오류 처리: 서버와의 통신 문제와 요청 오류를 구분
       if (error.response) {
         console.error('회원가입 중 서버 오류 발생:', error.response.data);
-        alert(`회원가입 실패: ${error.response.data.message || '서버 오류'}`);
+        alert(`회원가입 실패: 미입력 정보가 있습니다.`);
       } else if (error.request) {
         console.error('서버 응답 없음:', error.request);
         alert('서버와 통신할 수 없습니다. 나중에 다시 시도해주세요.');
