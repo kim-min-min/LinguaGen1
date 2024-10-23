@@ -7,6 +7,7 @@ import useStore from '../store/useStore';
 import DungeonCanvas from './Game/DungeonCanvas';
 import RuinsCanvas from './Game/RuinsCanvas';
 import MountainCanvas from './Game/MountainCanvas';
+import PageLoader from './PageLoader';
 
 const canvases = [DungeonCanvas, RuinsCanvas, MountainCanvas];
 
@@ -32,8 +33,9 @@ function LandingPage() {
   } = useStore();
 
   const [selectedCanvas, setSelectedCanvas] = useState(null);
-
+  const [isLoaderReady, setIsLoaderReady] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
+  const pageLoaderRef = useRef(null);
 
   const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
   const positions = [
@@ -68,16 +70,46 @@ function LandingPage() {
     setTimeout(() => setStartTyping(true), 3400);
   }, [setIsLoaded, setStartTyping]);
 
+  const preloadResources = useCallback(async () => {
+    // 이미지와 폰트를 미리 로드
+    const imageModules = import.meta.glob('../assets/CanvasImage/run_*.png');
+    const loadedFrames = await Promise.all(
+      Object.values(imageModules).map(importFunc => importFunc())
+    );
+    const sortedFrames = loadedFrames.map(module => module.default).sort();
+
+    await Promise.all(
+      sortedFrames.map(src => new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = src;
+      }))
+    );
+
+    const font = new FontFace('AntiquityPrint', 'url(src/assets/CanvasImage/font/Antiquity-print.ttf)');
+    await font.load().then((loadedFont) => {
+      document.fonts.add(loadedFont);
+    }).catch((error) => {
+      console.error('폰트 로딩 실패:', error);
+    });
+
+    setIsLoaderReady(true);
+  }, []);
+
+  useEffect(() => {
+    preloadResources();
+  }, [preloadResources]);
+
   const selectRandomCanvas = useCallback(() => {
     const randomCanvas = canvases[Math.floor(Math.random() * canvases.length)];
     setSelectedCanvas(() => randomCanvas);
-    setShowDemo(true);
-  }, [setShowDemo]);
+  }, []);
 
   const showWelcomeMessages = useCallback(() => {
     setWelcomeMessage1('링구아젠에 오신걸 환영합니다.');
     setTimeout(() => setShowWelcomeMessage1(true), 100);
-    
+
     setTimeout(() => {
       setShowWelcomeMessage1(false);
       
@@ -87,11 +119,14 @@ function LandingPage() {
         
         setTimeout(() => {
           setShowWelcomeMessage2(false);
-          setTimeout(selectRandomCanvas, 1000);
+          setTimeout(() => {
+            selectRandomCanvas(); // PageLoader가 시작될 때 Canvas 선택
+            setShowLoader(true); // PageLoader를 표시
+          }, 1000);
         }, 3000);
       }, 1000);
     }, 3000);
-  }, [setWelcomeMessage1, setShowWelcomeMessage1, setWelcomeMessage2, setShowWelcomeMessage2, selectRandomCanvas]);
+  }, [setWelcomeMessage1, setShowWelcomeMessage1, setWelcomeMessage2, setShowWelcomeMessage2, setShowLoader, selectRandomCanvas]);
 
   const handleStartClick = useCallback(() => {
     setIsLeaving(true);
@@ -106,13 +141,23 @@ function LandingPage() {
     navigate('/login');
   }, [navigate]);
 
-  const handleLoadComplete = () => {
+  const handleLoadComplete = useCallback(() => {
     setShowLoader(false);
-    setShowDemo(true);
-  };
+    setShowDemo(true); // PageLoader가 완료된 후 SelectedCanvas를 화면에 표시
+  }, [setShowDemo]);
 
-  if (showLoader) {
-    return <PageLoader onLoadComplete={handleLoadComplete} />;
+  if (showLoader && isLoaderReady) {
+    const SelectedCanvas = selectedCanvas;
+    return (
+      <>
+        <PageLoader ref={pageLoaderRef} onLoadComplete={handleLoadComplete} />
+        {selectedCanvas && (
+          <div style={{ display: 'none' }}>
+            <SelectedCanvas />
+          </div>
+        )}
+      </>
+    );
   }
 
   if (showDemo && selectedCanvas) {
