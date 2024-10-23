@@ -1,20 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import useStore from '../../store/useStore';
 import '../../App.css';
-import Word3D from '../Word3D';  // Word3D 컴포넌트 임포트
+import Word3D from '../Word3D';
+import { useNavigate } from 'react-router-dom'; // useNavigate 훅 import
+import DungeonCanvas from '../Game/DungeonCanvas';
+import RuinsCanvas from '../Game/RuinsCanvas';
+import MountainCanvas from '../Game/MountainCanvas';
+
+const canvases = [DungeonCanvas, RuinsCanvas, MountainCanvas];
 
 const MainContainer = ({ selectedGame }) => {
   const { cards, loading, loadMoreCards, isLoggedIn } = useStore();
   const containerRef = useRef(null);
   const [overscrollShadow, setOverscrollShadow] = useState(0);
-
-  const handleStartGame = () => {
-    console.log(selectedGame);
-    
-  };
+  const [canvasValue, setCanvasValue] = useState(null);
+  const navigate = useNavigate(); // useNavigate 훅 사용
 
   // 예시 단어 목록 (실제로는 API나 상태에서 가져와야 합니다)
   const wrongWords = [
@@ -28,24 +31,22 @@ const MainContainer = ({ selectedGame }) => {
 
   useEffect(() => {
     loadMoreCards(); // 초기 카드 로드
-  }, []);
+  }, [loadMoreCards]);
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || !isLoggedIn) return; // containerRef가 없거나 로그인하지 않은 경우 리턴
+    if (!container || !isLoggedIn) return;
 
     const handleScroll = () => {
-      // 스크롤이 최상단에서 오버스크롤 시 그림자 효과
       if (container.scrollTop <= 0) {
         const overscrollAmount = Math.abs(container.scrollTop);
-        setOverscrollShadow(Math.min(overscrollAmount + 10, 100)); // 최대 100px까지 shadow 길이
+        setOverscrollShadow(Math.min(overscrollAmount + 10, 100));
       } else {
-        setOverscrollShadow(0); // 기본 상태로 shadow 길이 설정
+        setOverscrollShadow(0);
       }
 
-      // 무한 스크롤 조건: 스크롤이 하단에 도달했을 때
       if (container.scrollTop + container.clientHeight >= container.scrollHeight - 50 && !loading) {
-        loadMoreCards(); // 추가 카드 로드
+        loadMoreCards();
       }
     };
 
@@ -53,10 +54,30 @@ const MainContainer = ({ selectedGame }) => {
     return () => container.removeEventListener('scroll', handleScroll);
   }, [loading, loadMoreCards, isLoggedIn]);
 
+  const handleStartGame = useCallback(() => {
+    console.log('Selected Game:', selectedGame);
+    const randomCanvas = canvases[Math.floor(Math.random() * canvases.length)];
+    console.log('Random Canvas Selected:', randomCanvas.name);
+    setCanvasValue(randomCanvas);
+
+    // /loading 경로로 이동
+    navigate('/loading');
+
+    // 5초 후에 준비된 Canvas로 이동
+    setTimeout(() => {
+      if (randomCanvas === DungeonCanvas) {
+        navigate('/dungeon');
+      } else if (randomCanvas === MountainCanvas) {
+        navigate('/mountain');
+      } else if (randomCanvas === RuinsCanvas) {
+        navigate('/ruins');
+      }
+    }, 3000);
+  }, [selectedGame, navigate]);
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-start mx-12 bg-white">
       {isLoggedIn ? (
-        // 로그인한 경우의 UI
         <>
           <div className="w-full flex justify-center mb-4 mt-4">
             <Button onClick={handleStartGame} className="w-40 h-14 text-white rounded-md font-bold text-xl hover:scale-125 transition-all duration-500">
@@ -120,11 +141,10 @@ const MainContainer = ({ selectedGame }) => {
           </div>
         </>
       ) : (
-        // 로그인하지 않은 경우의 UI
         <div className="w-full h-[calc(100vh-200px)] flex flex-col items-center justify-center">
           <h2 className="text-sm font-bold mb-8 mt-12 text-gray-400">* 로그인을 해야 게임을 할 수 있습니다 *</h2>
           <div className="w-[800px] h-[800px] bg-transparent flex items-center justify-center">
-            <Word3D /> {/* Word3D 컴포넌트를 여기에 추가 */}
+            <Word3D />
           </div>
         </div>
       )}

@@ -10,7 +10,10 @@ import Community from './components/Community/Community';
 import DailyQuiz from './components/DailyQuiz';
 import User from './components/test/User';
 import RankingPage from './components/RankingPage';
-
+import DungeonCanvas from './components/Game/DungeonCanvas';
+import MountainCanvas from './components/Game/MountainCanvas';
+import RuinsCanvas from './components/Game/RuinsCanvas';
+import PageLoader from './components/PageLoader';
 function App() {
   return (
     <Router>
@@ -25,7 +28,10 @@ function App() {
         <Route path="/users/:id" element={<User />} />
         <Route path='/ranking' element={<RankingPage />} />
         <Route path='/Test' element={<User />} />
-
+        <Route path='/dungeon' element={<DungeonCanvas />} />
+        <Route path='/mountain' element={<MountainCanvas />} />
+        <Route path='/ruins' element={<RuinsCanvas />} />
+        <Route path='/loading' element={<PageLoader />} />
       </Routes>
     </Router>
   );
