@@ -73,9 +73,15 @@ public class CommunityService {
         return communities.stream().map(this::convertToDTO).toList();
     }
 
-    // 글 작성자로 검색
+    // 글 작성자 회원 아이디로 검색
     public List<CommunityDTO> searchPostsByUserId(String userId) {
         List<Community> communities = repository.findByUserId(userId);
+        return communities.stream().map(this::convertToDTO).toList();
+    }
+
+    // 글 작성자 닉네임으로 검색
+    public List<CommunityDTO> searchPostsByNickname(String nickname) {
+        List<Community> communities = repository.findByUserNicknameContaining(nickname);
         return communities.stream().map(this::convertToDTO).toList();
     }
 
