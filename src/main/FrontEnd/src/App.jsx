@@ -14,6 +14,8 @@ import DungeonCanvas from './components/Game/DungeonCanvas';
 import MountainCanvas from './components/Game/MountainCanvas';
 import RuinsCanvas from './components/Game/RuinsCanvas';
 import PageLoader from './components/PageLoader';
+import Writing from "./components/Community/Writing.jsx";
+
 function App() {
   return (
     <Router>
@@ -24,6 +26,7 @@ function App() {
         <Route path="/dashboard" element={<DashBoard />} />
         <Route path='/mypage' element={<MyPage />} />
         <Route path='/community' element={<Community />} />
+        <Route path="/community/writing" element={<Writing />} />
         <Route path='/dailyQuiz' element={<DailyQuiz />} />
         <Route path="/users/:id" element={<User />} />
         <Route path='/ranking' element={<RankingPage />} />
