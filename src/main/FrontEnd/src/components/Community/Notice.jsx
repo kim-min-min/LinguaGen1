@@ -99,14 +99,20 @@ const Notice = ({ handleTabClick, setSelectedItem }) => {
             <PaginationItem>
               <PaginationPrevious
                 href="#"
-                onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(Math.max(currentPage - 1, 1));
+                }}
               />
             </PaginationItem>
             {[...Array(totalPages)].map((_, index) => (
               <PaginationItem key={index}>
                 <PaginationLink
                   href="#"
-                  onClick={() => handlePageChange(index + 1)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageChange(index + 1);
+                  }}
                   className={currentPage === index + 1 ? 'active' : ''}
                 >
                   {index + 1}
@@ -116,7 +122,10 @@ const Notice = ({ handleTabClick, setSelectedItem }) => {
             <PaginationItem>
               <PaginationNext
                 href="#"
-                onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(Math.min(currentPage + 1, totalPages));
+                }}
               />
             </PaginationItem>
           </PaginationContent>
