@@ -66,13 +66,25 @@ function LoginPage() {
     console.error('Google Login Failed:', error);
   };
 
+
+
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:8085/api/users/login', { id, password }, { withCredentials: true });
       if (response.status === 200 && response.data === '로그인 성공') {
-        sessionStorage.setItem('user', JSON.stringify({ id })); // 세션에 사용자 정보 저장
-        setIsLoggedIn(true);
+
+        const userResponse = await axios.get(`http://localhost:8085/api/users/${id}`, {withCredentials: true});
+
+        const userInfo = userResponse.data; // 사용자 정보 저장
+
+        // 세션 스토리지에 사용자 정보 저장
+        sessionStorage.setItem('user', JSON.stringify({ id: userInfo.id }));
+        sessionStorage.setItem('id', userInfo.id);
+        sessionStorage.setItem('nickname', userInfo.nickname);
+        sessionStorage.setItem('tell', userInfo.tell);
+
         navigate('/main');
       } else {
         setError('아이디 또는 비밀번호가 잘못되었습니다.');

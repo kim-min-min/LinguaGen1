@@ -106,13 +106,20 @@ function ProfileCard() {
 
       if (response.status === 200 && response.data === '로그인 성공') {
         alert('로그인 성공!');
-        sessionStorage.setItem('user', JSON.stringify({id}));
         setIsLoggedIn(true);
 
         // 로그인 성공 후 사용자 정보와 등급 정보 가져오기
         try {
           const userResponse = await axios.get(`http://localhost:8085/api/users/${id}`, {withCredentials: true});
-          setUserInfo(userResponse.data);
+          const userInfo = userResponse.data; // 사용자 정보 저장
+
+          // 세션 스토리지에 사용자 정보 저장
+          sessionStorage.setItem('user', JSON.stringify({ id: userInfo.id }));
+          sessionStorage.setItem('id', userInfo.id);
+          sessionStorage.setItem('nickname', userInfo.nickname);
+          sessionStorage.setItem('tell', userInfo.tell);
+
+          setUserInfo(userInfo);
 
           const gradeResponse = await axios.get(`http://localhost:8085/api/grade/${id}`, {withCredentials: true});
           setUserGrade(gradeResponse.data.grade);
@@ -133,9 +140,10 @@ function ProfileCard() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    sessionStorage.removeItem('user'); // 세션에서 사용자 정보 삭제
-    // 필요한 경우 추가적인 로그아웃 로직을 여기에 구현할 수 있습니다.
-    // 예: 로컬 스토리지 클리어, 서버에 로그아웃 요청 등
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('id');
+    sessionStorage.removeItem('nickname');
+    sessionStorage.removeItem('tell');
   };
 
   if (!isLoggedIn) {
