@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,7 +31,7 @@ const FormSchema = z.object({
     }),
 });
 
-const Writing = () => {
+const Writing = ({ handleTabClick }) => {
     const form = useForm({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -41,7 +41,6 @@ const Writing = () => {
         },
     });
 
-    const navigate = useNavigate();
     const { boardType } = useParams();
     const { isLoggedIn, setIsLoggedIn } = useStore();
     const [id, setId] = useState("");
@@ -53,9 +52,8 @@ const Writing = () => {
                 setIsLoggedIn(true);
                 const userData = JSON.parse(user);
                 try {
-                    // 사용자 정보 가져오기
                     const userResponse = await axios.get(`http://localhost:8085/api/users/${userData.id}`, { withCredentials: true });
-                    setId(userResponse.data.id); // 사용자 ID 설정
+                    setId(userResponse.data.id);
                 } catch (error) {
                     console.error('사용자 정보를 가져오는 중 오류 발생:', error);
                 }
@@ -83,7 +81,8 @@ const Writing = () => {
             })
             .then(data => {
                 console.log('Success:', data);
-                navigate(`/community/${boardType}`);
+                // DefaultBoard로 이동
+                handleTabClick('');
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -94,7 +93,6 @@ const Writing = () => {
         <div className="w-full bg-white rounded-md flex flex-col p-12 justify-start items-center min-h-screen">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
-                    {/* 제목 입력 */}
                     <FormField
                         control={form.control}
                         name="title"
@@ -109,7 +107,6 @@ const Writing = () => {
                         )}
                     />
 
-                    {/* Select 컴포넌트 - 카테고리 선택 */}
                     <FormField
                         control={form.control}
                         name="category"
@@ -133,7 +130,6 @@ const Writing = () => {
                         )}
                     />
 
-                    {/* 내용 입력 */}
                     <FormField
                         control={form.control}
                         name="content"
@@ -148,7 +144,6 @@ const Writing = () => {
                         )}
                     />
 
-                    {/* Submit 버튼 및 이미지 업로드 버튼 */}
                     <div className="flex items-center space-x-4">
                         <Button type="submit">Submit</Button>
                         <Button variant="outline" className="ml-4">
