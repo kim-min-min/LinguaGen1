@@ -48,7 +48,7 @@ const ClubBoard = ({ handleTabClick }) => {
       <p className="font-bold text-xl">동아리 게시판</p>
       <div className="mt-8 w-full h-full flex flex-col bg-transparent flex-grow"> {/* flex-grow 추가 */}
         <div className="w-full h-20 border-b-2 border-gray-300 flex justify-end items-center gap-4">
-        <Button
+          <Button
             className='bg-green-300 text-gray-500 font-bold hover:bg-green-400'
             onClick={() => handleTabClick('Writing')} // 글쓰기 클릭 시 activeTab을 Writing으로 변경
           >
@@ -97,14 +97,20 @@ const ClubBoard = ({ handleTabClick }) => {
             <PaginationItem>
               <PaginationPrevious
                 href="#"
-                onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(Math.max(currentPage - 1, 1));
+                }}
               />
             </PaginationItem>
             {[...Array(totalPages)].map((_, index) => (
               <PaginationItem key={index}>
                 <PaginationLink
                   href="#"
-                  onClick={() => handlePageChange(index + 1)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageChange(index + 1);
+                  }}
                   className={currentPage === index + 1 ? 'active' : ''}
                 >
                   {index + 1}
@@ -114,7 +120,10 @@ const ClubBoard = ({ handleTabClick }) => {
             <PaginationItem>
               <PaginationNext
                 href="#"
-                onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(Math.min(currentPage + 1, totalPages));
+                }}
               />
             </PaginationItem>
           </PaginationContent>

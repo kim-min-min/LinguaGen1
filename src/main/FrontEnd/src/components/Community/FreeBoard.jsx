@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react';
-import {Separator} from '@/components/ui/separator';
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table';
+import React, { useState, useEffect } from 'react';
+import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
     Pagination,
     PaginationContent,
@@ -10,10 +10,10 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
-import {Button} from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 
-const FreeBoard = ({handleTabClick}) => {
+const FreeBoard = ({ handleTabClick }) => {
     /*  // 카페 게시판 형식의 데이터셋
       const data = Array.from({ length: 30 }, (_, i) => ({
         id: i + 1,
@@ -63,10 +63,10 @@ const FreeBoard = ({handleTabClick}) => {
                     >
                         글쓰기
                     </Button>
-                    <Separator className="h-8" orientation="vertical"/>
+                    <Separator className="h-8" orientation="vertical" />
                     <Select onValueChange={handleItemsPerPageChange}>
                         <SelectTrigger className="w-[100px]">
-                            <SelectValue placeholder={`${itemsPerPage}개씩`}/>
+                            <SelectValue placeholder={`${itemsPerPage}개씩`} />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="5">5개씩</SelectItem>
@@ -108,14 +108,20 @@ const FreeBoard = ({handleTabClick}) => {
                         <PaginationItem>
                             <PaginationPrevious
                                 href="#"
-                                onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handlePageChange(Math.max(currentPage - 1, 1));
+                                }}
                             />
                         </PaginationItem>
                         {[...Array(totalPages)].map((_, index) => (
                             <PaginationItem key={index}>
                                 <PaginationLink
                                     href="#"
-                                    onClick={() => handlePageChange(index + 1)}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handlePageChange(index + 1);
+                                    }}
                                     className={currentPage === index + 1 ? 'active' : ''}
                                 >
                                     {index + 1}
@@ -125,7 +131,10 @@ const FreeBoard = ({handleTabClick}) => {
                         <PaginationItem>
                             <PaginationNext
                                 href="#"
-                                onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handlePageChange(Math.min(currentPage + 1, totalPages));
+                                }}
                             />
                         </PaginationItem>
                     </PaginationContent>
