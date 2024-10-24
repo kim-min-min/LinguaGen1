@@ -107,7 +107,7 @@ export const LandingPage = () => {
         <div id="leaves1 main"></div>
         <div id="leaves2 main"></div>
       </div>
-      <div className="absolute top-1/2 right-16 transform -translate-y-full bg-transparent p-4 rounded-lg flex flex-col justify-start items-center gap-4 w-auto h-20 z-10">
+      <div className="absolute top-1/2 right-16 transform -translate-y-full bg-transparent p-4 rounded-lg flex flex-col justify-start items-center gap-4 w-auto h-28 z-10">
         <TypeAnimation
           sequence={[
             'LinguaGen', 1000,
@@ -117,8 +117,13 @@ export const LandingPage = () => {
           wrapper="h2"
           cursor={true}
           repeat={Infinity}
-          className="text-white text-xl font-bold mb-8"
-          style={{ fontSize: '48px' }}
+          className="text-white text-xl font-bold h-full"
+          style={{ 
+            fontSize: '48px',
+            background: 'linear-gradient(30deg, #c850c0, #ffcc70)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
         />
       </div>
       <div className="absolute bottom-32 right-28 transform -translate-y-1/2 bg-zinc-800 p-4 rounded-lg shadow-lg flex flex-col justify-start items-center gap-4 w-auto h-60 p-8 z-0">
