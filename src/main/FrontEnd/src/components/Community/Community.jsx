@@ -164,8 +164,8 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
               key={idx}
               onClick={() => handlePostClick(post)} // 게시글 클릭 시 상세보기로 이동
             >
-              <h3 className='font-bold text-lg'>{post.title}</h3>
-              <p className='mt-2 mb-4'>{post.content}</p>
+              <h3 className='font-bold text-lg'>{post.title.length > 30 ? post.title.slice(0, 30) + '...' : post.title}</h3>
+              <p className='mt-2 mb-4'> {post.content.length > 30 ? post.content.slice(0, 30) + '...' : post.content}</p>
               <p className='cursor-pointer underline md:decoration-1'>{post.nickname ? post.nickname : post.userId}</p>
               <div className='w-1/2 flex justify-between mt-4 text-sm text-gray-400'>
                 <p>{format(new Date(post.createdAt), 'yyyy-MM-dd')}</p>
