@@ -3,7 +3,6 @@ package com.linguagen.service;
 
 
 import com.linguagen.entity.User;
-import com.linguagen.repository.UserInterestRepository;
 import com.linguagen.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;

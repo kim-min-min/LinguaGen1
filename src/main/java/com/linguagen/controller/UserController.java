@@ -3,7 +3,6 @@ package com.linguagen.controller;
 
 import com.linguagen.dto.UserInterestDTO;
 import com.linguagen.entity.User;
-import com.linguagen.repository.UserInterestRepository;
 import com.linguagen.service.UserInterestService;
 import com.linguagen.service.UserService;
 import jakarta.servlet.http.Cookie;
