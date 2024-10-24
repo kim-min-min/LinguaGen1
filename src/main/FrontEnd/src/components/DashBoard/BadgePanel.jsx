@@ -157,7 +157,7 @@ const BadgePanel = () => {
                 <img
                   src={badge.src || 'https://via.placeholder.com/60'} // 실제 이미지로 대체 가능
                   alt={badge.title}
-                  style={{ borderRadius: '50%' }}
+                  style={{ borderRadius: '50%' , width : '60px' , hegiht : '60px'}}
                 />
                 <Lock size={20} /> {/* 잠금 아이콘 */}
                 <Tooltip>{badge.description}</Tooltip> {/* 툴팁 */}
