@@ -56,13 +56,16 @@ public class CommunityController {
     @GetMapping("/search")
     public ResponseEntity<List<CommunityDTO>> searchCommunity(
             @RequestParam(required = false) String title,
-            @RequestParam(required = false) String userId) {
+            @RequestParam(required = false) String userId,
+            @RequestParam(required = false) String nickname) {
 
         List<CommunityDTO> communities;
         if (title != null) {
             communities = service.searchPostsByTitle(title);
         } else if (userId != null) {
             communities = service.searchPostsByUserId(userId);
+        } else if (nickname != null) {
+            communities = service.searchPostsByNickname(nickname);
         } else {
             communities = service.getAllCommunityPosts(); // 기본적으로 모든 게시글 반환
         }

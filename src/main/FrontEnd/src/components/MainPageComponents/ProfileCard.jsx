@@ -1,14 +1,14 @@
 "use client";
 
-import React, {useState, useEffect} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import {Card, CardHeader, CardContent} from "@/components/ui/card";
-import {Avatar, AvatarImage, AvatarFallback} from "@/components/ui/avatar";
-import {HoverCard, HoverCardContent, HoverCardTrigger} from "@/components/ui/hover-card";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -22,13 +22,13 @@ import PlatinumTier from "../../assets/imgs/Tiers/Platinum Tier.png";
 import DiamondTier from "../../assets/imgs/Tiers/Diamond Tier.png";
 import ChellengerTier from "../../assets/imgs/Tiers/Chellenger Tier.png";
 
-import {Separator} from "@/components/ui/separator";
+import { Separator } from "@/components/ui/separator";
 import useStore from '../../store/useStore';
 import "../../App.css";
 
 
 function ProfileCard() {
-  const {isLoggedIn, setIsLoggedIn} = useStore();
+  const { isLoggedIn, setIsLoggedIn } = useStore();
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -140,10 +140,9 @@ function ProfileCard() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    sessionStorage.removeItem('user');
-    sessionStorage.removeItem('id');
-    sessionStorage.removeItem('nickname');
-    sessionStorage.removeItem('tell');
+    sessionStorage.removeItem('user'); // 세션에서 사용자 정보 삭제
+    // 필요한 경우 추가적인 로그아웃 로직을 여기에 구현할 수 있습니다.
+    // 예: 로컬 스토리지 클리어, 서버에 로그아웃 요청 등
   };
 
   if (!isLoggedIn) {

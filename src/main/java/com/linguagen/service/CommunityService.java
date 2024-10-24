@@ -2,6 +2,7 @@ package com.linguagen.service;
 
 import com.linguagen.dto.CommunityDTO;
 import com.linguagen.entity.Community;
+import com.linguagen.entity.User;
 import com.linguagen.repository.CommunityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class CommunityService {
     // 게시글 수정
     public Optional<CommunityDTO> updateCommunityPost(Long idx, CommunityDTO updatedCommunityDTO, String userId) {
         return repository.findById(idx).map(existingCommunity -> {
-            if (!existingCommunity.getUserId().equals(userId)) {
+            if (!existingCommunity.getUser().getId().equals(userId)) {
                 throw new IllegalArgumentException("수정 권한이 없습니다.");
             }
             existingCommunity.setTitle(updatedCommunityDTO.getTitle());
@@ -57,7 +58,7 @@ public class CommunityService {
     // 게시글 삭제
     public boolean deleteCommunityPost(Long idx, String userId) {
         return repository.findById(idx).map(community -> {
-            if (!community.getUserId().equals(userId)) {
+            if (!community.getUser().getId().equals(userId)) {
                 throw new IllegalArgumentException("삭제 권한이 없습니다.");
             }
             community.setDeleted(true);
@@ -72,9 +73,15 @@ public class CommunityService {
         return communities.stream().map(this::convertToDTO).toList();
     }
 
-    // 글 작성자로 검색
+    // 글 작성자 회원 아이디로 검색
     public List<CommunityDTO> searchPostsByUserId(String userId) {
         List<Community> communities = repository.findByUserId(userId);
+        return communities.stream().map(this::convertToDTO).toList();
+    }
+
+    // 글 작성자 닉네임으로 검색
+    public List<CommunityDTO> searchPostsByNickname(String nickname) {
+        List<Community> communities = repository.findByUserNicknameContaining(nickname);
         return communities.stream().map(this::convertToDTO).toList();
     }
 
@@ -82,7 +89,7 @@ public class CommunityService {
     private CommunityDTO convertToDTO(Community community) {
         return new CommunityDTO(
                 community.getIdx(),
-                community.getUserId(),
+                community.getUser().getId(),
                 community.getCategory(),
                 community.getTitle(),
                 community.getContent(),
@@ -91,15 +98,18 @@ public class CommunityService {
                 community.getUpdatedAt(),
                 community.getViewCount(),
                 community.getLikeCount(),
-                community.isDeleted()
+                community.isDeleted(),
+                community.getUser().getNickname()
         );
     }
 
     // DTO를 엔티티로 변환
     private Community convertToEntity(CommunityDTO communityDTO) {
+        User user = new User();
+        user.setId(communityDTO.getUserId());
         return new Community(
                 communityDTO.getIdx(),
-                communityDTO.getUserId(),
+                user,
                 communityDTO.getCategory(),
                 communityDTO.getTitle(),
                 communityDTO.getContent(),

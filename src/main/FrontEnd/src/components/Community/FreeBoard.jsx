@@ -93,7 +93,7 @@ const FreeBoard = ({ handleTabClick }) => {
                             <TableRow key={item.idx}>
                                 <TableCell className="font-medium text-center h-14">{item.idx}</TableCell>
                                 <TableCell>{item.title}</TableCell>
-                                <TableCell className="text-center">{item.userId}</TableCell>
+                                <TableCell className="text-center">{item.nickname ? item.nickname : (item.userId.includes('@') ? item.userId.split('@')[0] : item.userId)}</TableCell>
                                 <TableCell className="text-center">
                                     {format(new Date(item.createdAt), 'yyyy-MM-dd')}
                                 </TableCell>
