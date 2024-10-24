@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -150,7 +150,7 @@ const Writing = () => {
 
                     {/* Submit 버튼 및 이미지 업로드 버튼 */}
                     <div className="flex items-center space-x-4">
-                        <Button type="submit">Submit</Button> {/* type="submit" 확인 */}
+                        <Button type="submit">Submit</Button>
                         <Button variant="outline" className="ml-4">
                             <label htmlFor="imageUpload" className="cursor-pointer">
                                 이미지 파일 선택

@@ -235,7 +235,7 @@ const Community = () => {
             {activeTab === 'FreeBoard' && <FreeBoard handleTabClick={handleTabClick} />}
             {activeTab === 'ExchangeLearningTips' && <ExchangeLearningTips handleTabClick={handleTabClick} />}
             {activeTab === 'ClubBoard' && <ClubBoard handleTabClick={handleTabClick} />}
-            {activeTab === 'Writing' && <Writing />}
+            {activeTab === 'Writing' && <Writing handleTabClick={handleTabClick} />}
             {activeTab === 'DetailView' && <DetailView selectedItem={selectedItem} handleTabClick={handleTabClick} />}
           </div>
         </div>
