@@ -10,6 +10,8 @@ import ClubBoard from './ClubBoard'; // 동아리 게시판 컴포넌트 임포�
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Writing from './Writing';
 import DetailView from './DetailView';
+import axios from 'axios';
+import {format} from "date-fns";
 
 const SearchBox = styled.div`
   margin-top : 15px;
@@ -90,51 +92,56 @@ const BackgroundVideo = styled.video`
   z-index: -1; /* 다른 요소 뒤에 배치 */
 `;
 
-const boardData = [
-  {
-    title: '공지사항',
-    tabKey: 'Notice', // 탭에 대응하는 키 추가
-    posts: [
-      { author: '프론트엔드운영자', date: '2024.10.16', views: '4,761', title: '링구아젠에 오신걸 환영합니다', description: '인공지능사관학교에서 11월 26일자로 고생해서 만든 링구...' },
-      { author: '프론트엔드운영자', date: '2024.10.15', views: '3,124', title: '새로운 업데이트', description: '이번 업데이트에는 많은 변화가...' },
-      { author: '프론트엔드운영자', date: '2024.10.14', views: '5,982', title: '서버 점검 안내', description: '서버 점검이 예정되어 있습니다...' },
-      { author: '프론트엔드운영자', date: '2024.10.13', views: '2,300', title: '보안 업데이트', description: '보안 업데이트가 진행될 예정입니다...' }
-    ]
-  },
-  {
-    title: '자유게시판',
-    tabKey: 'FreeBoard', // 탭에 대응하는 키 추가
-    posts: [
-      { author: '프론트엔드운영자', date: '2024.10.16', views: '4,761', title: '이거 자유게시판 맞냐?', description: '인공지능사관학교에서 11월 26일자로 고생해서 만든 링구...' },
-      { author: '프론트엔드운영자', date: '2024.10.15', views: '3,124', title: '새로운 업데이트', description: '이번 업데이트에는 많은 변화가...' },
-      { author: '프론트엔드운영자', date: '2024.10.14', views: '5,982', title: '서버 점검 안내', description: '서버 점검이 예정되어 있습니다...' },
-      { author: '프론트엔드운영자', date: '2024.10.13', views: '2,300', title: '보안 업데이트', description: '보안 업데이트가 진행될 예정입니다...' }
-    ]
-  },
-  {
-    title: '학습 팁 교환',
-    tabKey: 'ExchangeLearningTips', // 탭에 대응하는 키 추가
-    posts: [
-      { author: '학습팁운영자', date: '2024.10.16', views: '4,761', title: '링구아젠에 오신걸 환영합니다', description: '인공지능사관학교에서 11월 26일자로 고생해서 만든 링구...' },
-      { author: '프론트엔드운영자', date: '2024.10.15', views: '3,124', title: '새로운 업데이트', description: '이번 업데이트에는 많은 변화가...' },
-      { author: '프론트엔드운영자', date: '2024.10.14', views: '5,982', title: '서버 점검 안내', description: '서버 점검이 예정되어 있습니다...' },
-      { author: '프론트엔드운영자', date: '2024.10.13', views: '2,300', title: '보안 업데이트', description: '보안 업데이트가 진행될 예정입니다...' }
-    ]
-  },
-  {
-    title: '동아리 게시판',
-    tabKey: 'ClubBoard', // 탭에 대응하는 키 추가
-    posts: [
-      { author: '동아리는 역시 신이다', date: '2024.10.16', views: '4,761', title: '링구아젠에 오신걸 환영합니다', description: '인공지능사관학교에서 11월 26일자로 고생해서 만든 링구...' },
-      { author: '프론트엔드운영자', date: '2024.10.15', views: '3,124', title: '새로운 업데이트', description: '이번 업데이트에는 많은 변화가...' },
-      { author: '프론트엔드운영자', date: '2024.10.14', views: '5,982', title: '서버 점검 안내', description: '서버 점검이 예정되어 있습니다...' },
-      { author: '프론트엔드운영자', date: '2024.10.13', views: '2,300', title: '보안 업데이트', description: '보안 업데이트가 진행될 예정입니다...' }
-    ]
-  }
-];
-
 // 기본 게시판 컴포넌트
 const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
+  const [boardData, setBoardData] = useState({
+    Notice: [],
+    FreeBoard: [],
+    ExchangeLearningTips: [],
+    ClubBoard: []
+  });
+
+  const [loading, setLoading] = useState(true);
+
+// 각 게시판의 최신 글 4개 가져오기
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const responses = await Promise.all([
+          axios.get(`http://localhost:8085/api/community/latest/Notice`),
+          axios.get(`http://localhost:8085/api/community/latest/FreeBoard`),
+          axios.get(`http://localhost:8085/api/community/latest/ExchangeLearningTips`),
+          axios.get(`http://localhost:8085/api/community/latest/ClubBoard`)
+        ]);
+
+        // 각 카테고리의 데이터를 상태로 업데이트
+        setBoardData({
+          Notice: responses[0].data,
+          FreeBoard: responses[1].data,
+          ExchangeLearningTips: responses[2].data,
+          ClubBoard: responses[3].data
+        });
+        setLoading(false); // 모든 데이터 로딩이 완료되면 로딩 상태 해제
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+        setLoading(false); // 에러가 발생해도 로딩을 해제
+      }
+    };
+    fetchPosts();
+  }, []); // 빈 배열을 의존성으로 설정해 첫 렌더링 시 한 번만 실행
+
+  if (loading) {
+    return <p>Loading...</p>; // 로딩 중일 때 보여줄 UI
+  }
+
+// 각 게시판에 해당하는 카테고리명과 데이터 연결
+  const boardTitles = {
+    Notice: '공지사항',
+    FreeBoard: '자유게시판',
+    ExchangeLearningTips: '학습 팁 교환',
+    ClubBoard: '동아리 게시판'
+  };
+
   // 게시글 클릭 핸들러
   const handlePostClick = (post) => {
     setSelectedItem(post); // 선택한 게시글 데이터를 저장
@@ -143,26 +150,26 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
 
   return (
     <div className='w-full p-8 mt-8 bg-white rounded-md grid grid-cols-6 gap-8' style={{ height: '1450px' }}>
-      {boardData.map((board, index) => (
+      {Object.keys(boardData).map((category, index) => (
         <div className='flex flex-col col-span-3 row-span-3 w-full h-full' key={index}>
           <div className='border-slate-500 border-b-2 flex flex-row justify-between pb-2'>
-            <p className='font-bold'>{board.title}</p>
-            <p className='text-gray-300 cursor-pointer' onClick={() => handleTabClick(board.tabKey)}>
+            <p className='font-bold'>{boardTitles[category]}</p>
+            <p className='text-gray-300 cursor-pointer' onClick={() => handleTabClick(category)}>
               더보기 {'>'}
             </p>
           </div>
-          {board.posts.slice(0, 4).map((post, idx) => (
+          {boardData[category] && boardData[category].slice(0, boardData[category].length).map((post, idx) => (
             <div
               className='w-full h-42 flex flex-col border-b-2 py-2 items-start cursor-pointer'
               key={idx}
               onClick={() => handlePostClick(post)} // 게시글 클릭 시 상세보기로 이동
             >
               <h3 className='font-bold text-lg'>{post.title}</h3>
-              <p className='mt-2 mb-4'>{post.description}</p>
-              <p className='cursor-pointer underline md:decoration-1'>{post.author}</p>
+              <p className='mt-2 mb-4'>{post.content}</p>
+              <p className='cursor-pointer underline md:decoration-1'>{post.nickname ? post.nickname : post.userId}</p>
               <div className='w-1/2 flex justify-between mt-4 text-sm text-gray-400'>
-                <p>{post.date}</p>
-                <p>조회 {post.views}</p>
+                <p>{format(new Date(post.createdAt), 'yyyy-MM-dd')}</p>
+                <p>조회 {post.viewCount}</p>
               </div>
             </div>
           ))}

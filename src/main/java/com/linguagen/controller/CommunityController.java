@@ -71,4 +71,10 @@ public class CommunityController {
         }
         return ResponseEntity.ok(communities);
     }
+
+    // 카테고리별로 최신 글 4개 가져오기
+    @GetMapping("/latest/{category}")
+    public List<CommunityDTO> getLatestPostsByCategory(@PathVariable String category) {
+        return service.getLatestPostsByCategory(category);
+    }
 }
