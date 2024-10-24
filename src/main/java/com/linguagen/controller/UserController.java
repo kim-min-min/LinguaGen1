@@ -3,7 +3,6 @@ package com.linguagen.controller;
 
 import com.linguagen.dto.UserInterestDTO;
 import com.linguagen.entity.User;
-import com.linguagen.entity.UserInterest;
 import com.linguagen.repository.UserInterestRepository;
 import com.linguagen.service.UserInterestService;
 import com.linguagen.service.UserService;
@@ -25,7 +24,7 @@ public class UserController {
     private final UserInterestService userInterestService;
 
     // 생성자 주입
-    public UserController(UserService userService, UserInterestRepository userInterestRepository, UserInterestService userInterestService) {
+    public UserController(UserService userService, UserInterestService userInterestService) {
         this.userService = userService;
         this.userInterestService = userInterestService;
     }

@@ -1,7 +1,5 @@
 package com.linguagen.dto;
 
-
-
 import java.util.List;
 
 

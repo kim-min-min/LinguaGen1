@@ -3,7 +3,6 @@ package com.linguagen.service;
 
 
 import com.linguagen.entity.User;
-import com.linguagen.entity.UserInterest;
 import com.linguagen.repository.UserInterestRepository;
 import com.linguagen.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
@@ -20,7 +19,7 @@ public class UserService {
 
 
     // 생성자 주입
-    public UserService(UserRepository userRepository, UserInterestRepository userInterestRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
