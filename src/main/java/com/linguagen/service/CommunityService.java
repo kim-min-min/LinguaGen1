@@ -15,6 +15,8 @@ public class CommunityService {
 
     @Autowired
     private CommunityRepository repository;
+    @Autowired
+    private CommunityRepository communityRepository;
 
     // 게시글 생성
     public CommunityDTO createCommunityPost(CommunityDTO communityDTO) {
@@ -83,6 +85,12 @@ public class CommunityService {
     public List<CommunityDTO> searchPostsByNickname(String nickname) {
         List<Community> communities = repository.findByUserNicknameContaining(nickname);
         return communities.stream().map(this::convertToDTO).toList();
+    }
+
+    // 카테고리별로 최신 글 4개 가져오기
+    public List<CommunityDTO> getLatestPostsByCategory(String category) {
+        List<Community> latestPosts = communityRepository.findTop4ByCategoryOrderByCreatedAtDesc(category);
+        return latestPosts.stream().map(this::convertToDTO).toList();
     }
 
     // 엔티티를 DTO로 변환
