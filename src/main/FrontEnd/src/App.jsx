@@ -16,6 +16,7 @@ import RuinsCanvas from './components/Game/RuinsCanvas';
 import PageLoader from './components/PageLoader';
 import Writing from "./components/Community/Writing.jsx";
 
+import WelcomeMessage from './components/WelcomeMessage';
 function App() {
   return (
     <Router>
@@ -35,6 +36,7 @@ function App() {
         <Route path='/mountain' element={<MountainCanvas />} />
         <Route path='/ruins' element={<RuinsCanvas />} />
         <Route path='/loading' element={<PageLoader />} />
+        <Route path='/demo' element={<WelcomeMessage />} />
       </Routes>
     </Router>
   );

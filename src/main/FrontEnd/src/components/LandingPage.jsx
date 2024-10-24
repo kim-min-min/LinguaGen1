@@ -1,233 +1,133 @@
-import React, { useRef, useMemo, useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { TypeAnimation } from 'react-type-animation';
-import DiceCanvas from './DiceCanvas';
-import '../App.css';
-import useStore from '../store/useStore';
-import DungeonCanvas from './Game/DungeonCanvas';
-import RuinsCanvas from './Game/RuinsCanvas';
-import MountainCanvas from './Game/MountainCanvas';
-import PageLoader from './PageLoader';
+import * as THREE from 'three'
+import React, { useRef, useState, useCallback, useEffect, useMemo } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { Plane, useAspect, useTexture } from '@react-three/drei'
+import { EffectComposer, DepthOfField, Vignette } from '@react-three/postprocessing'
+import Fireflies from './Fireflies'
+import bgUrl from '../assets/LandingAssets/bg.jpg'
+import starsUrl from '../assets/LandingAssets/stars.png'
+import groundUrl from '../assets/LandingAssets/ground.png'
+import bearUrl from '../assets/LandingAssets/DevilishCat.png'
+import leaves1Url from '../assets/LandingAssets/leaves1.png'
+import leaves2Url from '../assets/LandingAssets/leaves2.png'
+import layerMaterial from './materials/layerMaterial.jsx'
+import './LandingPage.css'
+import { TypeAnimation } from 'react-type-animation'
+import useStore from '../store/useStore'
+import { useNavigate } from 'react-router-dom'
 
-const canvases = [DungeonCanvas, RuinsCanvas, MountainCanvas];
+function Scene({ dof }) {
+  const scaleN = useAspect(1600, 1000, 1.05)
+  const scaleW = useAspect(2200, 1000, 1.05)
+  const textures = useTexture([bgUrl, starsUrl, groundUrl, bearUrl, leaves1Url, leaves2Url])
+  const group = useRef()
+  const layersRef = useRef([])
+  const [movement] = useState(() => new THREE.Vector3())
+  const [temp] = useState(() => new THREE.Vector3())
+  const layers = useMemo(() => [
+    { texture: textures[0], z: 0, factor: 0.005, scale: scaleW },
+    { texture: textures[1], z: 10, factor: 0.005, scale: scaleW },
+    { texture: textures[2], z: 20, scale: scaleW },
+    {
+      texture: textures[3],
+      z: 30,
+      scaleFactor: 0.83,
+      scale: [scaleN[0] * 0.6, scaleN[1] * 0.6, 1],
+      position: [-13.5, 0, 30]
+    },
+    { texture: textures[4], factor: 0.03, scaleFactor: 1, z: 40, wiggle: 0.6, scale: scaleW },
+    { texture: textures[5], factor: 0.04, scaleFactor: 1.3, z: 49, wiggle: 1, scale: scaleW },
+  ], [textures, scaleN, scaleW])
 
-function LandingPage() {
-  const navigate = useNavigate();
-  const {
-    isLoaded,
-    startTyping,
-    isLeaving,
-    showDemo,
-    welcomeMessage1,
-    welcomeMessage2,
-    showWelcomeMessage1,
-    showWelcomeMessage2,
-    setIsLoaded,
-    setStartTyping,
-    setIsLeaving,
-    setShowDemo,
-    setWelcomeMessage1,
-    setWelcomeMessage2,
-    setShowWelcomeMessage1,
-    setShowWelcomeMessage2,
-  } = useStore();
-
-  const [selectedCanvas, setSelectedCanvas] = useState(null);
-  const [isLoaderReady, setIsLoaderReady] = useState(false);
-  const [showLoader, setShowLoader] = useState(false);
-  const pageLoaderRef = useRef(null);
-
-  const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
-  const positions = [
-    { top: '5%', left: '40%' },
-    { top: '25%', left: '15%' },
-    { top: '60%', left: '13%' },
-    { top: '80%', left: '38%' },
-    { top: '60%', right: '18%' },
-    { top: '25%', right: '15%' },
-  ];
-
-  const initialTransforms = [
-    'translateY(-250%)',
-    'translateY(-350%)',
-    'translateY(-550%)',
-    'translateY(-600%)',
-    'translateY(-550%)',
-    'translateY(-570%)',
-  ];
-
-  const rotationSpeeds = useMemo(() => [
-    { x: 0.005, y: 0.005, z: 0.005 },
-    { x: -0.005, y: 0.005, z: -0.005 },
-    { x: 0.005, y: -0.005, z: 0.005 },
-    { x: -0.005, y: -0.005, z: -0.005 },
-    { x: 0.005, y: 0.005, z: -0.005 },
-    { x: -0.005, y: 0.005, z: 0.005 },
-  ], []);
-
-  useEffect(() => {
-    setTimeout(() => setIsLoaded(true), 100);
-    setTimeout(() => setStartTyping(true), 3400);
-  }, [setIsLoaded, setStartTyping]);
-
-  const preloadResources = useCallback(async () => {
-    // 이미지와 폰트를 미리 로드
-    const imageModules = import.meta.glob('../assets/CanvasImage/run_*.png');
-    const loadedFrames = await Promise.all(
-      Object.values(imageModules).map(importFunc => importFunc())
-    );
-    const sortedFrames = loadedFrames.map(module => module.default).sort();
-
-    await Promise.all(
-      sortedFrames.map(src => new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = resolve;
-        img.onerror = reject;
-        img.src = src;
-      }))
-    );
-
-    const font = new FontFace('AntiquityPrint', 'url(src/assets/CanvasImage/font/Antiquity-print.ttf)');
-    await font.load().then((loadedFont) => {
-      document.fonts.add(loadedFont);
-    }).catch((error) => {
-      console.error('폰트 로딩 실패:', error);
-    });
-
-    setIsLoaderReady(true);
-  }, []);
-
-  useEffect(() => {
-    preloadResources();
-  }, [preloadResources]);
-
-  const selectRandomCanvas = useCallback(() => {
-    const randomCanvas = canvases[Math.floor(Math.random() * canvases.length)];
-    setSelectedCanvas(() => randomCanvas);
-  }, []);
-
-  const showWelcomeMessages = useCallback(() => {
-    setWelcomeMessage1('링구아젠에 오신걸 환영합니다.');
-    setTimeout(() => setShowWelcomeMessage1(true), 100);
-
-    setTimeout(() => {
-      setShowWelcomeMessage1(false);
-      
-      setTimeout(() => {
-        setWelcomeMessage2('게임을 한번 해볼게요.');
-        setTimeout(() => setShowWelcomeMessage2(true), 100);
-        
-        setTimeout(() => {
-          setShowWelcomeMessage2(false);
-          setTimeout(() => {
-            selectRandomCanvas(); // PageLoader가 시작될 때 Canvas 선택
-            setShowLoader(true); // PageLoader를 표시
-          }, 1000);
-        }, 3000);
-      }, 1000);
-    }, 3000);
-  }, [setWelcomeMessage1, setShowWelcomeMessage1, setWelcomeMessage2, setShowWelcomeMessage2, setShowLoader, selectRandomCanvas]);
-
-  const handleStartClick = useCallback(() => {
-    setIsLeaving(true);
-    const maxSlideUpDelay = Math.max(...[0.5, 0.7, 1.3, 1.9, 1.5, 0.9]) * 1000;
-    const slideUpDuration = 500;
-    const totalSlideUpTime = maxSlideUpDelay + slideUpDuration + 200;
-
-    setTimeout(showWelcomeMessages, totalSlideUpTime);
-  }, [setIsLeaving, showWelcomeMessages]);
-
-  const handleLoginClick = useCallback(() => {
-    navigate('/login');
-  }, [navigate]);
-
-  const handleLoadComplete = useCallback(() => {
-    setShowLoader(false);
-    setShowDemo(true); // PageLoader가 완료된 후 SelectedCanvas를 화면에 표시
-  }, [setShowDemo]);
-
-  if (showLoader && isLoaderReady) {
-    const SelectedCanvas = selectedCanvas;
-    return (
-      <>
-        <PageLoader ref={pageLoaderRef} onLoadComplete={handleLoadComplete} />
-        {selectedCanvas && (
-          <div style={{ display: 'none' }}>
-            <SelectedCanvas />
-          </div>
-        )}
-      </>
-    );
-  }
-
-  if (showDemo && selectedCanvas) {
-    const SelectedCanvas = selectedCanvas;
-    return <SelectedCanvas />;
-  }
+  useFrame((state, delta) => {
+    movement.lerp(temp.set(state.mouse.x, state.mouse.y * 0.2, 0), 0.2)
+    group.current.position.x = THREE.MathUtils.lerp(group.current.position.x, state.mouse.x * 20, 0.2)
+    group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, state.mouse.y / 10, 0.2)
+    group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, -state.mouse.x / 2, 0.2)
+    layersRef.current[4].uniforms.time.value = layersRef.current[5].uniforms.time.value += delta
+  }, 1)
 
   return (
-    <div className="scene-container">
-      {letters.map((letter, index) => (
-        <div 
-          key={letter} 
-          className={`dice-container ${isLoaded ? 'slide-down' : ''} ${isLeaving ? 'slide-up' : ''} dice-${index}`}
-          style={{
-            position: 'absolute',
-            width: '20%',
-            height: '20%',
-            backgroundColor: 'transparent',
-            ...positions[index],
-            transform: isLoaded ? 'none' : initialTransforms[index]
-          }}
-        >
-          <DiceCanvas 
-            letter={letter} 
-            rotationSpeed={rotationSpeeds[index]} 
-          />
-        </div>
+    <group ref={group}>
+      <Fireflies count={20} radius={80} colors={['orange']} />
+      {layers.map(({ scale, texture, ref, factor = 0, scaleFactor = 1, wiggle = 0, z, position }, i) => (
+        <Plane scale={scale} args={[1, 1, wiggle ? 10 : 1, wiggle ? 10 : 1]} position={position || [0, 0, z]} key={i} ref={ref}>
+          <layerMaterial movement={movement} textr={texture} factor={factor} ref={(el) => (layersRef.current[i] = el)} wiggle={wiggle} scale={scaleFactor} />
+        </Plane>
       ))}
-      {welcomeMessage1 && (
-        <div style={{userSelect : 'none'}} className={`welcome-message-1 ${showWelcomeMessage1 ? 'fade-in' : 'fade-out'}`}>
-          {welcomeMessage1}
-        </div>
-      )}
-      {welcomeMessage2 && (
-        <div style={{userSelect : 'none'}} className={`welcome-message-2 ${showWelcomeMessage2 ? 'fade-in' : 'fade-out'}`}>
-          {welcomeMessage2}
-        </div>
-      )}
-      <div style={{userSelect : 'none'}} className={`title-container ${isLoaded ? 'fade-in' : ''} ${isLeaving ? 'fade-out' : ''}`}>
-        {startTyping ? (
-          <TypeAnimation
-            sequence={[
-              'LinguaGen',
-              1000,
-              'Study English',
-              1000,
-              'AI-Powered',
-              1000,
-              'LinguaGen',
-            ]}
-            wrapper="h3"
-            speed={35}
-            style={{ fontSize: '100px', marginBottom: '25px', fontFamily: 'InterBold'}}
-            repeat={Infinity}
-          />
-        ) : (
-          <h3 style={{ fontSize: '100px', fontWeight: 'bold', marginBottom: '25px', visibility: 'hidden' }}>
-            LinguaGen
-          </h3>
-        )}
-        <button onClick={handleStartClick} style={{ opacity: isLeaving ? 0 : 1, transition: 'opacity 0.5s ease-out', width: '200px', marginBottom: '10px' }}>
-          시작하기
-        </button>
-        <br/>
-        <button onClick={handleLoginClick} style={{ backgroundColor: 'black', opacity: isLeaving ? 0 : 1, transition: 'opacity 0.5s ease-out', width: '150px',fontSize : '20px', marginTop: '10px' }}>
-          로그인하기
-        </button>
-      </div>
-    </div>
-  );
+    </group>
+  )
 }
 
-export default LandingPage;
+function Effects() {
+  const ref = useRef()
+  return (
+    <EffectComposer disableNormalPass multisampling={0}>
+      <DepthOfField ref={ref} target={[0, 0, 30]} bokehScale={8} focalLength={0.1} width={1024} />
+      <Vignette />
+    </EffectComposer>
+  )
+}
+
+export const LandingPage = () => {
+  const navigate = useNavigate()
+  const {
+    isLeaving,
+    setIsLeaving,
+  } = useStore()
+
+  const handleStartClick = useCallback(() => {
+    setIsLeaving(true)
+    setTimeout(() => {
+      navigate('/demo')
+    }, 1000) // 페이드 아웃 효과를 위한 시간 조정
+  }, [setIsLeaving, navigate])
+
+  const handleLoginClick = useCallback(() => {
+    navigate('/login')
+  }, [navigate])
+
+  return (
+    <div className="landing-page">
+      <div id="canvasWrapper" className={`${isLeaving ? 'fade-out' : ''}`}>
+        <Canvas
+          orthographic
+          camera={{ zoom: 5, position: [0, 0, 200], far: 300, near: 50 }}
+          gl={{ outputEncoding: THREE.sRGBEncoding, toneMapping: THREE.ACESFilmicToneMapping, antialias: false }}
+        >
+          <Scene />
+          <Effects />
+        </Canvas>
+      </div>
+      <div id="overlay">
+        <div id="bg main"></div>
+        <div id="stars main"></div>
+        <div id="ground main"></div>
+        <div id="bear main"></div>
+        <div id="leaves1 main"></div>
+        <div id="leaves2 main"></div>
+      </div>
+      <div className="absolute top-1/2 right-16 transform -translate-y-full bg-transparent p-4 rounded-lg flex flex-col justify-start items-center gap-4 w-auto h-20 z-10">
+        <TypeAnimation
+          sequence={[
+            'LinguaGen', 1000,
+            'Study English', 1000,
+            'AI-Powered', 1000,
+          ]}
+          wrapper="h2"
+          cursor={true}
+          repeat={Infinity}
+          className="text-white text-xl font-bold mb-8"
+          style={{ fontSize: '48px' }}
+        />
+      </div>
+      <div className="absolute bottom-32 right-28 transform -translate-y-1/2 bg-zinc-800 p-4 rounded-lg shadow-lg flex flex-col justify-start items-center gap-4 w-auto h-60 p-8 z-0">
+        <button onClick={handleStartClick} className="custom-btn btn-12 flex justify-center items-center"><span>Start</span><span>시작하기</span></button>
+        <button onClick={handleLoginClick} className="custom-btn btn-12 flex justify-center items-center"><span>Login</span><span>로그인 하러 가기</span></button>
+        <p className='mt-8 text-gray-400 font-bold'>made by LinguaGen</p>
+      </div>
+    </div>
+  )
+}
+
+export default LandingPage
