@@ -210,7 +210,7 @@ function ProfileCard() {
           <div className="mr-4 flex flex-col gap-8">
             <ContextMenu>
               <ContextMenuTrigger className="text-lg font-bold">
-                {userInfo ? userInfo.id : 'USERNAME'}
+                {userInfo ? (userInfo.nickname ? userInfo.nickname : userInfo.id) : 'USERNAME'}
               </ContextMenuTrigger>
               <ContextMenuContent>
                 <ContextMenuItem>수정하기</ContextMenuItem>
@@ -233,7 +233,7 @@ function ProfileCard() {
                       {userGradeString && userTier ? `${userGradeString} ${userTier}` : '로딩 중...'}
                     </h4>
                     <h3 className="text-md text-center">
-                      {userInfo ? `${userInfo.points}pt.` : '로딩 중...'}
+                      보유 포인트 : {userInfo ? `${userInfo.points}pt` : '로딩 중...'}
                     </h3>
                     <h2 className="text-sm text-center">
                       {userGradeString ? getGradeMessage(userGradeString) : '로딩 중...'}
