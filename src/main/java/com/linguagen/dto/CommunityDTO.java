@@ -21,4 +21,5 @@ public class CommunityDTO {
     private int viewCount;
     private int likeCount;
     private boolean isDeleted;
+    private String nickname;
 }
