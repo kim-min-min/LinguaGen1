@@ -34,7 +34,7 @@ const WordCarousel = () => {
                                 <div className="p-1">
                                     <Card>
                                         <CardContent className="flex flex-col aspect-square items-center justify-center p-6">
-                                            <h2 className="text-4xl InterBold mb-2" style={{ userSelect: 'none' }}>
+                                            <h2 className="text-4xl kanit-bold mb-2" style={{ userSelect: 'none' }}>
                                                 {word.word}
                                             </h2>
                                             <h4 className="text-2xl text-gray-600" style={{ userSelect: 'none' }}>
