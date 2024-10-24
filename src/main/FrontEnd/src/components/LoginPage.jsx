@@ -212,10 +212,29 @@ function Signup({ onSignupToggle, onNextSignup }) {
 
   // 유효성 검사
   const validate = () => {
+    // 이메일 유효성 검사
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // 기본적인 이메일 정규식
+    if (!emailRegex.test(formData.id)) {
+      setError('유효한 이메일 주소를 입력해 주세요.');
+      return false;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError('비밀번호가 일치하지 않습니다.');
       return false;
     }
+    // 전화번호 유효성 검사 (0~9로만 구성된 문자열)
+    const phoneRegex = /^[0-9]+$/; // 정규 표현식: 숫자만 허용
+    if (!phoneRegex.test(formData.tell)) {
+      setError('전화번호는 숫자로만 입력해야 합니다.');
+      return false;
+    }
+    // 주소 입력 여부 확인
+    if (!formData.address || formData.address.trim() === '') {
+      setError('주소를 입력해 주세요.');
+      return false;
+    }
+
     return true;
   };
 
@@ -268,10 +287,10 @@ function Signup({ onSignupToggle, onNextSignup }) {
         <div className="grid gap-2">
           <Label htmlFor="phone">전화번호</Label>
           <Input
-            name="phone"
+            name="tell"
             type="tel"
             placeholder="전화번호 입력"
-            value={formData.phone}
+            value={formData.tell}
             onChange={handleChange} // onChange 핸들러 추가
             required
           />
@@ -350,7 +369,7 @@ function SignupNext({ formData, onPreviousSignup }) {
         id: formData.id,
         password: formData.password,
         name: formData.name,
-        tell: formData.phone,
+        tell: formData.tell,
         address: fullAddress,
       };
 
