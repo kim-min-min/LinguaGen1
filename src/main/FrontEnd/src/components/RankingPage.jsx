@@ -18,7 +18,7 @@ const RankingPage = () => {
     const [users, setUsers] = useState([]); // User data from the server
     const [error, setError] = useState(null); // Error handling
 
-    const tierOrder = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Challenger'];
+    const tierOrder = ['Challenger', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -57,12 +57,12 @@ const RankingPage = () => {
     const handleSort = () => {
         const groupedData = _.groupBy(filteredData, 'grade'); // grade(등급)별로 그룹화
 
-        // 각 그룹을 playtime 순으로 정렬합니다.
+        // 각 그룹을 exp(경험치) 순으로 정렬합니다.
         const sortedGroups = Object.keys(groupedData).map((grade) => {
             const sortedGroup = [...groupedData[grade]].sort((a, b) => {
-                const playtimeA = parseInt(a.playtime.replace('h', '')) || 0;
-                const playtimeB = parseInt(b.playtime.replace('h', '')) || 0;
-                return playtimeB - playtimeA; // 내림차순 정렬
+                const expA = parseInt(a.exp) || 0; // 경험치가 숫자임을 보장합니다.
+                const expB = parseInt(b.exp) || 0;
+                return expB - expA; // 내림차순 정렬
             });
             return sortedGroup;
         });
@@ -128,8 +128,9 @@ const RankingPage = () => {
                             <tr className="text-left border-b-2 border-gray-300 select-none">
                                 <th className='cursor-pointer' onClick={() => handleSort('rank')}>순위</th>
                                 <th className='cursor-pointer'>아이디</th>
-                                <th className='cursor-pointer' onClick={() => handleSort('tier')}>계급</th>
-                                <th className='cursor-pointer' onClick={() => handleSort('playtime')}>플레이타임</th>
+                                <th className='cursor-pointer' onClick={() => handleSort('grade')}>등급</th>
+                                <th className='cursor-pointer' onClick={() => handleSort('exp')}>경험치</th>
+
                             </tr>
                             </thead>
                             <tbody>
@@ -138,12 +139,13 @@ const RankingPage = () => {
                                     key={user.id || index}
                                     className={`border-b border-gray-300 ${getFontColor(index + 1)} ${getFontSize(index + 1)}`}
                                 >
-                                    <td>{index + 1}</td>
-                                    <td>{user.userId}</td>
-                                    <td>{user.grade}</td>
-                                    <td>{user.playtime || `${user.exp} XP`}</td>
+                                    <td>{index + 1}</td> {/* 순위 */}
+                                    <td>{user.userId}</td> {/* 사용자 ID */}
+                                    <td>{tierOrder[user.grade - 1] || 'Unknown'}</td>
+                                    <td>{`${user.exp} XP`}</td> {/* 경험치로 표시 */}
                                 </tr>
                             ))}
+
                             </tbody>
                         </table>
                     </div>
