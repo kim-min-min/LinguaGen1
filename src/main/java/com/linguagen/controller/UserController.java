@@ -1,7 +1,11 @@
 package com.linguagen.controller;
 
 
+import com.linguagen.dto.UserInterestDTO;
 import com.linguagen.entity.User;
+import com.linguagen.entity.UserInterest;
+import com.linguagen.repository.UserInterestRepository;
+import com.linguagen.service.UserInterestService;
 import com.linguagen.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,10 +22,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserInterestService userInterestService;
 
     // 생성자 주입
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserInterestRepository userInterestRepository, UserInterestService userInterestService) {
         this.userService = userService;
+        this.userInterestService = userInterestService;
     }
 
     // 모든 유저 조회
@@ -41,13 +47,14 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-    // 유저 생성 또는 업데이트
+    // 유저 생성
     @PostMapping
     public ResponseEntity<User> saveOrUpdateUser(@RequestBody User user) {
         User savedUser = userService.saveOrUpdateUser(user);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
+
+
 
     // 유저 삭제
     @DeleteMapping("/{id}")
@@ -55,7 +62,30 @@ public class UserController {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    
+
+    // 유저 관심사 저장
+    @PostMapping("/interests")
+    public ResponseEntity<String> saveUserInterests(@RequestBody UserInterestDTO request) {
+        try {
+
+            // 디버깅: 요청 데이터 확인
+            System.out.println("User ID: " + request.getUserId());
+            System.out.println("Interests: " + request.getInterestIdx());
+
+            List<String> interests = request.getInterestIdx();
+            String userId = request.getUserId();
+
+            // Service를 통해 관심사 저장 로직 수행
+            userInterestService.saveUserInterests(userId, interests);
+
+            return new ResponseEntity<>("관심사 저장 완료", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("관심사 저장 실패: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
     // 로그인
     @PostMapping("/login")
     public String login(@RequestBody User user, HttpSession session) {

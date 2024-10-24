@@ -298,7 +298,6 @@ function Signup({ onSignupToggle, onNextSignup }) {
         <Button onClick={handleSubmit} className="w-full">
           Next
         </Button>
-
         {/* 에러 메시지 출력 */}
         {error && <p style={{ color: 'red' }}>{error}</p>}
       </form>
@@ -317,6 +316,7 @@ function SignupNext({ formData, onPreviousSignup }) {
   const [sliderValue, setSliderValue] = useState(33); // 초기 값 33
   const [selectedInterests, setSelectedInterests] = useState([]); // 관심사 선택 상태
 
+
   const getTier = () => {
     if (sliderValue < 49) return "Bronze";
     if (sliderValue < 80) return "Silver";
@@ -325,12 +325,16 @@ function SignupNext({ formData, onPreviousSignup }) {
 
   // ToggleGroup에서 선택된 항목 업데이트
   const handleInterestChange = (interest) => {
-    setSelectedInterests((prev) =>
-      prev.includes(interest)
-        ? prev.filter((item) => item !== interest) // 이미 선택된 경우 제거
-        : [...prev, interest] // 선택된 경우 추가
-    );
+    setSelectedInterests((prev) => {
+      const newInterests = prev.includes(interest)
+          ? prev.filter((item) => item !== interest) // 이미 선택된 경우 제거
+          : [...prev, interest]; // 선택된 경우 추가
+
+      console.log('선택된 관심사:', newInterests); // 업데이트된 배열 확인
+      return newInterests;
+    });
   };
+
 
 
 
@@ -340,42 +344,67 @@ function SignupNext({ formData, onPreviousSignup }) {
       // 주소 합치기
       const fullAddress = `${formData.address} ${formData.detailedAddress}`.trim();
 
+
       // completeFormData 객체에 모든 필수 데이터를 모아줍니다.
       const completeFormData = {
         id: formData.id,
         password: formData.password,
-        name: formData.name, // 예시로 이름 추가
-        tell: formData.phone, // 전화번호 필드 추가
+        name: formData.name,
+        tell: formData.phone,
         address: fullAddress,
       };
 
-      // 회원가입 정보 로그로 출력
       console.log("회원가입 정보:", completeFormData);
 
-      // axios로 POST 요청 전송
-      const response = await axios.post('http://localhost:8085/api/users', completeFormData, {
+      // 첫 번째 POST 요청: 사용자 정보 전송
+      const userResponse = await axios.post('http://localhost:8085/api/users', completeFormData, {
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       });
 
-      if (response.status === 201) {
-        alert('회원가입이 완료되었습니다!');
-        navigate('/main'); // 메인 페이지로 이동
+      if (userResponse.status === 201) {
+        console.log('사용자 정보 저장 성공:', userResponse.data);
+
+        if (selectedInterests.length === 0) {
+          console.warn('선택된 관심사가 없습니다. 관심사 전송을 건너뜁니다.');
+          alert('회원가입이 완료되었습니다!');
+          navigate('/main'); // 메인 페이지로 이동
+          return;
+        }
+
+        // 두 번째 POST 요청: 관심사 정보 전송
+        const interestResponse = await axios.post('http://localhost:8085/api/users/interests', {
+          userId: formData.id, // 사용자 ID와 함께 관심사 정보 전송
+          interestIdx: selectedInterests,
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+
+
+        });
+
+        if (interestResponse.status === 201) {
+          alert('회원가입이 완료되었습니다!');
+          navigate('/main'); // 메인 페이지로 이동
+        } else {
+          console.warn('관심사 저장 실패:', interestResponse.data);
+          alert('회원가입 중 관심사 저장에 실패했습니다.');
+        }
       } else {
-        console.warn('회원가입 실패:', response.data);
+        console.warn('회원가입 실패:', userResponse.data);
         alert('회원가입에 실패했습니다.');
       }
     } catch (error) {
-      // 오류 처리: 서버와의 통신 문제와 요청 오류를 구분
       if (error.response) {
-        console.error('회원가입 중 서버 오류 발생:', error.response.data);
-        alert(`회원가입 실패: 미입력 정보가 있습니다.`);
+        console.error('서버 오류 발생:', error.response.data);
+        alert(`회원가입 실패: ${error.response.data.message || '오류가 발생했습니다.'}`);
       } else if (error.request) {
         console.error('서버 응답 없음:', error.request);
         alert('서버와 통신할 수 없습니다. 나중에 다시 시도해주세요.');
       } else {
-        console.error('회원가입 요청 설정 중 오류 발생:', error.message);
+        console.error('요청 설정 중 오류 발생:', error.message);
         alert('회원가입 요청 처리 중 문제가 발생했습니다.');
       }
     }

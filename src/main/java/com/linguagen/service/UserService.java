@@ -3,6 +3,8 @@ package com.linguagen.service;
 
 
 import com.linguagen.entity.User;
+import com.linguagen.entity.UserInterest;
+import com.linguagen.repository.UserInterestRepository;
 import com.linguagen.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -16,8 +18,9 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+
     // 생성자 주입
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserInterestRepository userInterestRepository) {
         this.userRepository = userRepository;
     }
 
@@ -52,6 +55,8 @@ public class UserService {
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
+
+
 
 
 
