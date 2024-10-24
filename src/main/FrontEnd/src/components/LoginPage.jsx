@@ -197,6 +197,7 @@ function Signup({ onSignupToggle, onNextSignup }) {
     id: '',
     password: '',
     confirmPassword: '',
+    nickname: '', // 닉네임 추가
     tell: '',
     address: '',
     detailedAddress: '',
@@ -232,6 +233,11 @@ function Signup({ onSignupToggle, onNextSignup }) {
     // 주소 입력 여부 확인
     if (!formData.address || formData.address.trim() === '') {
       setError('주소를 입력해 주세요.');
+      return false;
+    }
+    // 닉네임 입력 여부 확인
+    if (!formData.nickname || formData.nickname.trim() === '') {
+      setError('닉네임을 입력해 주세요.');
       return false;
     }
 
@@ -280,6 +286,17 @@ function Signup({ onSignupToggle, onNextSignup }) {
             type="password"
             placeholder="비밀번호 확인"
             value={formData.confirmPassword}
+            onChange={handleChange} // onChange 핸들러 추가
+            required
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="nickname">닉네임</Label>
+          <Input
+            name="nickname"
+            type="text"
+            placeholder="닉네임 입력"
+            value={formData.nickname}
             onChange={handleChange} // onChange 핸들러 추가
             required
           />
@@ -368,7 +385,7 @@ function SignupNext({ formData, onPreviousSignup }) {
       const completeFormData = {
         id: formData.id,
         password: formData.password,
-        name: formData.name,
+        nickname: formData.nickname,
         tell: formData.tell,
         address: fullAddress,
       };
