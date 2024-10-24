@@ -64,11 +64,7 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findByIdAndPassword(user.getId(), user.getPassword());
 
         if (optionalUser.isPresent()) {
-            User authenticatedUser = optionalUser.get();
 
-            // 세션에 로그인 정보 저장
-            session.setAttribute("user", authenticatedUser.getId());
-            session.setAttribute("nickname", authenticatedUser.getNickname());
             return true;
         }
         return false;

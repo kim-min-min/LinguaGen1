@@ -54,6 +54,11 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
     const activeTab = activePanel === 'accountSettings' ? 'profile' : 'notification';
     const [selectedImage, setSelectedImage] = useState('https://via.placeholder.com/60'); // 기본 이미지 URL
 
+    // 세션 스토리지에서 값 가져오기
+    const nickname = sessionStorage.getItem('nickname') || 'Unknown';
+    const email = sessionStorage.getItem('user') || 'example@example.com';
+    const phone = sessionStorage.getItem('tell') || '010-0000-0000';
+
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -118,7 +123,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                 </div>
                                 <div className='p-8 pt-0 w-full flex justify-start'>
                                     <p className='font-bold'>닉네임</p>
-                                    <p className='ml-32 font-bold'>Scar Pula</p>
+                                    <p className='ml-32 font-bold'>{nickname}</p>
                                 </div>
                                 <div className='p-8 pt-0 w-full flex justify-start'>
                                     <p className='font-bold'>자기소개</p>
@@ -158,7 +163,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                 <CardContent className='flex flex-col'>
                                     <div className='p-8 pt-0 pb-0 w-full flex justify-between mb-4'>
                                         <p className='font-bold w-24'>이메일</p>
-                                        <p className='mr-40 font-bold'>dltjdeh7745@naver.com</p>
+                                        <p className='mr-40 font-bold'>{email}</p>
                                         <Dialog>
                                             <DialogTrigger className='bg-transparent w-0 h-0 mb-4'>
                                                 <Button>설정</Button>
@@ -173,7 +178,8 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                                         <Label htmlFor="name" className="text-right">
                                                             이메일
                                                         </Label>
-                                                        <Input id="email" placeholder='example@example' className="col-span-3" />
+                                                        <Input id="email" placeholder='example@example'
+                                                               className="col-span-3"/>
                                                     </div>
                                                 </div>
                                                 <DialogFooter>
@@ -199,13 +205,15 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                                         <Label htmlFor="password" className="text-right">
                                                             비밀번호
                                                         </Label>
-                                                        <Input id="password" placeholder='8~12자리 대소문자 구분없음' className="col-span-3" />
+                                                        <Input id="password" placeholder='8~12자리 대소문자 구분없음'
+                                                               className="col-span-3"/>
                                                     </div>
                                                     <div className="grid grid-cols-4 items-center gap-4">
                                                         <Label htmlFor="confirmPassword" className="text-right">
                                                             비밀번호 확인
                                                         </Label>
-                                                        <Input id="confirmPassword" placeholder='비밀번호 재입력' className="col-span-3" />
+                                                        <Input id="confirmPassword" placeholder='비밀번호 재입력'
+                                                               className="col-span-3"/>
                                                     </div>
                                                 </div>
                                                 <DialogFooter>
@@ -216,7 +224,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                     </div>
                                     <div className='p-8 pt-0 w-full flex justify-between mb-4'>
                                         <p className='font-bold'>전화번호</p>
-                                        <p className='mr-48 font-bold'>010-8470-0211</p>
+                                        <p className='mr-48 font-bold'>{phone}</p>
                                         <Dialog>
                                             <DialogTrigger className='bg-transparent w-0 h-0 mb-4'>
                                                 <Button>설정</Button>
@@ -231,7 +239,8 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                                         <Label htmlFor="phone" className="text-right">
                                                             전화번호
                                                         </Label>
-                                                        <Input id="phone" placeholder='- 없이 작성하세요' className="col-span-3" />
+                                                        <Input id="phone" placeholder='- 없이 작성하세요'
+                                                               className="col-span-3"/>
                                                     </div>
                                                 </div>
                                                 <DialogFooter>
@@ -246,7 +255,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                     </>
                 )}
 
-                {activeTab === 'notification' && <NotificationPanel />} {/* 알림 설정 탭 */}
+                {activeTab === 'notification' && <NotificationPanel/>} {/* 알림 설정 탭 */}
             </div>
         </div>
     );
