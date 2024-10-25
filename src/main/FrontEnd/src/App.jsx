@@ -37,6 +37,10 @@ function App() {
         <Route path='/ruins' element={<RuinsCanvas />} />
         <Route path='/loading' element={<PageLoader />} />
         <Route path='/demo' element={<WelcomeMessage />} />
+        <Route path="/community/:board" element={<Community />} />
+        <Route path="/community/:board/detailview/:idx" element={<Community />} />
+        <Route path="/community/:board/detailview" element={<Community />} />
+        <Route path='/community/:board/writing' element={<Community />} />
       </Routes>
     </Router>
   );

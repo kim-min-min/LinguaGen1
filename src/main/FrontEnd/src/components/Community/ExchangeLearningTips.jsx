@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -12,7 +13,8 @@ import {
 } from '@/components/ui/pagination';
 import { Button } from '@/components/ui/button';
 
-const ExchangeLearningTips = ({ handleTabClick }) => {
+const ExchangeLearningTips = ({ handleTabClick, setSelectedItem }) => {
+  const navigate = useNavigate();
   // 카페 게시판 형식의 데이터셋
   const data = Array.from({ length: 30 }, (_, i) => ({
     id: i + 1,
@@ -41,6 +43,15 @@ const ExchangeLearningTips = ({ handleTabClick }) => {
     setCurrentPage(1); // 페이지가 바뀌면 첫 페이지로 돌아감
   };
 
+  const handleWriteClick = () => {
+    navigate('/community/exchangelearningtips/writing');
+  };
+
+  const handleRowClick = (item) => {
+    setSelectedItem(item);
+    handleTabClick('detailview', 'exchangelearningtips');
+  };
+
   return (
     <div className="w-full bg-white rounded-md flex flex-col p-12 justify-start items-center min-h-screen"> {/* min-height 설정 */}
       <p className="font-bold text-xl">학습 팁 공유</p>
@@ -48,7 +59,7 @@ const ExchangeLearningTips = ({ handleTabClick }) => {
         <div className="w-full h-20 border-b-2 border-gray-300 flex justify-end items-center gap-4">
           <Button
             className='bg-green-300 text-gray-500 font-bold hover:bg-green-400'
-            onClick={() => handleTabClick('Writing')} // 글쓰기 클릭 시 activeTab을 Writing으로 변경
+            onClick={handleWriteClick}
           >
             글쓰기
           </Button>
@@ -79,7 +90,7 @@ const ExchangeLearningTips = ({ handleTabClick }) => {
           </TableHeader>
           <TableBody>
             {selectedData.map((item) => (
-              <TableRow key={item.id}>
+              <TableRow key={item.id} onClick={() => handleRowClick(item)} className="cursor-pointer">
                 <TableCell className="font-medium text-center h-14">{item.id}</TableCell>
                 <TableCell>{item.title}</TableCell>
                 <TableCell className="text-center">{item.author}</TableCell>
