@@ -51,6 +51,11 @@ const FreeBoard = ({ handleTabClick }) => {
         setCurrentPage(1); // 페이지가 바뀌면 첫 페이지로 돌아감
     };
 
+    const handleRowClick = (item) => {
+        setSelectedItem(item); // 선택한 데이터를 설정
+        handleTabClick('DetailView'); // 상세보기 페이지로 이동
+    };
+
     return (
         <div
             className="w-full bg-white rounded-md flex flex-col p-12 justify-start items-center min-h-screen"> {/* min-height 설정 */}
@@ -90,7 +95,7 @@ const FreeBoard = ({ handleTabClick }) => {
                     </TableHeader>
                     <TableBody>
                         {selectedData.map((item) => (
-                            <TableRow key={item.idx}>
+                            <TableRow key={item.id} onClick={() => handleRowClick(item)} className="cursor-pointer">
                                 <TableCell className="font-medium text-center h-14">{item.idx}</TableCell>
                                 <TableCell>{item.title}</TableCell>
                                 <TableCell className="text-center">{item.nickname ? item.nickname : (item.userId.includes('@') ? item.userId.split('@')[0] : item.userId)}</TableCell>
