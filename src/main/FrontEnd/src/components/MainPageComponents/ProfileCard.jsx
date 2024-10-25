@@ -138,11 +138,32 @@ function ProfileCard() {
     }
   };
 
+/*
   const handleLogout = () => {
     setIsLoggedIn(false);
     sessionStorage.removeItem('user'); // 세션에서 사용자 정보 삭제
     // 필요한 경우 추가적인 로그아웃 로직을 여기에 구현할 수 있습니다.
     // 예: 로컬 스토리지 클리어, 서버에 로그아웃 요청 등
+  };
+*/
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:8085/api/users/logout', {
+        method: 'POST',
+        credentials: 'include',  // 세션 쿠키 포함
+      });
+
+      if (response.ok) {
+        // 로그아웃 성공 시 클라이언트에서 세션 정보 제거
+        setIsLoggedIn(false);
+        sessionStorage.removeItem('user'); // 세션에서 사용자 정보 삭제
+        console.log('로그아웃 성공');
+      } else {
+        console.log('로그아웃 실패');
+      }
+    } catch (error) {
+      console.error('로그아웃 중 오류 발생:', error);
+    }
   };
 
   if (!isLoggedIn) {

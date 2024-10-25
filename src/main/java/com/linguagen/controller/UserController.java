@@ -3,11 +3,13 @@ package com.linguagen.controller;
 
 import com.linguagen.dto.UserInterestDTO;
 import com.linguagen.entity.User;
+import com.linguagen.service.AccessLogService;
 import com.linguagen.service.UserInterestService;
 import com.linguagen.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,8 @@ public class UserController {
 
     private final UserService userService;
     private final UserInterestService userInterestService;
+    @Autowired
+    private AccessLogService accessLogService;
 
     // 생성자 주입
     public UserController(UserService userService, UserInterestService userInterestService) {
@@ -52,8 +56,6 @@ public class UserController {
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
-
-
     // 유저 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {
@@ -82,13 +84,13 @@ public class UserController {
         }
     }
 
-
-
     // 로그인
     @PostMapping("/login")
     public String login(@RequestBody User user, HttpSession session) {
         boolean isAuthenticated = userService.login(user, session);
         if (isAuthenticated) {
+            session.setAttribute("userId", user.getId());
+            accessLogService.saveLog(user.getId(), "login");
             return "로그인 성공";
         } else {
             return "로그인 실패: 잘못된 자격 증명";
@@ -98,6 +100,11 @@ public class UserController {
     // 로그아웃 요청 처리
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session, HttpServletResponse response) {
+        String userId = (String) session.getAttribute("userId");
+        if (userId != null) {
+            accessLogService.saveLog(userId, "logout");
+        }
+
         session.invalidate(); // 세션 무효화
 
         // JSESSIONID 쿠키 삭제
@@ -109,6 +116,4 @@ public class UserController {
 
         return ResponseEntity.ok("로그아웃 되었습니다.");
     }
-
-
 }
