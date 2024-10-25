@@ -68,6 +68,11 @@ const MountainCanvas = () => {
   const hpFullImage = useRef(loadImages([HP_Full])[0]);
   const hpEmptyImage = useRef(loadImages([HP_Empty])[0]);
 
+    // 배경 이미지 캐싱
+    const backgroundRef = useRef(new Image());
+    backgroundRef.current.src = DungeonImage;
+  
+
   const drawHealthBar = useCallback((ctx, x, y, health) => {
     const barWidth = 150;
     const barHeight = 20;
@@ -134,11 +139,10 @@ const MountainCanvas = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 배경 그리기
-    const background = new Image();
-    background.src = DungeonImage;
-    if (background.complete) {
-      ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+    if (backgroundRef.current.complete) {
+      ctx.drawImage(backgroundRef.current, 0, 0, canvas.width, canvas.height);
     }
+
 
     // 보스 스프라이트 그리기
     const bossImages = {
@@ -240,13 +244,15 @@ const MountainCanvas = () => {
     canvas.height = canvas.parentElement.offsetHeight * 0.6;
 
     // 폰트 로딩
-    const font = new FontFace('AntiquityPrint', 'url(src/assets/CanvasImage/font/Antiquity-print.ttf)');
-    font.load().then((loadedFont) => {
-      document.fonts.add(loadedFont);
-      fontLoadedRef.current = true;
-    }).catch((error) => {
-      console.error('폰트 로딩 실패:', error);
-    });
+    if (!fontLoadedRef.current) {
+      const font = new FontFace('AntiquityPrint', 'url(src/assets/CanvasImage/font/Antiquity-print.ttf)');
+      font.load().then((loadedFont) => {
+        document.fonts.add(loadedFont);
+        fontLoadedRef.current = true;
+      }).catch((error) => {
+        console.error('폰트 로딩 실패:', error);
+      });
+    }
 
     canvas.addEventListener('mousemove', handleMouseMove);
 
