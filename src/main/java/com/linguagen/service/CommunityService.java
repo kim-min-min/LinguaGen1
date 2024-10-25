@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommunityService {
@@ -31,15 +32,16 @@ public class CommunityService {
         }
     }
 
-    // 게시글 조회 (단일)
+    // 단일 게시글 조회 (삭제되지 않은 게시글만)
     public Optional<CommunityDTO> getCommunityByIdx(Long idx) {
-        return repository.findById(idx).map(this::convertToDTO);
+        Optional<Community> community = repository.findByIdxAndIsDeletedFalse(idx);
+        return community.map(this::convertToDTO);
     }
 
-    // 게시글 전체 조회
+    // 모든 게시글 조회 (삭제되지 않은 게시글만)
     public List<CommunityDTO> getAllCommunityPosts() {
-        List<Community> communities = repository.findAll();
-        return communities.stream().map(this::convertToDTO).toList();
+        List<Community> communities = repository.findByIsDeletedFalse();
+        return communities.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     // 게시글 수정
@@ -69,28 +71,28 @@ public class CommunityService {
         }).orElse(false);
     }
 
-    // 제목으로 검색
+    // 제목으로 검색 (삭제되지 않은 게시글만)
     public List<CommunityDTO> searchPostsByTitle(String title) {
-        List<Community> communities = repository.findByTitleContaining(title);
-        return communities.stream().map(this::convertToDTO).toList();
+        List<Community> communities = repository.findByTitleContainingAndIsDeletedFalse(title);
+        return communities.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    // 글 작성자 회원 아이디로 검색
+    // 작성자 ID로 검색 (삭제되지 않은 게시글만)
     public List<CommunityDTO> searchPostsByUserId(String userId) {
-        List<Community> communities = repository.findByUserId(userId);
-        return communities.stream().map(this::convertToDTO).toList();
+        List<Community> communities = repository.findByUserIdAndIsDeletedFalse(userId);
+        return communities.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    // 글 작성자 닉네임으로 검색
+    // 닉네임으로 검색 (삭제되지 않은 게시글만)
     public List<CommunityDTO> searchPostsByNickname(String nickname) {
-        List<Community> communities = repository.findByUserNicknameContaining(nickname);
-        return communities.stream().map(this::convertToDTO).toList();
+        List<Community> communities = repository.findByNicknameAndIsDeletedFalse(nickname);
+        return communities.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    // 카테고리별로 최신 글 4개 가져오기
+    // 카테고리별로 최신 4개 글 조회 (삭제되지 않은 게시글만)
     public List<CommunityDTO> getLatestPostsByCategory(String category) {
-        List<Community> latestPosts = communityRepository.findTop4ByCategoryOrderByCreatedAtDesc(category);
-        return latestPosts.stream().map(this::convertToDTO).toList();
+        List<Community> communities = repository.findTop4ByCategoryAndIsDeletedFalseOrderByCreatedAtDesc(category);
+        return communities.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     // 엔티티를 DTO로 변환
