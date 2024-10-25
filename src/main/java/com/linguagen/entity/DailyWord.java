@@ -16,7 +16,7 @@ public class DailyWord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idx", nullable = false, updatable = false)
+    @Column(name = "idx", nullable = false, updatable = false, columnDefinition = "INT UNSIGNED")
     private Long idx;
 
     @Column(name = "word", nullable = false)
