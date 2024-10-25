@@ -66,9 +66,6 @@ function LoginPage() {
     console.error('Google Login Failed:', error);
   };
 
-
-
-
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -94,7 +91,6 @@ function LoginPage() {
       setError('로그인 중 오류가 발생했습니다.');
     }
   };
-
 
   const handleSignupToggle = () => {
     setShowSignup(!showSignup); // 회원가입 폼 표시 토글
@@ -196,11 +192,7 @@ function LoginPage() {
         </div>
       </GoogleOAuthProvider>
   );
-
 }
-
-
-
 
 // Signup 컴포넌트
 function Signup({ onSignupToggle, onNextSignup }) {
@@ -237,9 +229,9 @@ function Signup({ onSignupToggle, onNextSignup }) {
       return false;
     }
     // 전화번호 유효성 검사 (0~9로만 구성된 문자열)
-    const phoneRegex = /^[0-9]+$/; // 정규 표현식: 숫자만 허용
+    const phoneRegex = /^[0-9]{11}$/; // 정규 표현식: 숫자만 허용
     if (!phoneRegex.test(formData.tell)) {
-      setError('전화번호는 숫자로만 입력해야 합니다.');
+      setError('전화번호는 숫자 11자리로 입력해야 합니다.');
       return false;
     }
     // 주소 입력 여부 확인
@@ -252,7 +244,6 @@ function Signup({ onSignupToggle, onNextSignup }) {
       setError('닉네임을 입력해 주세요.');
       return false;
     }
-
     return true;
   };
 
@@ -364,7 +355,6 @@ function SignupNext({ formData, onPreviousSignup }) {
   const [sliderValue, setSliderValue] = useState(33); // 초기 값 33
   const [selectedInterests, setSelectedInterests] = useState([]); // 관심사 선택 상태
 
-
   const getTier = () => {
     if (sliderValue < 49) return "Bronze";
     if (sliderValue < 80) return "Silver";
@@ -383,15 +373,11 @@ function SignupNext({ formData, onPreviousSignup }) {
     });
   };
 
-
-
-
 // 회원가입 완료 처리
   const handleSignupComplete = async () => {
     try {
       // 주소 합치기
       const fullAddress = `${formData.address} ${formData.detailedAddress}`.trim();
-
 
       // completeFormData 객체에 모든 필수 데이터를 모아줍니다.
       const completeFormData = {
@@ -429,8 +415,6 @@ function SignupNext({ formData, onPreviousSignup }) {
           headers: {
             'Content-Type': 'application/json',
           },
-
-
         });
 
         if (interestResponse.status === 201) {
@@ -457,7 +441,6 @@ function SignupNext({ formData, onPreviousSignup }) {
       }
     }
   };
-
 
   return (
     <div className="flex justify-center items-center w-2/3 h-auto">

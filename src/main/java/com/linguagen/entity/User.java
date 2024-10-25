@@ -30,16 +30,16 @@ public class User {
     @Column(name = "address", nullable = false, length = 1000)
     private String address;
 
-    @Column(name = "tell", nullable = false, length = 13)
+    @Column(name = "tell", nullable = false, length = 11)
     private String tell;
 
     @Column(name = "objective", length = 255)
     private String objective;
 
-    @Column(name = "points")
-    private Integer points;
+    @Column(name = "points", columnDefinition = "INT DEFAULT 0")
+    private Integer points = 0;
 
-    @Column(name = "join_date")
+    @Column(name = "join_date", nullable = false, updatable = false)
     private LocalDateTime joinDate;
 
     // 엔티티 저장 전 현재 시간 설정
