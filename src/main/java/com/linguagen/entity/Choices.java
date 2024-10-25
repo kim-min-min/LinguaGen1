@@ -11,17 +11,17 @@ public class Choices {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx", nullable = false, columnDefinition = "int unsigned")
-    private Long idx;
+    private Long idx; // 선택지 식별자
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qs_idx", nullable = false)
-    private Question question;
+    private Question question; // 문제 식별자
 
     @Column(name = "choice_label", nullable = false, length = 1)
-    private String choiceLabel;
+    private String choiceLabel; // 선택지 레이블(A, B, C, D)
 
     @Column(name = "choice_text", nullable = false, columnDefinition = "text")
-    private String choiceText;
+    private String choiceText; // 선택지 내용
 
     // 무한 순환 참조 방지를 위한 toString 재정의
     @Override
