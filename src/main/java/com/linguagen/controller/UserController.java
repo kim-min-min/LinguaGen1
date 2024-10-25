@@ -110,5 +110,17 @@ public class UserController {
         return ResponseEntity.ok("로그아웃 되었습니다.");
     }
 
+    // 비밀번호 변경
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody User user) {
+        boolean isChanged = userService.changePassword(user.getId(), user.getPassword());
+
+        if (isChanged) {
+            return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호 변경에 실패했습니다.");
+        }
+    }
+
 
 }

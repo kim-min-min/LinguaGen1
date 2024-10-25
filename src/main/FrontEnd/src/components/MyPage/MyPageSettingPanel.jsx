@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import axios from "axios";
+
 
 // 탭 컨테이너 및 슬라이드 스타일 정의
 const TabContainer = styled.div`
@@ -53,10 +55,12 @@ const Slider = styled.div`
 const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
     const activeTab = activePanel === 'accountSettings' ? 'profile' : 'notification';
     const [selectedImage, setSelectedImage] = useState('https://via.placeholder.com/60'); // 기본 이미지 URL
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     // 세션 스토리지에서 값 가져오기
     const nickname = sessionStorage.getItem('nickname') || 'Unknown';
-    const email = sessionStorage.getItem('user') || 'example@example.com';
+    const email = sessionStorage.getItem('id') || 'example@example.com';
     const phone = sessionStorage.getItem('tell') || '010-0000-0000';
 
     const handleImageChange = (event) => {
@@ -72,6 +76,42 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
 
     const triggerFileInput = () => {
         document.getElementById('imageInput').click(); // 파일 선택 창 열기
+    };
+
+    const handlePasswordChange = async () => {
+        if (password !== confirmPassword) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+        if (password.length < 8 || password.length > 12) {
+            alert('비밀번호는 8~12자 사이여야 합니다.');
+            return;
+        }
+
+        try {
+            // 서버로 비밀번호 변경 요청
+            const response = await axios.post(
+                'http://localhost:8085/api/users/change-password',
+                { id: email, password },
+                { withCredentials: true }
+            );
+
+            if (response.status === 200) {
+                alert('비밀번호가 성공적으로 변경되었습니다.');
+                setPassword(false)
+            } else {
+                alert('비밀번호 변경에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+
+            // 서버가 반환한 에러 메시지가 있을 경우 표시
+            if (error.response && error.response.data) {
+                alert(`오류: ${error.response.data.message || '비밀번호 변경에 실패했습니다.'}`);
+            } else {
+                alert('비밀번호 변경 중 오류가 발생했습니다.');
+            }
+        }
     };
 
     return (
@@ -163,7 +203,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                 <CardContent className='flex flex-col'>
                                     <div className='p-8 pt-0 pb-0 w-full flex justify-between mb-4'>
                                         <p className='font-bold w-24'>이메일</p>
-                                        <p className='mr-40 font-bold'>{email}</p>
+                                        <p className='mr-52 font-bold'>{email}</p>
                                         <Dialog>
                                             <DialogTrigger className='bg-transparent w-0 h-0 mb-4'>
                                                 <Button>설정</Button>
@@ -190,7 +230,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                     </div>
                                     <div className='p-8 pt-0 pb-0 w-full flex justify-between mb-4'>
                                         <p className='font-bold w-24'>비밀번호</p>
-                                        <p className='mr-40 font-bold text-gray-300'> 비밀번호를 설정해주세요</p>
+                                        <p className='mr-36 font-bold text-gray-300'> 비밀번호를 설정해주세요</p>
                                         <Dialog>
                                             <DialogTrigger className='bg-transparent w-0 h-0 mb-4'>
                                                 <Button>설정</Button>
@@ -205,19 +245,28 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                                         <Label htmlFor="password" className="text-right">
                                                             비밀번호
                                                         </Label>
-                                                        <Input id="password" placeholder='8~12자리 대소문자 구분없음'
+                                                        <Input
+                                                               id="password"
+                                                               type="password"
+                                                               value={password}
+                                                               onChange={(e) => setPassword(e.target.value)}
+                                                               placeholder="8~12자리 비밀번호"
                                                                className="col-span-3"/>
                                                     </div>
                                                     <div className="grid grid-cols-4 items-center gap-4">
                                                         <Label htmlFor="confirmPassword" className="text-right">
                                                             비밀번호 확인
                                                         </Label>
-                                                        <Input id="confirmPassword" placeholder='비밀번호 재입력'
+                                                        <Input id="confirmPassword"
+                                                               type="password"
+                                                               value={confirmPassword}
+                                                               onChange={(e) => setConfirmPassword(e.target.value)}
+                                                               placeholder="비밀번호 재입력"
                                                                className="col-span-3"/>
                                                     </div>
                                                 </div>
                                                 <DialogFooter>
-                                                    <Button type="submit">Save changes</Button>
+                                                    <Button onClick={handlePasswordChange} >Save changes</Button>
                                                 </DialogFooter>
                                             </DialogContent>
                                         </Dialog>

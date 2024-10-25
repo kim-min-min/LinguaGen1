@@ -70,6 +70,18 @@ public class UserService {
         return false;
     }
 
+    @Transactional
+    public boolean changePassword(String userId, String newPassword) {
+        // ID가 String이므로 findById에 문자열로 전달
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new IllegalArgumentException("해당 사용자를 찾을 수 없습니다.")
+        );
+
+        user.setPassword(newPassword);  // 비밀번호 변경
+        userRepository.save(user);  // 변경 사항 저장
+        return true;
+    }
+
     // 로그아웃 로직: 세션 무효화
     public void logout(HttpSession session) {
         session.invalidate();  // 세션 무효화
