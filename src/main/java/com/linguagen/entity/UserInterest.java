@@ -8,6 +8,7 @@ public class UserInterest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "INT UNSIGNED")
     private Long idx;  // 고유 ID
 
     @Column(nullable = false)
