@@ -205,7 +205,7 @@ const Community = () => {
       <Header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }} />
       <div className='w-full flex flex-col justify-center items-center my-12' style={{ height: '350px' }}>
         <Link to='/community' onClick={() => handleTabClick('')}>
-          <h1 className='select-none'>Community</h1>
+          <h1 className='select-none kanit-semibold'>Community</h1>
         </Link>
       </div>
       <div className='w-full h-auto flex justify-center items-center'>

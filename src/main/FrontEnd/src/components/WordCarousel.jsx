@@ -23,7 +23,7 @@ const WordCarousel = () => {
 
     return (
         <div className='flex flex-col items-center gap-4'>
-            <p style={{fontSize: '24px', fontWeight: 'bold', color: '#f0fdfa'}}>오늘의 단어</p>
+            <p style={{fontSize: '24px', fontWeight: 'bold', color: '#f0fdfa', userSelect: 'none'}} className='jua-regular'>오늘의 단어</p>
             {words.length === 0 ? (
                 <p>단어를 불러오는 중...</p>  // 데이터가 없을 때 표시
             ) : (
@@ -37,7 +37,7 @@ const WordCarousel = () => {
                                             <h2 className="text-4xl kanit-bold mb-2" style={{ userSelect: 'none' }}>
                                                 {word.word}
                                             </h2>
-                                            <h4 className="text-2xl text-gray-600" style={{ userSelect: 'none' }}>
+                                            <h4 className="text-2xl text-gray-600 jua-regular" style={{ userSelect: 'none' }}>
                                                 {word.wordDesc}
                                             </h4>
                                         </CardContent>

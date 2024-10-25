@@ -80,7 +80,7 @@ const MainContainer = ({ selectedGame }) => {
       {isLoggedIn ? (
         <>
           <div className="w-full flex justify-center mb-4 mt-4">
-            <Button onClick={handleStartGame} className="w-40 h-14 text-white rounded-md font-bold text-xl hover:scale-125 transition-all duration-500">
+            <Button onClick={handleStartGame} className="w-40 h-14 text-white rounded-md font-bold text-xl hover:scale-125 transition-all duration-500 jua-regular">
               게임 시작하기
             </Button>
           </div>
