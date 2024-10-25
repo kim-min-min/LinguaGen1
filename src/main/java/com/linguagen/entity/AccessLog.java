@@ -16,6 +16,7 @@ public class AccessLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "INT UNSIGNED")
     private Long idx;
 
     @Column(name = "user_id", nullable = false, length = 50)
