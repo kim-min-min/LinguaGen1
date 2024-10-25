@@ -7,20 +7,27 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
-    // 제목에 특정 문자열이 포함된 게시글 검색
-    List<Community> findByTitleContaining(String title);
+    // 삭제되지 않은 게시글만 조회
+    List<Community> findByIsDeletedFalse();
 
-    // 글 작성자 기준(유저 아이디)으로 게시글 검색
-    List<Community> findByUserId(String userId);
+    // 특정 idx에 해당하는 삭제되지 않은 게시글만 조회
+    Optional<Community> findByIdxAndIsDeletedFalse(Long idx);
 
-    // 글 작성자 기준(닉네임)으로 게시글 검색
-    @Query("SELECT c FROM Community c WHERE c.user.nickname LIKE %:nickname%")
-    List<Community> findByUserNicknameContaining(@Param("nickname") String nickname);
+    // 제목으로 검색하고 삭제되지 않은 게시글만 조회
+    List<Community> findByTitleContainingAndIsDeletedFalse(String title);
 
-    // 카테고리별로 최신 글 4개 가져오기
-    List<Community> findTop4ByCategoryOrderByCreatedAtDesc(String category);
+    // 작성자 ID로 검색하고 삭제되지 않은 게시글만 조회
+    List<Community> findByUserIdAndIsDeletedFalse(String userId);
+
+    // 닉네임으로 검색하고 삭제되지 않은 게시글만 조회
+    @Query("SELECT c FROM Community c WHERE c.user.nickname = :nickname AND c.isDeleted = false")
+    List<Community> findByNicknameAndIsDeletedFalse(@Param("nickname") String nickname);
+
+    // 특정 카테고리의 최신 4개 글, 삭제되지 않은 게시글만 조회
+    List<Community> findTop4ByCategoryAndIsDeletedFalseOrderByCreatedAtDesc(String category);
 }

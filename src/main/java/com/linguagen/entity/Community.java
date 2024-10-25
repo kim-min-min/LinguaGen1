@@ -53,4 +53,8 @@ public class Community {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+
+    public String getNickname() {
+        return this.user.getNickname();
+    }
 }
