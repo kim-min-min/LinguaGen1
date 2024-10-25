@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Header from '../Header'; // Assuming Header is already imported
 import '@fortawesome/fontawesome-free/css/all.min.css'; // Font Awesome CSS 추가
@@ -7,7 +7,7 @@ import Notice from './Notice'; // 공지사항 컴포넌트 임포트
 import FreeBoard from './FreeBoard'; // 자유게시판 컴포넌트 임포트
 import ExchangeLearningTips from './ExchangeLearningTips'; // 학습 팁 교환 컴포넌트 임포트
 import ClubBoard from './ClubBoard'; // 동아리 게시판 컴포넌트 임포트
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import Writing from './Writing';
 import DetailView from './DetailView';
 import axios from 'axios';
@@ -77,23 +77,29 @@ const Item = styled.div`
   cursor: pointer;
   user-select: none;
   &:hover {
-    color: ${({ isActive }) => (isActive ? '#bbf7d0' : '#bbf7d0')}; /* hover 상태에서 색상 변경 */
+    color: ${({ isActive }) => (isActive ? '#bbf7d0' : '#bbf7d0')}; /* hover 상에 색상 변경 */
   }
   transition: color 0.3s ease; /* 부드러운 색상 전환 애니메이션 */
 `;
 
-const BackgroundVideo = styled.video`
+const BackgroundVideoWrapper = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* 비디오가 화면에 맞도록 커버되도록 설정 */
-  z-index: -1; /* 다른 요소 뒤에 배치 */
+  z-index: -1;
 `;
 
-// 기본 게시판 컴포넌트
+const BackgroundVideo = styled.video`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+// 기본 시판 컴포넌트
 const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
+  const navigate = useNavigate(); // useNavigate 훅 사용
   const [boardData, setBoardData] = useState({
     Notice: [],
     FreeBoard: [],
@@ -128,7 +134,7 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
       }
     };
     fetchPosts();
-  }, []); // 빈 배열을 의존성으로 설정해 첫 렌더링 시 한 번만 실행
+  }, []); // 빈 배열을 존성으로 설정해 첫 렌더링 시 한 번만 실행
 
   if (loading) {
     return <p>Loading...</p>; // 로딩 중일 때 보여줄 UI
@@ -143,9 +149,10 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
   };
 
   // 게시글 클릭 핸들러
-  const handlePostClick = (post) => {
-    setSelectedItem(post); // 선택한 게시글 데이터를 저장
-    handleTabClick('DetailView'); // 상세보기 탭으로 이동
+  const handlePostClick = (post, category) => {
+    setSelectedItem(post);
+    const boardPath = category.toLowerCase();
+    navigate(`/community/${boardPath}/detailview/${post.idx}`);
   };
 
   return (
@@ -162,7 +169,7 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
             <div
               className='w-full h-42 flex flex-col border-b-2 py-2 items-start cursor-pointer'
               key={idx}
-              onClick={() => handlePostClick(post)} // 게시글 클릭 시 상세보기로 이동
+              onClick={() => handlePostClick(post, category)} // category 인자 추가
             >
               <h3 className='font-bold text-lg'>{post.title.length > 30 ? post.title.slice(0, 30) + '...' : post.title}</h3>
               <p className='mt-2 mb-4'> {post.content.length > 30 ? post.content.slice(0, 30) + '...' : post.content}</p>
@@ -180,28 +187,52 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
 };
 
 const Community = () => {
-  const [activeTab, setActiveTab] = useState('');
-  const inputRef = useRef(null);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const { board, idx } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const [activeTab, setActiveTab] = useState(board || '');
+  const [selectedItem, setSelectedItem] = useState(null);
+  const videoRef = useRef(null);
 
   useEffect(() => {
-    // URL 경로를 기반으로 activeTab 설정
-    const path = location.pathname.split('/')[2];
-    setActiveTab(path ? path.charAt(0).toUpperCase() + path.slice(1) : '');
-  }, [location.pathname]);
+    const path = location.pathname.split('/');
+    if (path.includes('detailview')) {
+      setActiveTab('detailview');
+    } else if (path.includes('writing')) {
+      setActiveTab('writing');
+    } else {
+      setActiveTab(board || '');
+    }
 
-  const handleTabClick = (title) => {
-    setActiveTab(title);
-    window.history.replaceState(null, '', `/community/${title.toLowerCase()}`); // URL 변경
+    // 비디오 재생 유지
+    if (videoRef.current) {
+      videoRef.current.play();
+    }
+  }, [board, location]);
+
+  const handleTabClick = (title, currentBoard) => {
+    if (title === 'detailview') {
+      navigate(`/community/${currentBoard}/detailview`);
+    } else if (title === 'writing') {
+      navigate(`/community/${currentBoard}/writing`);
+    } else {
+      setActiveTab(title);
+      navigate(`/community/${title.toLowerCase()}`);
+    }
+  };
+
+  const handleRowClick = (item) => {
+    setSelectedItem(item);
+    navigate(`/community/${activeTab.toLowerCase()}/detailview`);
   };
 
   return (
     <div className='w-full h-full flex flex-col overflow-y-scroll custom-scrollbar'>
-      <BackgroundVideo autoPlay muted loop>
-        <source src='src/assets/video/CommunityBackground.mp4' type='video/mp4' />
-      </BackgroundVideo>
+      <BackgroundVideoWrapper>
+        <BackgroundVideo ref={videoRef} autoPlay muted loop>
+          <source src='/src/assets/video/CommunityBackground.mp4' type='video/mp4' />
+        </BackgroundVideo>
+      </BackgroundVideoWrapper>
       <Header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }} />
       <div className='w-full flex flex-col justify-center items-center my-12' style={{ height: '350px' }}>
         <Link to='/community' onClick={() => handleTabClick('')}>
@@ -213,8 +244,8 @@ const Community = () => {
           <div className='w-1/6 h-96 flex flex-col justify-start items-start m-8 border-2 border-gray-300 rounded-lg' style={{ backdropFilter: 'blur(15px)', background: 'rgba(255, 255, 255, 0.2' }}>
             <div className='col-span-2 w-full h-24 pt-2 pl-4'>
               <SearchBox>
-                <SearchInput ref={inputRef} type="text" placeholder="Search..." />
-                <SearchButton onClick={() => inputRef.current.focus()}>
+                <SearchInput type="text" placeholder="Search..." />
+                <SearchButton>
                   <i className="fas fa-search"></i>
                 </SearchButton>
               </SearchBox>
@@ -236,14 +267,13 @@ const Community = () => {
           </div>
 
           <div className='w-1/2 h-full flex flex-col justify-start items-center'>
-            {/* 조건부 렌더링: 선택된 탭에 따라 컴포넌트를 렌더링 */}
             {activeTab === '' && <DefaultBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
-            {activeTab === 'Notice' && <Notice handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
-            {activeTab === 'FreeBoard' && <FreeBoard handleTabClick={handleTabClick} />}
-            {activeTab === 'ExchangeLearningTips' && <ExchangeLearningTips handleTabClick={handleTabClick} />}
-            {activeTab === 'ClubBoard' && <ClubBoard handleTabClick={handleTabClick} />}
-            {activeTab === 'Writing' && <Writing handleTabClick={handleTabClick} />}
-            {activeTab === 'DetailView' && <DetailView selectedItem={selectedItem} handleTabClick={handleTabClick} />}
+            {activeTab === 'notice' && <Notice handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+            {activeTab === 'freeboard' && <FreeBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+            {activeTab === 'exchangelearningtips' && <ExchangeLearningTips handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+            {activeTab === 'clubboard' && <ClubBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+            {activeTab === 'writing' && <Writing handleTabClick={handleTabClick} currentBoard={board} />}
+            {activeTab === 'detailview' && <DetailView idx={idx} handleTabClick={handleTabClick} />}
           </div>
         </div>
       </div>

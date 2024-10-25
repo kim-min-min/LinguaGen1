@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -13,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 const Notice = ({ handleTabClick, setSelectedItem }) => {
+  const navigate = useNavigate();
   // 카페 게시판 형식의 데이터셋
   const data = Array.from({ length: 30 }, (_, i) => ({
     id: i + 1,
@@ -40,9 +42,13 @@ const Notice = ({ handleTabClick, setSelectedItem }) => {
     setCurrentPage(1); // 페이지가 바뀌면 첫 페이지로 돌아감
   };
 
+  const handleWriteClick = () => {
+    navigate('/community/notice/writing');
+  };
+
   const handleRowClick = (item) => {
     setSelectedItem(item); // 선택한 데이터를 설정
-    handleTabClick('DetailView'); // 상세보기 페이지로 이동
+    handleTabClick('detailview', 'notice'); // 'notice'를 추가로 전달
   };
 
   return (
@@ -52,7 +58,7 @@ const Notice = ({ handleTabClick, setSelectedItem }) => {
         <div className="w-full h-20 border-b-2 border-gray-300 flex justify-end items-center gap-4">
           <Button
             className='bg-green-300 text-gray-500 font-bold hover:bg-green-400'
-            onClick={() => handleTabClick('Writing')} // 글쓰기 클릭 시 activeTab을 Writing으로 변경
+            onClick={handleWriteClick}
           >
             글쓰기
           </Button>

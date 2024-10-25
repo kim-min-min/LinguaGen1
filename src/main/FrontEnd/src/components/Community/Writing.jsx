@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,19 +31,28 @@ const FormSchema = z.object({
     }),
 });
 
-const Writing = ({ handleTabClick }) => {
+const Writing = ({ handleTabClick, currentBoard }) => {
+    const { board } = useParams();
+    const location = useLocation();
+    const [currentCategory, setCurrentCategory] = useState(board || currentBoard || '');
+
+    useEffect(() => {
+        const path = location.pathname.split('/');
+        const category = path[path.length - 2];
+        setCurrentCategory(category);
+    }, [location]);
+
+    const { isLoggedIn, setIsLoggedIn } = useStore();
+    const [id, setId] = useState("");
+
     const form = useForm({
         resolver: zodResolver(FormSchema),
         defaultValues: {
             title: "",
-            category: "",
+            category: currentCategory,
             content: "",
         },
     });
-
-    const { boardType } = useParams();
-    const { isLoggedIn, setIsLoggedIn } = useStore();
-    const [id, setId] = useState("");
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -81,8 +90,8 @@ const Writing = ({ handleTabClick }) => {
             })
             .then(data => {
                 console.log('Success:', data);
-                // DefaultBoard로 이동
-                handleTabClick('');
+                // 현재 게시판으로 이동
+                handleTabClick(currentCategory);
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -90,9 +99,9 @@ const Writing = ({ handleTabClick }) => {
     };
 
     return (
-        <div className="w-full bg-white rounded-md flex flex-col p-12 justify-start items-center min-h-screen">
+        <div className="w-full bg-white rounded-md flex flex-col p-12 justify-start items-center">
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
                     <FormField
                         control={form.control}
                         name="title"
@@ -114,7 +123,7 @@ const Writing = ({ handleTabClick }) => {
                             <FormItem>
                                 <FormLabel>카테고리 선택</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange}>
+                                    <Select onValueChange={field.onChange} defaultValue={currentBoard}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="게시판을 선택하세요" />
                                         </SelectTrigger>
