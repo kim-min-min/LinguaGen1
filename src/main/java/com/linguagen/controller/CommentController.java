@@ -30,6 +30,13 @@ public class CommentController {
         return ResponseEntity.ok(createdComment);
     }
 
+    // 댓글 수정
+    @PutMapping("/{commentIdx}")
+    public ResponseEntity<CommentDTO> updateComment(@PathVariable Long commentIdx, @RequestBody CommentDTO commentDTO) {
+        CommentDTO updatedComment = service.updateComment(commentIdx, commentDTO);
+        return ResponseEntity.ok(updatedComment);
+    }
+
     // 댓글 삭제
     @DeleteMapping("/{commentIdx}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentIdx) {
