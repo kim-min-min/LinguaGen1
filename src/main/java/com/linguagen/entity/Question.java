@@ -1,53 +1,72 @@
 package com.linguagen.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+import java.time.LocalDateTime;
+
 @Entity
+@Table(name = "question")
+@Data
 public class Question {
+
     @Id
-    @Column(length = 255, nullable = false)
-    private String id;  // 문제 ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idx", nullable = false, columnDefinition = "int unsigned")
+    private Long idx;
 
-    @Column(length = 100, nullable = false)
-    private String type;  // 문제 유형
+    @Column(name = "type", nullable = false, length = 50)
+    private String type;
 
-    @Column(length = 100, nullable = false)
-    private String detailedType;  // 세부 유형
+    @Column(name = "detail_type", nullable = false, length = 50)
+    private String detailType;
 
-    @Column(length = 100, nullable = false)
-    private String interestCategory;  // 관심사
+    @Column(name = "interest", nullable = false, length = 100)
+    private String interest;
 
-    @Column(length = 50, nullable = false)
-    private String difficultyGrade;  // 난이도 등급
+    @Column(name = "diff_grade", nullable = false)
+    private Byte diffGrade;
 
-    @Column()
-    private Integer difficultyTier;  // 난이도 티어
+    @Column(name = "diff_tier", nullable = false)
+    private Byte diffTier;
 
-    @Column(length = 2000, nullable = false)
-    private String content;  // 문제 내용
+    @Enumerated(EnumType.STRING)
+    @Column(name = "question_format", nullable = false)
+    private QuestionFormat questionFormat;
 
-    @Column( length = 300, nullable = false)
-    private String option1;  // 보기1
+    @Column(name = "passage", columnDefinition = "text")
+    private String passage;
 
-    @Column(length = 300)
-    private String option2;  // 보기2
+    @Column(name = "question", nullable = false, columnDefinition = "text")
+    private String question;
 
-    @Column(length = 300)
-    private String option3;  // 보기3
+    @Column(name = "correct_answer", nullable = false, columnDefinition = "text")
+    private String correctAnswer;
 
-    @Column(length = 300)
-    private String option4;  // 보기4
+    @Column(name = "explanation", nullable = false, columnDefinition = "text")
+    private String explanation;
 
-    @Column(length = 50, nullable = false)
-    private String correctAnswer;  // 정답
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-    @Column(length = 2000)
-    private String explanation;  // 문제 해설
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 
-    public Question() {}
+    @Getter
+    public enum QuestionFormat {
+        MULTIPLE_CHOICE("multiple-choice"),
+        SHORT_ANSWER("short-answer");
+
+        private final String value;
+
+        QuestionFormat(String value) {
+            this.value = value;
+        }
+
+    }
 }
+
