@@ -57,26 +57,19 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
     const [selectedImage, setSelectedImage] = useState('https://via.placeholder.com/60'); // 기본 이미지 URL
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [phone, setPhone] = useState(sessionStorage.getItem('tell') || '010-0000-0000'); // 상태로 관리
+    const [isPhoneDialogOpen, setIsPhoneDialogOpen] = useState(false); // 전화번호 Dialog 상태 관리
+    const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false); // 비밀번호 Dialog 상태
+
+
 
     // 세션 스토리지에서 값 가져오기
     const nickname = sessionStorage.getItem('nickname') || 'Unknown';
     const email = sessionStorage.getItem('id') || 'example@example.com';
-    const phone = sessionStorage.getItem('tell') || '010-0000-0000';
 
-    const handleImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setSelectedImage(reader.result); // 선택한 이미지 URL 설정
-            };
-            reader.readAsDataURL(file); // 이미지 파일 읽기
-        }
-    };
 
-    const triggerFileInput = () => {
-        document.getElementById('imageInput').click(); // 파일 선택 창 열기
-    };
+
 
     const handlePasswordChange = async () => {
         if (password !== confirmPassword) {
@@ -99,6 +92,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
             if (response.status === 200) {
                 alert('비밀번호가 성공적으로 변경되었습니다.');
                 setPassword(false)
+                setIsPasswordDialogOpen(false); // Dialog 닫기
             } else {
                 alert('비밀번호 변경에 실패했습니다.');
             }
@@ -111,6 +105,42 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
             } else {
                 alert('비밀번호 변경 중 오류가 발생했습니다.');
             }
+        }
+    };
+
+    const handlePhoneNumberChange = async () => {
+        try {
+            const response = await axios.post(
+                'http://localhost:8085/api/users/change-tell',
+                { id: email, tell:phoneNumber },
+                { withCredentials: true }
+            );
+
+            if (response.status === 200) {
+                alert('전화번호가 성공적으로 변경되었습니다.');
+                sessionStorage.setItem('tell', phoneNumber);
+                setPhone(phoneNumber); // 상태 업데이트 -> 화면에 반영
+                setIsPhoneDialogOpen(false); // Dialog 닫기
+            } else {
+                alert('전화번호 변경에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('전화번호 변경 중 오류가 발생했습니다.');
+        }
+    };
+
+    const triggerFileInput = () => {
+        document.getElementById('imageInput').click(); // 파일 선택 창 열기
+    };
+
+
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => setSelectedImage(reader.result);
+            reader.readAsDataURL(file);
         }
     };
 
@@ -206,7 +236,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                         <p className='mr-52 font-bold'>{email}</p>
                                         <Dialog>
                                             <DialogTrigger className='bg-transparent w-0 h-0 mb-4'>
-                                                <Button>설정</Button>
+
                                             </DialogTrigger>
                                             <DialogContent>
                                                 <DialogHeader>
@@ -231,7 +261,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                     <div className='p-8 pt-0 pb-0 w-full flex justify-between mb-4'>
                                         <p className='font-bold w-24'>비밀번호</p>
                                         <p className='mr-36 font-bold text-gray-300'> 비밀번호를 설정해주세요</p>
-                                        <Dialog>
+                                        <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
                                             <DialogTrigger className='bg-transparent w-0 h-0 mb-4'>
                                                 <Button>설정</Button>
                                             </DialogTrigger>
@@ -274,7 +304,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                     <div className='p-8 pt-0 w-full flex justify-between mb-4'>
                                         <p className='font-bold'>전화번호</p>
                                         <p className='mr-48 font-bold'>{phone}</p>
-                                        <Dialog>
+                                        <Dialog open={isPhoneDialogOpen} onOpenChange={setIsPhoneDialogOpen}>
                                             <DialogTrigger className='bg-transparent w-0 h-0 mb-4'>
                                                 <Button>설정</Button>
                                             </DialogTrigger>
@@ -288,12 +318,15 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                                         <Label htmlFor="phone" className="text-right">
                                                             전화번호
                                                         </Label>
-                                                        <Input id="phone" placeholder='- 없이 작성하세요'
+                                                        <Input  type="tel"
+                                                                value={phoneNumber}
+                                                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                                                id="phone" placeholder='- 없이 작성하세요'
                                                                className="col-span-3"/>
                                                     </div>
                                                 </div>
                                                 <DialogFooter>
-                                                    <Button type="submit">Save changes</Button>
+                                                    <Button onClick={handlePhoneNumberChange} >Save changes</Button>
                                                 </DialogFooter>
                                             </DialogContent>
                                         </Dialog>

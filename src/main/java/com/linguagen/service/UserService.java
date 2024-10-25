@@ -70,6 +70,7 @@ public class UserService {
         return false;
     }
 
+    // 비번 변경
     @Transactional
     public boolean changePassword(String userId, String newPassword) {
         // ID가 String이므로 findById에 문자열로 전달
@@ -78,6 +79,17 @@ public class UserService {
         );
 
         user.setPassword(newPassword);  // 비밀번호 변경
+        userRepository.save(user);  // 변경 사항 저장
+        return true;
+    }
+
+    // 전번 변경
+    @Transactional
+    public boolean changeTellNumber(String id, String newTell) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        user.setTell(newTell);  // 전화번호 업데이트
         userRepository.save(user);  // 변경 사항 저장
         return true;
     }

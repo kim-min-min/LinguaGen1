@@ -122,5 +122,15 @@ public class UserController {
         }
     }
 
+    // 전화번호 변경
+    @PostMapping("/change-tell")
+    public ResponseEntity<String> changeTellNumber(@RequestBody User user) {
+        boolean isChanged = userService.changeTellNumber(user.getId(), user.getTell());
 
+        if (isChanged) {
+            return ResponseEntity.ok("전화번호가 성공적으로 변경되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("전화번호 변경에 실패했습니다.");
+        }
+    }
 }
