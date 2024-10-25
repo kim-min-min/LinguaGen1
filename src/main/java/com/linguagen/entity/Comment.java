@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "community")
-public class Community {
+@Table(name = "comment")
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,16 +23,12 @@ public class Community {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private String category;
+    @ManyToOne
+    @JoinColumn(name = "community_idx", referencedColumnName = "idx", columnDefinition = "INT UNSIGNED")
+    private Community community;
 
-    @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
+    @Column(name = "content")
     private String content;
-
-    private String file;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -40,21 +36,14 @@ public class Community {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "view_count", columnDefinition = "INT DEFAULT 0")
-    private int viewCount;
-
-    @Column(name = "like_count", columnDefinition = "INT DEFAULT 0")
-    private int likeCount;
-
     @Column(name = "is_deleted", columnDefinition = "TINYINT(1) DEFAULT 0")
     private boolean isDeleted;
 
-    @PrePersist
-    protected void onCreate() {
+    public Comment(User user, Community community, String content) {
+        this.user = user;
+        this.community = community;
+        this.content = content;
         this.createdAt = LocalDateTime.now();
-    }
-
-    public String getNickname() {
-        return this.user.getNickname();
+        this.isDeleted = false;
     }
 }
