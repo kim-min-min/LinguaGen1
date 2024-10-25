@@ -8,7 +8,8 @@ public class UserInterest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // 고유 ID
+    @Column(columnDefinition = "INT UNSIGNED")
+    private Long idx;  // 고유 ID
 
     @Column(nullable = false)
     private String userId;  // 사용자 ID
@@ -27,11 +28,11 @@ public class UserInterest {
 
     // Getters and Setters
     public Long getId() {
-        return id;
+        return idx;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.idx = id;
     }
 
     public String getUserId() {

@@ -1,10 +1,20 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import {format} from "date-fns";
 
 const DetailView = ({ selectedItem, handleTabClick }) => {
   // 댓글 상태를 관리하기 위한 useState
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [data, setData] = useState([]);
+
+  // 각 게시판에 해당하는 카테고리명과 데이터 연결
+  const boardTitles = {
+    Notice: '공지사항',
+    freeboard: '자유게시판',
+    ExchangeLearningTips: '학습 팁 교환',
+    ClubBoard: '동아리 게시판'
+  };
 
   if (!selectedItem) {
     return <div>항목을 선택해 주세요.</div>;
@@ -36,13 +46,13 @@ const DetailView = ({ selectedItem, handleTabClick }) => {
       <div className="w-full flex flex-col justify-start items-start mb-4">
         <div className="w-full flex justify-between items-center border-b pb-2">
           <div>
-            <p className="text-green-500 font-bold">공지사항</p>
+            <p className="text-green-500 font-bold">{boardTitles[selectedItem.category]}</p>
             <h2 className="text-2xl font-bold mb-1">{selectedItem.title}</h2>
             <div className="text-gray-500 flex items-center space-x-2">
-              <span>{selectedItem.author}</span>
+              <span>{selectedItem.nickname ? selectedItem.nickname : (selectedItem.userId.includes('@') ? selectedItem.userId.split('@')[0] : selectedItem.userId)}</span>
               <span>·</span>
-              <span>{selectedItem.date}</span>
-              <span>· 조회 {selectedItem.views}</span>
+              <span>{format(new Date(selectedItem.createdAt), 'yyyy-MM-dd')}</span>
+              <span>· 조회 {selectedItem.viewCount}</span>
               <span>· 댓글 {comments.length}</span>
             </div>
           </div>
@@ -56,7 +66,7 @@ const DetailView = ({ selectedItem, handleTabClick }) => {
 
       {/* 본문 내용 */}
       <div className="w-full bg-transparent p-4 rounded-md mb-8">
-        <p className="mb-4">국토대장정</p>
+        <p className="mb-4">{selectedItem.content}</p>
       </div>
 
       {/* 작성자 정보 및 더보기 */}
@@ -68,7 +78,7 @@ const DetailView = ({ selectedItem, handleTabClick }) => {
         />
         <div>
           <Button className="text-sm bg-transparent" variant="link">
-            {selectedItem.author}님의 게시글 더보기
+            {selectedItem.nickname ? selectedItem.nickname : (selectedItem.userId.includes('@') ? selectedItem.userId.split('@')[0] : selectedItem.userId)}님의 게시글 더보기
           </Button>
         </div>
       </div>
