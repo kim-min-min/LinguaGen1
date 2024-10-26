@@ -156,6 +156,9 @@ const DetailView = ({handleTabClick}) => {
     if (!selectedItem) {
         return <div>로딩 중...</div>;
     }
+  if (!selectedItem) {
+    return <div className="custom-loader"></div>;
+  }
 
     return (
         <div className="w-full bg-white rounded-md flex flex-col justify-start items-center min-h-screen p-8">

@@ -137,7 +137,7 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
   }, []); // 빈 배열을 존성으로 설정해 첫 렌더링 시 한 번만 실행
 
   if (loading) {
-    return <p>Loading...</p>; // 로딩 중일 때 보여줄 UI
+    return <div className="custom-loader"></div>; // 로딩 중일 때 보여줄 UI
   }
 
 // 각 게시판에 해당하는 카테고리명과 데이터 연결

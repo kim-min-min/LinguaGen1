@@ -150,7 +150,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
             case 'listening':
                 return (
                     <>
-                        <div className='flex flex-col justify-center items-center' style={{ width: '33%', padding: '10px', borderRight: '3px solid #ccc', fontSize: '24px' }}>
+                        <div className='flex flex-col justify-center items-center kanit-regular' style={{ width: '33%', padding: '10px', borderRight: '3px solid #ccc', fontSize: '24px' }}>
                             <h2>{currentQuestion.question}</h2>
                             {currentQuestion.type === 'listening' && (
                                 <button className='mt-8' onClick={() => new Audio(currentQuestion.audioSrc).play()}>
@@ -190,6 +190,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                                         position: 'relative',
                                         overflow: 'hidden',
                                     }}
+                                    className='kanit-regular'
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                 >
@@ -227,7 +228,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
             case 'fillInTheBlank':
                 return (
                     <div
-                        className='flex flex-col justify-center items-center'
+                        className='flex flex-col justify-center items-center kanit-regular'
                         style={{
                             width: '100%',
                             padding: '10px',
@@ -291,7 +292,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
     const renderGameOver = () => {
         return (
             <div 
-                className='flex flex-col justify-center items-center w-full h-full'
+                className='flex flex-col justify-center items-center w-full h-full kanit-regular'
                 style={{
                     transition: 'all 1s ease-out',
                     transform: gameOverAnimation ? 'translateY(0)' : 'translateY(-100%)',
@@ -319,7 +320,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
 
     const renderGameClear = () => {
         return (
-            <div className='flex flex-col justify-center items-center w-full h-full'>
+            <div className='flex flex-col justify-center items-center w-full h-full kanit-regular'>
                 <h2 className='text-4xl font-bold mb-8 text-green-600'>Game Clear!</h2>
                 <div className='flex space-x-4'>
                     <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' onClick={onRestart}>

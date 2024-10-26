@@ -107,7 +107,7 @@ export const LandingPage = () => {
         <div id="leaves1 main"></div>
         <div id="leaves2 main"></div>
       </div>
-      <div className="absolute top-1/2 right-16 transform -translate-y-full bg-transparent p-4 rounded-lg flex flex-col justify-start items-center gap-4 w-auto h-28 z-10">
+      <div className="absolute top-1/2 right-16 transform -translate-y-1/2 bg-transparent p-4 rounded-lg shadow-lg flex flex-col justify-start items-center gap-4 w-96 h-auto z-10">
         <TypeAnimation
           sequence={[
             'LinguaGen', 1000,
@@ -117,19 +117,24 @@ export const LandingPage = () => {
           wrapper="h2"
           cursor={true}
           repeat={Infinity}
-          className="text-white text-xl font-bold h-full"
-          style={{ 
+          className="text-white text-xl font-bold"
+          style={{
             fontSize: '48px',
             background: 'linear-gradient(30deg, #c850c0, #ffcc70)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
+            lineHeight: '1.2',
+            padding: '10px 0',
+            display: 'block',
           }}
         />
-      </div>
-      <div className="absolute bottom-32 right-28 transform -translate-y-1/2 bg-zinc-800 p-4 rounded-lg shadow-lg flex flex-col justify-start items-center gap-4 w-auto h-60 p-8 z-0">
-        <button onClick={handleStartClick} className="custom-btn btn-12 flex justify-center items-center"><span>Start</span><span>시작하기</span></button>
-        <button onClick={handleLoginClick} className="custom-btn btn-12 flex justify-center items-center"><span>Login</span><span>로그인 하러 가기</span></button>
-        <p className='mt-8 text-gray-400 font-bold'>made by LinguaGen</p>
+        <div className='mt-8 bg-zinc-800 p-4 rounded-lg shadow-lg flex flex-col justify-start items-center gap-4 w-2/3 h-auto z-10'>
+          <button onClick={handleStartClick} className="custom-btn btn-12 flex justify-center items-center"><span>Start</span><span>시작하기</span></button>
+          <button onClick={handleLoginClick} className="custom-btn btn-12 flex justify-center items-center"><span>Login</span><span>로그인 하러 가기</span></button>
+          <div className='mt-8 text-gray-400 font-bold'>
+            <p>made by LinguaGen</p>
+          </div>
+        </div>
       </div>
     </div>
   )
