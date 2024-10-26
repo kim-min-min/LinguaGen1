@@ -31,9 +31,9 @@ function Scene({ dof }) {
     {
       texture: textures[3],
       z: 30,
-      scaleFactor: 0.83,
-      scale: [scaleN[0] * 0.6, scaleN[1] * 0.6, 1],
-      position: [-13.5, 0, 30]
+      scaleFactor: 0.8,
+      scale: [scaleN[0] * 0.45, scaleN[1] * 0.45, 1],
+      position: [-13.5, -7, 30]
     },
     { texture: textures[4], factor: 0.03, scaleFactor: 1, z: 40, wiggle: 0.6, scale: scaleW },
     { texture: textures[5], factor: 0.04, scaleFactor: 1.3, z: 49, wiggle: 1, scale: scaleW },
@@ -107,7 +107,7 @@ export const LandingPage = () => {
         <div id="leaves1 main"></div>
         <div id="leaves2 main"></div>
       </div>
-      <div className="absolute top-1/2 right-16 transform -translate-y-1/2 bg-transparent p-4 rounded-lg shadow-lg flex flex-col justify-start items-center gap-4 w-96 h-auto z-10">
+      <div className="absolute top-1/2 right-20 transform -translate-y-1/2 bg-transparent p-6 rounded-lg shadow-lg flex flex-col justify-start items-center gap-6 w-[30rem] h-auto z-10">
         <TypeAnimation
           sequence={[
             'LinguaGen', 1000,
@@ -117,21 +117,22 @@ export const LandingPage = () => {
           wrapper="h2"
           cursor={true}
           repeat={Infinity}
-          className="text-white text-xl font-bold"
+          className="text-white text-2xl font-bold"
           style={{
-            fontSize: '48px',
+            fontSize: '64px',
             background: 'linear-gradient(30deg, #c850c0, #ffcc70)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            lineHeight: '1.2',
-            padding: '10px 0',
+            lineHeight: '1.3',
+            padding: '12px 0',
             display: 'block',
+            width: '100%',
           }}
         />
-        <div className='mt-8 bg-zinc-800 p-4 rounded-lg shadow-lg flex flex-col justify-start items-center gap-4 w-2/3 h-auto z-10'>
-          <button onClick={handleStartClick} className="custom-btn btn-12 flex justify-center items-center"><span>Start</span><span>시작하기</span></button>
-          <button onClick={handleLoginClick} className="custom-btn btn-12 flex justify-center items-center"><span>Login</span><span>로그인 하러 가기</span></button>
-          <div className='mt-8 text-gray-400 font-bold'>
+        <div className='mt-10 bg-zinc-800 p-8 rounded-lg shadow-lg flex flex-col justify-start items-center gap-8 w-full h-auto z-10'>
+          <button onClick={handleStartClick} className="custom-btn btn-12 flex justify-center items-center text-xl w-64 h-16"><span>Start</span><span>시작하기</span></button>
+          <button onClick={handleLoginClick} className="custom-btn btn-12 flex justify-center items-center text-xl w-64 h-16"><span>Login</span><span>로그인 하러 가기</span></button>
+          <div className='mt-12 text-gray-400 font-bold text-xl'>
             <p>made by LinguaGen</p>
           </div>
         </div>
