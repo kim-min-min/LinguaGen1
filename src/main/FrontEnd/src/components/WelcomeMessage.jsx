@@ -105,12 +105,12 @@ const WelcomeMessage = () => {
   return (
     <>
       {welcomeMessage1 && (
-        <div style={{ userSelect: 'none' }} className={`welcome-message-1 ${showWelcomeMessage1 ? 'fade-in' : 'fade-out'}`}>
+        <div style={{ userSelect: 'none' }} className={`welcome-message-1 ${showWelcomeMessage1 ? 'fade-in' : 'fade-out'} jua-regular`}>
           {welcomeMessage1}
         </div>
       )}
       {welcomeMessage2 && (
-        <div style={{ userSelect: 'none' }} className={`welcome-message-2 ${showWelcomeMessage2 ? 'fade-in' : 'fade-out'}`}>
+        <div style={{ userSelect: 'none' }} className={`welcome-message-2 ${showWelcomeMessage2 ? 'fade-in' : 'fade-out'} jua-regular`}>
           {welcomeMessage2}
         </div>
       )}

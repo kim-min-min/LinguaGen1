@@ -80,7 +80,7 @@ const DetailView = ({ handleTabClick }) => {
   };
 
   if (!selectedItem) {
-    return <div>로딩 중...</div>;
+    return <div className="custom-loader"></div>;
   }
 
   return (
