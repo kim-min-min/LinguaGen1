@@ -43,6 +43,16 @@ public class CommentService {
         return convertToDTO(savedComment);
     }
 
+    // 댓글 수정
+    public CommentDTO updateComment(Long commentIdx, CommentDTO commentDTO) {
+        Comment comment = repository.findById(commentIdx)
+                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
+        comment.setContent(commentDTO.getContent());
+        comment.setUpdatedAt(java.time.LocalDateTime.now());
+        Comment updatedComment = repository.save(comment);
+        return convertToDTO(updatedComment);
+    }
+
     // 댓글 삭제
     public void deleteComment(Long commentIdx) {
         Comment comment = repository.findById(commentIdx).orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
