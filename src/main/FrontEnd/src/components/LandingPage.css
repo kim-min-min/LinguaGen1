@@ -249,76 +249,56 @@ canvas {
   height: 100% !important; /* Canvas의 높이를 100%로 설정 */
 }
 
-.btn-12{
-    position: relative;
-    border:none;
-    box-shadow: none;
-    width: 130px;
-    height: 40px;
-    line-height: 42px;
-    -webkit-perspective: 230px;
-    perspective: 230px;
-  }
-  .btn-12 span {
-    position: absolute;
-    top: 0; /* span 요소를 부모의 상단에 위치 */
-    left: 0; /* span 요소를 부모의 왼쪽에 위치 */
-    width: 130px;
-    height: 40px;
-    line-height: 40px; /* 수직 중앙 정렬 */
-    background: rgb(64 64 64);
-    background: linear-gradient(0deg, rgba(82 82 82,1) 0%, rgba(82 82 82,1) 100%);
-    display: block;
-    box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
-     7px 7px 20px 0px rgba(0,0,0,.1),
-     4px 4px 5px 0px rgba(0,0,0,.1);
-    border-radius: 5px;
-    margin:0;
-    text-align: center;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    -webkit-transition: all .3s;
-    transition: all .3s;
-  }
-  .btn-12 span:nth-child(1) {
-    box-shadow:
-     -7px -7px 20px 0px #fff9,
-     -4px -4px 5px 0px #fff9,
-     7px 7px 20px 0px #0002,
-     4px 4px 5px 0px #0001;
-    -webkit-transform: rotateX(90deg);
-    -moz-transform: rotateX(90deg);
-    transform: rotateX(90deg);
-    -webkit-transform-origin: 50% 50% -20px;
-    -moz-transform-origin: 50% 50% -20px;
-    transform-origin: 50% 50% -20px;
-  }
-  .btn-12 span:nth-child(2) {
-    -webkit-transform: rotateX(0deg);
-    -moz-transform: rotateX(0deg);
-    transform: rotateX(0deg);
-    -webkit-transform-origin: 50% 50% -20px;
-    -moz-transform-origin: 50% 50% -20px;
-    transform-origin: 50% 50% -20px;
-  }
-  .btn-12:hover span:nth-child(1) {
-    box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
-     7px 7px 20px 0px rgba(0,0,0,.1),
-     4px 4px 5px 0px rgba(0,0,0,.1);
-    -webkit-transform: rotateX(0deg);
-    -moz-transform: rotateX(0deg);
-    transform: rotateX(0deg);
-  }
-  .btn-12:hover span:nth-child(2) {
-    box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
-     7px 7px 20px 0px rgba(0,0,0,.1),
-     4px 4px 5px 0px rgba(0,0,0,.1);
-   color: transparent;
-    -webkit-transform: rotateX(-90deg);
-    -moz-transform: rotateX(-90deg);
-    transform: rotateX(-90deg);
-  }
+.btn-12 {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 230px;
+  border: none;
+  box-shadow: none;
+}
+
+.btn-12 span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(0deg, rgb(82, 82, 82) 0%, rgb(82, 82, 82) 100%);
+  border-radius: 5px;
+  box-shadow: inset 2px 2px 2px 0px rgba(255,255,255,.5),
+              7px 7px 20px 0px rgba(0,0,0,.1),
+              4px 4px 5px 0px rgba(0,0,0,.1);
+  transition: all 0.3s;
+  backface-visibility: hidden;
+}
+
+.btn-12 span:nth-child(1) {
+  transform: rotateX(90deg);
+  transform-origin: 50% 50% -32px;
+  box-shadow: -7px -7px 20px 0px rgba(255,255,255,0.6),
+              -4px -4px 5px 0px rgba(255,255,255,0.6),
+              7px 7px 20px 0px rgba(0,0,0,0.13),
+              4px 4px 5px 0px rgba(0,0,0,0.067);
+}
+
+.btn-12 span:nth-child(2) {
+  transform: rotateX(0deg);
+  transform-origin: 50% 50% -32px;
+}
+
+.btn-12:hover span:nth-child(1) {
+  transform: rotateX(0deg);
+}
+
+.btn-12:hover span:nth-child(2) {
+  transform: rotateX(-90deg);
+  color: transparent;
+}
+
   .custom-btn {
     position: relative; /* 부모 요소의 position을 relative로 설정 */
     width: 130px;
