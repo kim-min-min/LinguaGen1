@@ -31,4 +31,13 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Query("SELECT q FROM Question q LEFT JOIN FETCH q.choices WHERE q.idx = :idx")
     Optional<Question> findByIdWithChoices(@Param("idx") Long idx);
+
+    // 특정 난이도의 랜덤 문제를 count개 만큼 가져오는 쿼리
+    @Query(value = "SELECT * FROM question WHERE diff_grade = :grade AND diff_tier = :tier ORDER BY RAND() LIMIT :count",
+        nativeQuery = true)
+    List<Question> findRandomQuestionsByDifficulty(
+        @Param("grade") Byte grade,
+        @Param("tier") Byte tier,
+        @Param("count") int count
+    );
 }
