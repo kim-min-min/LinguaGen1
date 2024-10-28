@@ -99,7 +99,7 @@ const Writing = ({ handleTabClick, currentBoard }) => {
     };
 
     return (
-        <div className="w-full bg-white rounded-md flex flex-col p-12 justify-start items-center">
+        <div className="w-full bg-white rounded-md flex flex-col p-12 justify-start items-center mt-8">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
                     <FormField

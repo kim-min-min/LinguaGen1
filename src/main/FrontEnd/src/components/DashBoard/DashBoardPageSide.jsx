@@ -22,7 +22,7 @@ const DashBoardPageSide = ({ activePanel, setActivePanel }) => {
   const navigate = useNavigate(); // useNavigate 사용
 
   return (
-    <div className='flex flex-col items-center justify-start w-1/4 mt-24 border-2 border-gray-300 rounded-lg' style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2', height : 'auto'}}>
+    <div className='flex flex-col items-center justify-start w-80 border-2 border-gray-300 rounded-lg' style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2', height : 'auto'}}>
       <div className='flex flex-col items-start justify-between w-full h-48 pt-4 p-4'>
         {/* Avatar 클릭 시 MyPageSettingPanel로 이동 */}
         <Avatar className='w-20 h-20 ml-4'>

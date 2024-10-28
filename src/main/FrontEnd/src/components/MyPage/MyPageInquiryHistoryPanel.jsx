@@ -78,7 +78,7 @@ const MyPageInquiryHistoryPanel = ({ activePanel, setActivePanel }) => {
           <div className="pb-10 w-full text-center font-bold text-xl">
             <p>문의글 내역</p>
           </div>
-          <div className="flex flex-col items-center justify-start w-full mt-4">
+          <div className="flex flex-col items-center justify-start w-full h-full mt-4">
             <div className="w-full h-full mb-32">
               <Table>
                 <TableCaption>문의한 내역입니다.</TableCaption>
@@ -110,6 +110,9 @@ const MyPageInquiryHistoryPanel = ({ activePanel, setActivePanel }) => {
                 </Button>
               </div>
             </div>
+          </div>
+          <div className='h-[320px]'>
+
           </div>
         </>
       )}

@@ -22,8 +22,8 @@ const WordCarousel = () => {
     }, []);
 
     return (
-        <div className='flex flex-col items-center gap-4'>
-            <p style={{fontSize: '24px', fontWeight: 'bold', color: '#f0fdfa', userSelect: 'none'}} className='jua-regular'>오늘의 단어</p>
+        <div className='flex flex-col items-center gap-4' >
+            <p style={{fontSize: '24px', fontWeight: 'bold', color: '#f0fdfa', userSelect: 'none', marginTop: '68px'}} className='jua-regular'>오늘의 단어</p>
             {words.length === 0 ? (
                 <p>단어를 불러오는 중...</p>  // 데이터가 없을 때 표시
             ) : (

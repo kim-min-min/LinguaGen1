@@ -97,6 +97,14 @@ const BackgroundVideo = styled.video`
   object-fit: cover;
 `;
 
+const CommunityContainer = styled.div`
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+`;
+
 // 기본 시판 컴포넌트
 const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
   const navigate = useNavigate(); // useNavigate 훅 사용
@@ -227,22 +235,27 @@ const Community = () => {
   };
 
   return (
-    <div className='w-full h-full flex flex-col overflow-y-scroll custom-scrollbar'>
+    <CommunityContainer className='overflow-y-auto custom-scrollbar'>
       <BackgroundVideoWrapper>
         <BackgroundVideo ref={videoRef} autoPlay muted loop>
           <source src='/src/assets/video/CommunityBackground.mp4' type='video/mp4' />
         </BackgroundVideo>
       </BackgroundVideoWrapper>
-      <Header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }} />
-      <div className='w-full flex flex-col justify-center items-center my-12' style={{ height: '350px' }}>
+      <Header />
+      
+      {/* 커뮤니티 타이틀 */}
+      <div className='w-full flex justify-center items-center mt-8 mb-4'>
         <Link to='/community' onClick={() => handleTabClick('')}>
           <h1 className='select-none kanit-semibold'>Community</h1>
         </Link>
       </div>
-      <div className='w-full h-auto flex justify-center items-center'>
-        <div className='w-full h-full mt-12 mb-18 flex grid-cols-2 justify-center'>
-          <div className='w-1/6 h-96 flex flex-col justify-start items-start m-8 border-2 border-gray-300 rounded-lg' style={{ backdropFilter: 'blur(15px)', background: 'rgba(255, 255, 255, 0.2' }}>
-            <div className='col-span-2 w-full h-24 pt-2 pl-4'>
+
+      {/* 메인 컨텐츠 영역을 grid로 구성 */}
+      <main className='w-full h-full grid grid-cols-12 gap-4 p-4 pt-0'>
+        {/* 왼쪽 사이드바 */}
+        <div className='col-span-3 col-start-2 flex flex-col items-center'>
+          <div className='w-80 flex flex-col border-2 border-gray-300 rounded-lg backdrop-blur-md bg-white/20 mt-8'>
+            <div className='w-full p-4'>
               <SearchBox>
                 <SearchInput type="text" placeholder="Search..." />
                 <SearchButton>
@@ -250,7 +263,7 @@ const Community = () => {
                 </SearchButton>
               </SearchBox>
             </div>
-            <div className='w-full h-auto my-8'>
+            <div className='w-full my-8'>
               <Item isActive={activeTab === 'Notice'} onClick={() => handleTabClick('Notice')}>
                 공지사항
               </Item>
@@ -265,19 +278,20 @@ const Community = () => {
               </Item>
             </div>
           </div>
-
-          <div className='w-1/2 h-full flex flex-col justify-start items-center'>
-            {activeTab === '' && <DefaultBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
-            {activeTab === 'notice' && <Notice handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
-            {activeTab === 'freeboard' && <FreeBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
-            {activeTab === 'exchangelearningtips' && <ExchangeLearningTips handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
-            {activeTab === 'clubboard' && <ClubBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
-            {activeTab === 'writing' && <Writing handleTabClick={handleTabClick} currentBoard={board} />}
-            {activeTab === 'detailview' && <DetailView idx={idx} handleTabClick={handleTabClick} />}
-          </div>
         </div>
-      </div>
-    </div>
+
+        {/* 오른쪽 메인 컨테이너 */}
+        <div className='col-span-7 flex flex-col'>
+          {activeTab === '' && <DefaultBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+          {activeTab === 'notice' && <Notice handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+          {activeTab === 'freeboard' && <FreeBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+          {activeTab === 'exchangelearningtips' && <ExchangeLearningTips handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+          {activeTab === 'clubboard' && <ClubBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+          {activeTab === 'writing' && <Writing handleTabClick={handleTabClick} currentBoard={board} />}
+          {activeTab === 'detailview' && <DetailView idx={idx} handleTabClick={handleTabClick} />}
+        </div>
+      </main>
+    </CommunityContainer>
   );
 };
 
