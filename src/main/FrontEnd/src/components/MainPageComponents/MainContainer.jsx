@@ -76,7 +76,7 @@ const MainContainer = ({ selectedGame }) => {
   }, [selectedGame, navigate]);
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-start mx-12 bg-white">
+    <div className="w-full h-full flex flex-col items-center justify-start mx-12 bg-white rounded-lg">
       {isLoggedIn ? (
         <>
           <div className="w-full flex justify-center mb-4 mt-4">

@@ -161,7 +161,7 @@ const DetailView = ({handleTabClick}) => {
   }
 
     return (
-        <div className="w-full bg-white rounded-md flex flex-col justify-start items-center min-h-screen p-8">
+        <div className="w-full bg-white rounded-md flex flex-col justify-start items-center min-h-screen p-8 mt-8">
             {/* 게시글 내용 */}
             <div className="w-full flex flex-col justify-start items-start mb-4">
                 <div className="w-full flex justify-between items-center border-b pb-2">
