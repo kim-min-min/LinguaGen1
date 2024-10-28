@@ -33,7 +33,7 @@ function Scene({ dof }) {
       z: 30,
       scaleFactor: 0.8,
       scale: [scaleN[0] * 0.45, scaleN[1] * 0.45, 1],
-      position: [-13.5, -7, 30]
+      position: [-55.5, -12, 30]
     },
     { texture: textures[4], factor: 0.03, scaleFactor: 1, z: 40, wiggle: 0.6, scale: scaleW },
     { texture: textures[5], factor: 0.04, scaleFactor: 1.3, z: 49, wiggle: 1, scale: scaleW },
@@ -107,7 +107,15 @@ export const LandingPage = () => {
         <div id="leaves1 main"></div>
         <div id="leaves2 main"></div>
       </div>
-      <div className="absolute top-1/2 right-20 transform -translate-y-1/2 bg-transparent p-6 rounded-lg shadow-lg flex flex-col justify-start items-center gap-6 w-[30rem] h-auto z-10">
+      <div className='absolute top-4 left-4 w-auto h-full bg-transparent z-10 flex flex-col justify-between items-start'>
+        <p className='text-white text-5xl kanit-semibold'>LinguaGen</p>
+        <p className='text-white text-xl kanit-semibold mb-8'>made by Team-A</p>
+      </div>
+      <div className='absolute bottom-4 right-4 w-auto h-full bg-transparent z-10 flex flex-col justify-end items-end'>
+        <p className='text-white text-xl kanit-semibold'>{"</"}Korean{">"}</p>
+      </div>
+
+      <div className="absolute top-1/2 right-20 transform -translate-y-1/2 bg-transparent p-6 rounded-lg flex flex-col justify-start items-center gap-6 w-[30rem] h-auto z-10">
         <TypeAnimation
           sequence={[
             'LinguaGen', 1000,
@@ -125,16 +133,15 @@ export const LandingPage = () => {
             WebkitTextFillColor: 'transparent',
             lineHeight: '1.3',
             padding: '12px 0',
-            display: 'block',
+            display: 'flex',
+            justifyContent: 'center',
             width: '100%',
           }}
         />
-        <div className='mt-10 bg-zinc-800 p-8 rounded-lg shadow-lg flex flex-col justify-start items-center gap-8 w-full h-auto z-10'>
-          <button onClick={handleStartClick} className="custom-btn btn-12 flex justify-center items-center text-xl w-64 h-16"><span>Start</span><span>시작하기</span></button>
+        <div className='mt-10 bg-zinc-800 p-8 rounded-lg shadow-lg flex flex-col justify-start items-center gap-8 w-[24rem] h-auto z-10 shadow-lg'>
+          <button onClick={handleStartClick} className="custom-btn btn-12 flex justify-center items-center text-xl w-64 h-16"><span>Tutorial</span><span>튜토리얼</span></button>
           <button onClick={handleLoginClick} className="custom-btn btn-12 flex justify-center items-center text-xl w-64 h-16"><span>Login</span><span>로그인 하러 가기</span></button>
-          <div className='mt-12 text-gray-400 font-bold text-xl'>
-            <p>made by LinguaGen</p>
-          </div>
+          <button onClick={handleLoginClick} className="custom-btn btn-12 flex justify-center items-center text-xl w-64 h-16"><span>Readme!!</span><span>Documentation</span></button>
         </div>
       </div>
     </div>
