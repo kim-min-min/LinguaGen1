@@ -167,7 +167,7 @@ const MyPagePlayHistoryPanel = ({ activePanel, setActivePanel }) => {
 
     return (
         <>
-            <div className='flex flex-col items-center justify-start w-full mt-16 ml-24 pt-4 border-2 border-gray-300 rounded-lg'
+            <div className='flex flex-col items-start justify-start h-full w-full ml-24 border-2 border-gray-300 rounded-lg'
                 style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2', height : 'auto'}}
             >
                 {/* 탭 부분 */}

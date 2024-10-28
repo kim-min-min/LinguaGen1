@@ -25,8 +25,7 @@ const MainPageContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  position : relative;
-  align-items: center;
+  position: relative;
   animation: ${fadeInAnimation} 1s forwards;
 `;
 
@@ -41,21 +40,11 @@ const BackgroundVideo = styled.video`
 `;
 
 function MainPage() {
-  const [marginTop, setMarginTop] = useState('1000px'); // 기본적으로 반응형일 때 marginTop 1000px 설정
   const [fadeIn, setFadeIn] = useState(false);
   const [selectedGame, setSelectedGame] = useState('');
   const { setIsLoggedIn } = useStore();
 
   useEffect(() => {
-    const handleResize = () => {
-      // 화면 크기에 따라 marginTop 설정
-      if (window.innerWidth >= 1024) {
-        setMarginTop('0px');
-      } else {
-        setMarginTop('1087px');
-      }
-    };
-
     // 로그인 상태 확인
     const user = JSON.parse(sessionStorage.getItem('user'));
     if (user) {
@@ -64,44 +53,32 @@ function MainPage() {
       setIsLoggedIn(false);
     }
 
-    // 초기 화면 크기 체크 및 리스너 등록
-    handleResize();
-    window.addEventListener('resize', handleResize);
-
     // 페이드 인 효과 시작
     setTimeout(() => setFadeIn(true), 100);
-    // 컴포넌트 언마운트 시 리스너 제거
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
   }, [setIsLoggedIn]);
 
   return (
     <MainPageContainer>
       <BackgroundVideo autoPlay muted loop>
-        <source src='src/assets/video/MainBackground.mp4' type='video/mp4'/>
+        <source src='src/assets/video/MainBackground.mp4' type='video/mp4' />
       </BackgroundVideo>
       <Header />
-      <main className='w-full h-full flex flex-col lg:flex-row items-center justify-center lg:gap-12 lg:overflow-hidden overflow-scroll'>
-        {/* 좌측 메뉴바 */}
-        <div className='flex justify-start lg:justify-center h-full order-3 lg:order-1 lg:mt-0 mt-14 lg:mb-0 mb-14'>
-          <PracticeMenubar setSelectedGame={setSelectedGame}/>
-        </div>
-
-        {/* 메인 컨테이너 */}
-        <div className='w-full lg:w-5/12 h-full order-4 lg:order-2'>
-          <div className='border-x-2 h-full shadow-xl flex items-center justify-start flex-col'>
-            <MainContainer selectedGame={selectedGame}/>
+      
+      {/* 메인 컨텐츠 영역을 grid로 구성 */}
+      <main className='w-full h-full grid grid-cols-12 gap-4 p-4 pt-0 mt-4 '>
+        {/* 왼쪽 사이드바 (프로필 카드 + 캐러셀) */}
+        <div className='col-span-3 col-start-2 flex flex-col gap-8'>
+          <div className='flex items-center justify-center'>
+            <ProfileCard />
+          </div>
+          <div className='flex items-center justify-center'>
+            <WordCarousel />
           </div>
         </div>
 
-        {/* 프로필 카드와 캐러셀 */}
-        <div 
-          className='flex justify-center lg:justify-start h-auto lg:h-full flex-col gap-12 w-full lg:w-96 order-1 lg:order-3 items-center lg:items-start'
-          style={{ marginTop: marginTop }} // marginTop을 동적으로 적용
-        >
-          <ProfileCard />
-          <WordCarousel />
+        {/* 오른쪽 메인 컨테이너 */}
+        <div className='col-span-7 flex items-center justify-center'>
+          <MainContainer selectedGame={selectedGame} />
         </div>
       </main>
     </MainPageContainer>

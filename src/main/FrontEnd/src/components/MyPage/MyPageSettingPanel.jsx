@@ -145,7 +145,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
     };
 
     return (
-        <div className='flex flex-col items-center justify-start w-full min-h-screen pb-14 mt-16 ml-24 pt-4 border-2 border-gray-300 rounded-lg'
+        <div className='flex flex-col items-center justify-start w-full min-h-screen ml-24 pt-4 border-2 border-gray-300 rounded-lg'
             style={{ backdropFilter: 'blur(15px)', background: 'rgba(255, 255, 255, 0.2' }}
         >
             {/* 탭 부분 */}

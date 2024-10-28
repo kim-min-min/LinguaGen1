@@ -8,7 +8,7 @@ import MyPagePlayHistoryPanel from './MyPagePlayHistoryPanel'; // 플레이 내�
 
 // 사이드바 스타일
 const SidebarContainer = styled.div`
-  width: 210px;
+  width: 20rem;
   padding: 20px;
   font-size: 16px;
   height: 545px;
@@ -73,62 +73,67 @@ const MyPage = () => {
   };
 
   return (
-    <div className='flex flex-col items-center justify-start overflow-y-auto custom-scrollbar h-full w-full relative'>
+    <div className='flex flex-col items-center justify-start h-screen w-full relative overflow-y-auto custom-scrollbar'>
       <BackgroundVideo autoPlay muted loop>
         <source src='src/assets/video/MainBackground.mp4' type='video/mp4' />
       </BackgroundVideo>
-      <Header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }} />
-      <div className='flex flex-row items-start justify-center h-full w-3/4'>
-        <div className='flex flex-col items-center justify-start w-1/4 h-full pt-20 pl-4'>
-          <SidebarContainer>
-            <SectionTitle>기록</SectionTitle>
-            <List>
-              <ListItem
-                isActive={activePanel === 'playHistory'}
-                onClick={() => setActivePanel('playHistory')}
-              >
-                내 플레이 내역
-              </ListItem>
-              <ListItem
-                isActive={activePanel === 'postHistory'}
-                onClick={() => setActivePanel('postHistory')}
-              >
-                작성한 게시글
-              </ListItem>
-              <ListItem
-                isActive={activePanel === 'inquiryHistory'}
-                onClick={() => setActivePanel('inquiryHistory')}
-              >
-                작성한 문의글
-              </ListItem>
-              <ListItem
-                isActive={activePanel === 'pointUsingHistory'}
-                onClick={() => setActivePanel('pointUsingHistory')}
-              >
-                포인트 사용 내역
-              </ListItem>
-            </List>
+      <Header />
+      
+      {/* 메인 컨텐츠 영역을 grid로 구성 */}
+      <main className='w-full h-min-screen grid grid-cols-12 gap-4 p-4 pt-0 mt-4 flex flex-col justify-start items-start'>
+        {/* 왼쪽 사이드바 */}
+        <div className='col-span-3 col-start-2 flex flex-col gap-8 items-center'>
+          <div className='flex items-center justify-center mt-16'>
+            <SidebarContainer>
+              <SectionTitle>기록</SectionTitle>
+              <List>
+                <ListItem
+                  isActive={activePanel === 'playHistory'}
+                  onClick={() => setActivePanel('playHistory')}
+                >
+                  내 플레이 내역
+                </ListItem>
+                <ListItem
+                  isActive={activePanel === 'postHistory'}
+                  onClick={() => setActivePanel('postHistory')}
+                >
+                  작성한 게시글
+                </ListItem>
+                <ListItem
+                  isActive={activePanel === 'inquiryHistory'}
+                  onClick={() => setActivePanel('inquiryHistory')}
+                >
+                  작성한 문의글
+                </ListItem>
+                <ListItem
+                  isActive={activePanel === 'pointUsingHistory'}
+                  onClick={() => setActivePanel('pointUsingHistory')}
+                >
+                  포인트 사용 내역
+                </ListItem>
+              </List>
 
-            <SectionTitle style={{ marginTop: '45px' }}>설정</SectionTitle>
-            <List>
-              <ListItem
-                isActive={activePanel === 'accountSettings'}
-                onClick={() => setActivePanel('accountSettings')}
-              >
-                계정 설정
-              </ListItem>
-              <ListItem
-                isActive={activePanel === 'notificationSettings'}
-                onClick={() => setActivePanel('notificationSettings')}
-              >
-                알림 설정
-              </ListItem>
-            </List>
-          </SidebarContainer>
+              <SectionTitle style={{ marginTop: '45px' }}>설정</SectionTitle>
+              <List>
+                <ListItem
+                  isActive={activePanel === 'accountSettings'}
+                  onClick={() => setActivePanel('accountSettings')}
+                >
+                  계정 설정
+                </ListItem>
+                <ListItem
+                  isActive={activePanel === 'notificationSettings'}
+                  onClick={() => setActivePanel('notificationSettings')}
+                >
+                  알림 설정
+                </ListItem>
+              </List>
+            </SidebarContainer>
+          </div>
         </div>
 
-        {/* 선택된 패널에 따라 다른 컴포넌트를 렌더링 */}
-        <div className='w-3/4 h-auto min-h-full'>
+        {/* 오른쪽 메인 컨테이너 */}
+        <div className='col-span-7 flex items-start justify-center mt-16'>
           {(activePanel === 'playHistory' || activePanel === 'postHistory' || activePanel === 'inquiryHistory' || activePanel === 'pointUsingHistory') && (
             <MyPagePlayHistoryPanel activePanel={activePanel} setActivePanel={setActivePanel} />
           )}
@@ -136,7 +141,7 @@ const MyPage = () => {
             <MyPageSettingPanel activePanel={activePanel} setActivePanel={setActivePanel} />
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 };

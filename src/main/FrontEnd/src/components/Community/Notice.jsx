@@ -52,7 +52,7 @@ const Notice = ({ handleTabClick, setSelectedItem }) => {
   };
 
   return (
-    <div className="w-full bg-white rounded-md flex flex-col p-12 justify-start items-center min-h-screen">
+    <div className="w-full bg-white rounded-md flex flex-col p-12 justify-start items-center min-h-screen mt-8">
       <p className="font-bold text-xl">공지사항</p>
       <div className="mt-8 w-full h-full flex flex-col bg-transparent flex-grow">
         <div className="w-full h-20 border-b-2 border-gray-300 flex justify-end items-center gap-4">
