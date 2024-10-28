@@ -270,24 +270,17 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                 return (
                     <div className="flex h-full w-full">
                         {/* 왼쪽 패널: 지문과 문제 */}
-                        <div className="w-1/3 h-full border-r-2 border-gray-200 p-6 flex flex-col bg-white">
-                            {/* 지문 섹션 */}
-                            <div className="mb-6">
-                                <h3 className="text-lg font-semibold mb-2 text-gray-700">Passage</h3>
-                                <div className="max-h-[40vh] overflow-y-auto p-4 bg-gray-50 rounded-lg">
-                                    <p className="text-base text-gray-600 leading-relaxed whitespace-pre-wrap break-words">
-                                        {currentQuestion.passage}
-                                    </p>
+                        <div className="w-1/3 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto">
+                            {/* 지문이 있는 경우 */}
+                            {currentQuestion.passage && (
+                                <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
+                                    <h3 className="text-lg font-semibold mb-2 text-gray-700">Passage</h3>
+                                    <p className="text-base text-gray-600 leading-relaxed">{currentQuestion.passage}</p>
                                 </div>
-                            </div>
-
-                            {/* 문제 섹션 */}
-                            <div className="flex-1 overflow-y-auto">
-                                <div className="bg-white p-4 rounded-lg">
-                                    <h2 className="text-xl font-semibold text-gray-800 whitespace-pre-wrap break-words">
-                                        {currentQuestion.question}
-                                    </h2>
-                                </div>
+                            )}
+                            {/* 문제 */}
+                            <div className="bg-white p-4 rounded-lg shadow-sm">
+                                <h2 className="text-xl font-semibold text-gray-800">{currentQuestion.question}</h2>
                             </div>
                         </div>
 
