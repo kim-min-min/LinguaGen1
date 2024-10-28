@@ -97,5 +97,13 @@ public class QuestionService {
             choice.getChoiceText()
         );
     }
+
+    public List<QuestionDTO> getQuestionsByDifficultyWithCount(Byte grade, Byte tier, int count) {
+        // 해당 난이도의 문제들을 무작위로 count개 만큼 가져옴
+        List<Question> questions = questionRepository.findRandomQuestionsByDifficulty(grade, tier, count);
+        return questions.stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
 }
 

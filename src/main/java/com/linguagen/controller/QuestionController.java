@@ -61,6 +61,15 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.getQuestionById(idx));
     }
 
+    // 난이도별 문제 조회 (개수 제한 추가)
+    @GetMapping("/questions/difficulty")
+    public ResponseEntity<List<QuestionDTO>> getQuestionsByDifficulty(
+        @RequestParam Byte grade,
+        @RequestParam Byte tier,
+        @RequestParam(defaultValue = "10") int count) {
+        return ResponseEntity.ok(questionService.getQuestionsByDifficultyWithCount(grade, tier, count));
+    }
+
     // API 오류 처리
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
