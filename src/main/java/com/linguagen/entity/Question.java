@@ -1,6 +1,7 @@
 package com.linguagen.entity;
 
 
+import com.linguagen.entity.converter.QuestionFormatConverter;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -34,7 +35,7 @@ public class Question {
     @Column(name = "diff_tier", nullable = false)
     private Byte diffTier; // 난이도 티어
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = QuestionFormatConverter.class)
     @Column(name = "question_format", nullable = false)
     private QuestionFormat questionFormat; // 문제 형식
 
