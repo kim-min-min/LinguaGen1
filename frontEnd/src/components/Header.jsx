@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card.jsx";
-import { Separator } from "@/components/ui/separator.jsx"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Separator } from "@/components/ui/separator"
 import home from '../assets/imgs/home.png'
-import { Button } from "@/components/ui/button.jsx"
+import { Button } from "@/components/ui/button"
 import {
   Sheet,
   SheetContent,
@@ -11,7 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet.jsx"
+} from "@/components/ui/sheet"
 import {
   Table,
   TableBody,
@@ -20,7 +20,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table.jsx"
+} from "@/components/ui/table"
 
 const Header = () => {
   const navigate = useNavigate();
@@ -108,7 +108,6 @@ const Header = () => {
             {/* 오른쪽 아이콘들 */}
             <div className='flex-1 flex justify-end items-center gap-5'>
               
-              <p className='text-white text-sm press-start-2p-regular cursor-pointer hover:text-gray-400 transition-colors duration-300' >ChatBot</p>
               <p className='text-white text-sm press-start-2p-regular cursor-pointer hover:text-gray-400 transition-colors duration-300' onClick={handleDailyQuizClick}>Daily-Quiz</p>
               <p className='text-white text-sm press-start-2p-regular cursor-pointer hover:text-gray-400 transition-colors duration-300' onClick={handleRankingClick}>Ranking</p>
               <Separator orientation='vertical' className='h-8 bg-white' />
@@ -117,7 +116,7 @@ const Header = () => {
                   <HoverCard>
                     <HoverCardTrigger>
                       <img 
-                        src='../assets/imgs/notification-bell.png'
+                        src='src/assets/imgs/notification-bell.png' 
                         alt="alarm" 
                         className='w-[35px] h-[35px] cursor-pointer'
                       />

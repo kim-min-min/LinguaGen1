@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useMemo } from 'react'
 import styled from 'styled-components'
 import { Lock } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 
 // Switch 컨테이너 및 슬라이드 애니메이션 스타일 정의
 const SwitchContainer = styled.div`
@@ -113,38 +114,79 @@ const BadgeGrid = styled.div`
 `
 
 const BadgePanel = () => {
-  const [activeTab, setActiveTab] = useState('challenges'); // 기본 탭을 'challenges'로 설정
-  const [badges, setBadges] = useState([]); // JSON 데이터를 저장할 상태값
+  const [activeTab, setActiveTab] = useState('challenges');
 
-  // JSON 파일을 fetch로 불러오는 함수
-  useEffect(() => {
-    const fetchBadges = async () => {
-      const challengesResponse = await fetch('src/Challenges.json');
-      const activitiesResponse = await fetch('src/Activities.json');
-      const challengesBadges = await challengesResponse.json();
-      const activitiesBadges = await activitiesResponse.json();
+  // challenges 데이터 쿼리
+  const { data: challengesBadges = [] } = useQuery({
+    queryKey: ['badges', 'challenges'],
+    queryFn: async () => {
+      const response = await fetch('src/Challenges.json');
+      const data = await response.json();
+      // 이미지 프리로딩
+      await Promise.all(
+        data.map(badge => 
+          new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = badge.src;
+            img.onload = resolve;
+            img.onerror = reject;
+          }).catch(() => {/* 이미지 로드 실패 처리 */})
+        )
+      );
+      return data;
+    },
+    staleTime: Infinity, // 데이터를 항상 fresh하게 유지
+    cacheTime: Infinity, // 캐시 영구 유지
+  });
 
-      if (activeTab === 'challenges') {
-        setBadges(challengesBadges);
-      } else {
-        setBadges(activitiesBadges);
-      }
-    };
+  // activities 데이터 쿼리
+  const { data: activitiesBadges = [] } = useQuery({
+    queryKey: ['badges', 'activities'],
+    queryFn: async () => {
+      const response = await fetch('src/Activities.json');
+      const data = await response.json();
+      // 이미지 프리로딩
+      await Promise.all(
+        data.map(badge => 
+          new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = badge.src;
+            img.onload = resolve;
+            img.onerror = reject;
+          }).catch(() => {/* 이미지 로드 실패 처리 */})
+        )
+      );
+      return data;
+    },
+    staleTime: Infinity,
+    cacheTime: Infinity,
+  });
 
-    fetchBadges();
-  }, [activeTab]); // activeTab이 바뀔 때마다 데이터를 다시 불러옴
+  // 현재 활성화된 탭의 데이터를 메모이제이션
+  const badges = useMemo(() => 
+    activeTab === 'challenges' ? challengesBadges : activitiesBadges,
+    [activeTab, challengesBadges, activitiesBadges]
+  );
 
   return (
-    <div className='flex flex-col items-center justify-start w-full ml-24 border-2 border-gray-300 rounded-lg' style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2', height : 'auto'}}>
-      <div className='w-full'><h4 className='font-bold h-14 pt-8 pl-4' style={{ fontSize: '24px' }}>뱃지</h4></div>
+    <div className='flex flex-col items-center justify-start w-full ml-24 border-2 border-gray-300 rounded-lg' 
+         style={{backdropFilter: 'blur(15px)', background: 'rgba(255, 255, 255, 0.2', height: 'auto'}}>
+      <div className='w-full'>
+        <h4 className='font-bold h-14 pt-8 pl-4' style={{ fontSize: '24px' }}>뱃지</h4>
+      </div>
 
-      {/* Switch 탭 구현 */}
       <SwitchContainer>
-        <SwitchSlider activeTab={activeTab} /> {/* 슬라이더 애니메이션 */}
-        <SwitchButton active={activeTab === 'challenges'} onClick={() => setActiveTab('challenges')}>
+        <SwitchSlider activeTab={activeTab} />
+        <SwitchButton 
+          active={activeTab === 'challenges'} 
+          onClick={() => setActiveTab('challenges')}
+        >
           Challenges
         </SwitchButton>
-        <SwitchButton active={activeTab === 'activities'} onClick={() => setActiveTab('activities')}>
+        <SwitchButton 
+          active={activeTab === 'activities'} 
+          onClick={() => setActiveTab('activities')}
+        >
           Activities
         </SwitchButton>
       </SwitchContainer>
@@ -152,15 +194,17 @@ const BadgePanel = () => {
       <div className='flex flex-col items-start justify-start w-full mt-10 h-full'>
         <BadgeGrid style={{ marginBottom: '45px' }}>
           {badges.map((badge, index) => (
-            <div key={index} className="flex flex-col items-center justify-center">
+            <div key={badge.id || index} className="flex flex-col items-center justify-center">
               <BadgeItem unlocked={badge.unlocked}>
                 <img
-                  src={badge.src || 'https://via.placeholder.com/60'} // 실제 이미지로 대체 가능
+                  src={badge.src || 'https://via.placeholder.com/60'}
                   alt={badge.title}
-                  style={{ borderRadius: '50%' , width : '60px' , hegiht : '60px'}}
+                  style={{ borderRadius: '50%', width: '60px', height: '60px'}}
+                  loading="lazy" // 지연 로딩 적용
+                  decoding="async" // 비동기 디코딩
                 />
-                <Lock size={20} /> {/* 잠금 아이콘 */}
-                <Tooltip>{badge.description}</Tooltip> {/* 툴팁 */}
+                <Lock size={20} />
+                <Tooltip>{badge.description}</Tooltip>
               </BadgeItem>
               <BadgeText unlocked={badge.unlocked}>{badge.title}</BadgeText>
             </div>
