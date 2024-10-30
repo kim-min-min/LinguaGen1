@@ -122,10 +122,10 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
     const fetchPosts = async () => {
       try {
         const responses = await Promise.all([
-          axios.get(`http://localhost:8085/api/community/latest/Notice`),
-          axios.get(`http://localhost:8085/api/community/latest/FreeBoard`),
-          axios.get(`http://localhost:8085/api/community/latest/ExchangeLearningTips`),
-          axios.get(`http://localhost:8085/api/community/latest/ClubBoard`)
+          axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/community/latest/Notice`),
+          axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/community/latest/FreeBoard`),
+          axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/community/latest/ExchangeLearningTips`),
+          axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/community/latest/ClubBoard`)
         ]);
 
         // 각 카테고리의 데이터를 상태로 업데이트

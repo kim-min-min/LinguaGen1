@@ -29,7 +29,7 @@ const DetailView = ({handleTabClick}) => {
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8085/api/community/${idx}`);
+                const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/community/${idx}`);
                 setSelectedItem(response.data);
             } catch (error) {
                 console.error('게시글을 불러오는 중 에러 발생:', error);
@@ -54,7 +54,7 @@ const DetailView = ({handleTabClick}) => {
 
     const fetchComments = async () => {
         try {
-            const response = await axios.get(`http://localhost:8085/api/comments/${idx}`);
+            const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/comments/${idx}`);
             setComments(response.data);
         } catch (error) {
             console.error('댓글을 불러오는 중 에러 발생:', error);
@@ -74,7 +74,7 @@ const DetailView = ({handleTabClick}) => {
         console.log("Saving post edits:", { editedTitle, editedContent });
         console.log({loggedInUserId})
         try {
-            await axios.put(`http://localhost:8085/api/community/${idx}?userId=${loggedInUserId}`, {
+            await axios.put(`${import.meta.env.VITE_APP_API_BASE_URL}/community/${idx}?userId=${loggedInUserId}`, {
                 title: editedTitle,
                 content: editedContent,
             });
@@ -89,7 +89,7 @@ const DetailView = ({handleTabClick}) => {
     // 게시글 삭제
     const handleDeletePost = async () => {
         try {
-            await axios.delete(`http://localhost:8085/api/community/${idx}`);
+            await axios.delete(`${import.meta.env.VITE_APP_API_BASE_URL}/community/${idx}`);
             navigate(`/community/${board}`);
         } catch (error) {
             console.error('게시글 삭제 중 에러 발생:', error);
@@ -115,7 +115,7 @@ const DetailView = ({handleTabClick}) => {
             userId: userId,
         };
         try {
-            const response = await axios.post('http://localhost:8085/api/comments', commentData);
+            const response = await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/comments`, commentData);
             setNewComment(''); // 입력란 초기화
             fetchComments(); // 댓글 목록 다시 불러오기
         } catch (error) {
@@ -146,7 +146,7 @@ const DetailView = ({handleTabClick}) => {
         if (!confirmed) return;
 
         try {
-            await axios.delete(`http://localhost:8085/api/comments/${commentIdx}`);
+            await axios.delete(`\`${import.meta.env.VITE_APP_API_BASE_URL}/comments/${commentIdx}`);
             fetchComments();
         } catch (error) {
             console.error('댓글 삭제 중 에러 발생:', error);
@@ -305,6 +305,5 @@ const DetailView = ({handleTabClick}) => {
         </div>
     );
 };
-
 
 export default DetailView;
