@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9064e66a-c41b-431e-9930-c12a3418d94e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/modules/backend.main.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/controller/HomeController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontEnd/.env.development" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontEnd/.env.production" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontEnd/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontEnd/nginx.conf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/font/Antiquity-print.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontEnd/src/assets/video/CommunityBackground.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontEnd/src/assets/video/DashBoardBackground.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontEnd/src/assets/video/MainBackground.mp4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/3d217c92-1550-429a-b56f-aa5d87ea4d95.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/3d217c92-1550-429a-b56f-aa5d87ea4d95/storage_v2/_src_/schema/Insa5_SpringA_final_3.ItSL-g.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/LinguaGen.main.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/ojdbc11.jar" beforeDir="false" afterPath="$PROJECT_DIR$/backend/libs/ojdbc11.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/.eslintrc.cjs" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/.eslintrc.cjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/components.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/components.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/jsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/jsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/postcss.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/postcss.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/public/Inter-Bold.woff" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/public/Inter-Bold.woff" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/public/Inter-Regular.woff" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/public/Inter-Regular.woff" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/public/vite.svg" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/public/vite.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/Activities.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/Activities.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/Challenges.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/Challenges.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/10.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/10.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/11.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/11.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/12.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/12.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/13.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/13.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/14.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/14.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/15.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/15.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/16.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/16.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/17.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/17.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/18.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/18.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/19.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/19.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/20.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/20.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/21.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/21.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/22.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/22.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/23.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/23.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/24.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/24.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/25.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/25.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/26.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/26.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/27.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/27.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/28.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/28.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/29.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/29.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/30.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/30.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/31.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/31.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/32.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/32.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/33.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/33.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/34.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/34.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/35.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/35.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/36.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/36.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/37.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/37.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/38.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/38.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/39.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/39.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/40.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/40.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/41.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/41.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/42.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/42.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/43.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/43.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/44.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/44.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/45.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/45.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/46.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/46.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/47.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/47.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/48.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/48.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/49.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/49.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/5.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/5.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/50.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/50.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/51.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/51.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/52.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/52.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/53.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/53.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/6.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/6.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/7.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/7.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/8.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/8.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/BadgeImage/9.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/BadgeImage/9.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/Dungeon.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/Dungeon.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/HP_Empty.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/HP_Empty.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/HP_Full.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/HP_Full.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/Mountain.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/Mountain.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/Ruins.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/Ruins.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_10.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_10.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_11.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_11.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_12.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_12.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_13.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_13.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_14.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_14.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_15.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_15.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_5.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_5.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_6.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_6.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_7.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_7.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_8.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_8.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_cleave_9.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_cleave_9.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_10.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_10.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_11.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_11.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_12.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_12.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_13.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_13.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_14.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_14.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_15.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_15.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_16.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_16.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_17.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_17.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_18.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_18.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_19.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_19.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_20.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_20.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_21.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_21.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_22.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_22.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_5.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_5.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_6.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_6.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_7.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_7.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_8.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_8.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_death_9.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_death_9.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_idle_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_idle_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_idle_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_idle_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_idle_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_idle_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_idle_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_idle_4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_idle_5.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_idle_5.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_idle_6.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_idle_6.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_slime_FREE_v1.0_288x160_spritesheet.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_slime_FREE_v1.0_288x160_spritesheet.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_take_hit_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_take_hit_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_take_hit_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_take_hit_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_take_hit_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_take_hit_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_take_hit_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_take_hit_4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/demon_take_hit_5.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/demon_take_hit_5.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/font/antiquity-print.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/public/assets/CanvasImage/font/Antiquity-print.ttf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_atk_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_atk_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_atk_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_atk_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_atk_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_atk_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_atk_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_atk_4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_atk_5.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_atk_5.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_atk_6.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_atk_6.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_atk_7.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_atk_7.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_atk_8.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_atk_8.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_death_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_death_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_death_10.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_death_10.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_death_11.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_death_11.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_death_12.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_death_12.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_death_13.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_death_13.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_death_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_death_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_death_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_death_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_death_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_death_4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_death_5.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_death_5.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_death_6.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_death_6.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_death_7.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_death_7.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_death_8.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_death_8.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_death_9.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_death_9.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_idle_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_idle_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_idle_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_idle_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_idle_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_idle_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_idle_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_idle_4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_idle_5.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_idle_5.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_idle_6.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_idle_6.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_idle_7.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_idle_7.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_idle_8.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_idle_8.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_10.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_10.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_11.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_11.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_12.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_12.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_13.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_13.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_14.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_14.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_15.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_15.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_16.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_16.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_17.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_17.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_18.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_18.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_5.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_5.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_6.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_6.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_7.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_7.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_8.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_8.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_sp_atk_9.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_sp_atk_9.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_take_hit_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_take_hit_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_take_hit_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_take_hit_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_take_hit_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_take_hit_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_take_hit_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_take_hit_4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_take_hit_5.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_take_hit_5.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/knight_take_hit_6.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/knight_take_hit_6.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/run_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/run_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/run_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/run_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/run_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/run_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/run_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/run_4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/run_5.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/run_5.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/run_6.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/run_6.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/run_7.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/run_7.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/CanvasImage/run_8.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/CanvasImage/run_8.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/LandingAssets/DevilishCat.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/LandingAssets/DevilishCat.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/LandingAssets/Tree.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/LandingAssets/Tree.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/LandingAssets/bear.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/LandingAssets/bear.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/LandingAssets/bg.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/LandingAssets/bg.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/LandingAssets/ground.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/LandingAssets/ground.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/LandingAssets/leaves1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/LandingAssets/leaves1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/LandingAssets/leaves2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/LandingAssets/leaves2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/LandingAssets/stars.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/LandingAssets/stars.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/Background-imgs.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/Background-imgs.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/Background-imgs_1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/Background-imgs_1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/MainBodyImage.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/MainBodyImage.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/MainLogo.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/MainLogo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/RankingPage.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/RankingPage.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/Tiers/Bronze Tier.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/Tiers/Bronze Tier.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/Tiers/Chellenger Tier.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/Tiers/Chellenger Tier.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/Tiers/Diamond Tier.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/Tiers/Diamond Tier.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/Tiers/Gold Tier.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/Tiers/Gold Tier.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/Tiers/Platinum Tier.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/Tiers/Platinum Tier.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/Tiers/Silver TIer.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/Tiers/Silver TIer.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/chatbot.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/chatbot.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/check.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/check.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/comments.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/comments.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/day.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/day.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/down.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/down.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/home.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/home.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/info.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/info.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/magnifier.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/magnifier.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/notification-bell.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/notification-bell.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/placeholder.svg" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/placeholder.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/play.svg" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/play.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/promotion.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/promotion.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/timer.svg" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/timer.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/trophy.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/trophy.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/imgs/unchecked.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/imgs/unchecked.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/react.svg" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/assets/react.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/video/CommunityBackground.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/public/assets/video/CommunityBackground.mp4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/video/DashBoardBackground.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/public/assets/video/DashBoardBackground.mp4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/assets/video/MainBackground.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/public/assets/video/MainBackground.mp4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Community/ClubBoard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Community/ClubBoard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Community/Community.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Community/Community.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Community/DetailView.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Community/DetailView.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Community/ExchangeLearningTips.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Community/ExchangeLearningTips.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Community/FreeBoard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Community/FreeBoard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Community/Notice.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Community/Notice.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Community/Writing.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Community/Writing.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/CustomLineChart.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/CustomLineChart.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/CustomRadicalChart.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/CustomRadicalChart.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/DailyQuiz.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/DailyQuiz.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/DashBoard/AchievementPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/DashBoard/AchievementPanel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/DashBoard/BadgePanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/DashBoard/BadgePanel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/DashBoard/DashBoard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/DashBoard/DashBoard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/DashBoard/DashBoardPageSide.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/DashBoard/DashBoardPageSide.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/DashBoard/DashBoardPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/DashBoard/DashBoardPanel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/DemoPlay.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/DemoPlay.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Dice.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Dice.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/DiceCanvas.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/DiceCanvas.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Fireflies.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Fireflies.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Game/DungeonCanvas.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Game/DungeonCanvas.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Game/GameProgressPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Game/GameProgressPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Game/MountainCanvas.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Game/MountainCanvas.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Game/RuinsCanvas.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Game/RuinsCanvas.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/GoodbyeMessage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/GoodbyeMessage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Header.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Header.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/HeatMap.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/HeatMap.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/LandingPage.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/LandingPage.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/LandingPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/LandingPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/LoginPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/LoginPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/MainPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/MainPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/MainPageComponents/MainContainer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/MainPageComponents/MainContainer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/MainPageComponents/PracticeMenubar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/MainPageComponents/PracticeMenubar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/MainPageComponents/ProfileCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/MainPageComponents/ProfileCard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/MyPage/MyPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/MyPage/MyPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/MyPage/MyPageInquiryHistoryPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/MyPage/MyPageInquiryHistoryPanel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/MyPage/MyPagePlayHistoryPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/MyPage/MyPagePlayHistoryPanel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/MyPage/MyPagePointUsingHistoryPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/MyPage/MyPagePointUsingHistoryPanel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/MyPage/MyPagePostHistoryPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/MyPage/MyPagePostHistoryPanel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/MyPage/MyPageSettingPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/MyPage/MyPageSettingPanel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/MyPage/NotificationPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/MyPage/NotificationPanel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Overlay.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Overlay.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/PageLoader.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/PageLoader.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/RankingPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/RankingPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Stars.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Stars.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Switch.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Switch.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Test/QuestionList.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Test/QuestionList.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Test/User.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Test/User.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/WeeklyLearning.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/WeeklyLearning.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/WelcomeMessage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/WelcomeMessage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/Word3D.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/Word3D.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/WordCarousel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/WordCarousel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/materials/layerMaterial.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/materials/layerMaterial.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/accordion.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/accordion.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/avatar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/avatar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/button.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/button.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/card.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/card.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/carousel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/carousel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/chart.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/chart.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/checkbox.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/checkbox.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/context-menu.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/context-menu.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/dialog.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/dialog.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/form.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/form.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/hover-card.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/hover-card.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/input.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/input.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/label.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/label.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/navigation-menu.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/navigation-menu.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/pagination.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/pagination.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/progress.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/progress.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/radio-group.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/radio-group.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/select.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/select.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/separator.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/separator.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/sheet.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/sheet.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/slider.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/slider.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/switch.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/switch.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/table.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/table.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/textarea.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/textarea.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/toggle-group.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/toggle-group.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/toggle.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/toggle.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/components/ui/tooltip.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/components/ui/tooltip.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/lib/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/lib/utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/main.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/main.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/store/useStore.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/store/useStore.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/src/styles/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/src/styles/global.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/tailwind.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/FrontEnd/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontEnd/vite.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/LinguaGenApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/controller/CommentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/controller/CommentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/controller/CommunityController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/controller/CommunityController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/controller/DailyQuizController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/controller/DailyQuizController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/controller/DailyWordController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/controller/DailyWordController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/controller/ErrorResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/controller/ErrorResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/controller/GradeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/controller/GradeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/controller/QuestionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/controller/QuestionController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/dto/AccessLogDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/dto/AccessLogDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/dto/CommentDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/dto/CommentDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/dto/CommunityDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/dto/CommunityDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/dto/GradeDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/dto/GradeDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/dto/GuessRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/dto/GuessRequestDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/dto/QuestionDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/dto/QuestionDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/dto/UserInterestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/dto/UserInterestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/entity/AccessLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/entity/AccessLog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/entity/Choices.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/entity/Choices.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/entity/Comment.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/entity/Comment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/entity/Community.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/entity/Community.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/entity/DailyQuiz.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/entity/DailyQuiz.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/entity/DailyWord.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/entity/DailyWord.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/entity/Grade.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/entity/Grade.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/entity/Question.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/entity/Question.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/entity/UserInterest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/entity/UserInterest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/entity/converter/QuestionFormatConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/entity/converter/QuestionFormatConverter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/exception/ResourceNotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/exception/ResourceNotFoundException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/repository/AccessLogRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/repository/AccessLogRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/repository/CommentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/repository/CommentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/repository/CommunityRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/repository/CommunityRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/repository/DailyQuizRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/repository/DailyQuizRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/repository/DailyWordRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/repository/DailyWordRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/repository/GradeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/repository/GradeRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/repository/QuestionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/repository/QuestionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/repository/UserInterestRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/repository/UserInterestRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/service/AccessLogService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/service/AccessLogService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/service/CommentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/service/CommentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/service/CommunityService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/service/CommunityService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/service/DailyQuizService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/service/DailyQuizService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/service/DailyWordService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/service/DailyWordService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/service/GradeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/service/GradeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/service/QuestionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/service/QuestionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/service/UserInterestService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/service/UserInterestService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/linguagen/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/linguagen/backend/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/linguagen/LinguaGenApplicationTests.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/backend">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Dockerfile" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;DevHaeng&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/DevHaeng/LinguaGen.git&quot;,
+    &quot;accountId&quot;: &quot;2969c088-3e4b-42a9-9bcb-d6c777e72458&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2o5pYFBqCOwxl1LiYVSHRemsyoD" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build backend.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.BackendApplication.executor": "Run",
+    "git-widget-placeholder": "main",
+    "jdk.selected.JAVA_MODULE": "17",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Project/BackUp",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\LinguaGen\frontEnd\public\assets\CanvasImage\font" />
+      <recent name="C:\LinguaGen\frontEnd\public\assets\video" />
+      <recent name="C:\LinguaGen\frontEnd\dist\assets" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\LinguaGen\backend" />
+      <recent name="C:\LinguaGen" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.BackendApplication">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="LinguaGen" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="com.linguagen.backend.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.linguagen.backend.BackendApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LinguaGenApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="LinguaGen.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.linguagen.LinguaGenApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23339.11" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23339.11" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9064e66a-c41b-431e-9930-c12a3418d94e" name="Changes" comment="" />
+      <created>1730169338768</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1730169338768</updated>
+      <workItem from="1730169340375" duration="24191000" />
+      <workItem from="1730199538475" duration="1723000" />
+      <workItem from="1730247249886" duration="56000" />
+      <workItem from="1730247321908" duration="1052000" />
+      <workItem from="1730248401102" duration="1464000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
