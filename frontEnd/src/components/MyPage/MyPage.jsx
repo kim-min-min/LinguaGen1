@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import Header from '../Header.jsx';
+import Header from '../Header';
 import styled from 'styled-components';
-import MyPageSettingPanel from './MyPageSettingPanel.jsx'; // 계정 설정 패널
-import MyPagePlayHistoryPanel from './MyPagePlayHistoryPanel.jsx'; // 플레이 내역 패널
+import MyPageSettingPanel from './MyPageSettingPanel'; // 계정 설정 패널
+import MyPagePlayHistoryPanel from './MyPagePlayHistoryPanel'; // 플레이 내역 패널
 
 
 // 사이드바 스타일
@@ -75,7 +75,7 @@ const MyPage = () => {
   return (
     <div className='flex flex-col items-center justify-start h-screen w-full relative overflow-y-auto custom-scrollbar'>
       <BackgroundVideo autoPlay muted loop>
-        <source src='/assets/video/MainBackground.mp4' type='video/mp4' />
+        <source src='src/assets/video/MainBackground.mp4' type='video/mp4' />
       </BackgroundVideo>
       <Header />
       
@@ -85,8 +85,8 @@ const MyPage = () => {
         <div className='col-span-3 col-start-2 flex flex-col gap-8 items-center'>
           <div className='flex items-center justify-center mt-16'>
             <SidebarContainer>
-              <SectionTitle>기록</SectionTitle>
-              <List>
+              <SectionTitle className='jua-regular text-2xl'>기록</SectionTitle>
+              <List className='jua-regular text-xl'>
                 <ListItem
                   isActive={activePanel === 'playHistory'}
                   onClick={() => setActivePanel('playHistory')}
@@ -113,8 +113,8 @@ const MyPage = () => {
                 </ListItem>
               </List>
 
-              <SectionTitle style={{ marginTop: '45px' }}>설정</SectionTitle>
-              <List>
+              <SectionTitle className='jua-regular text-2xl' style={{ marginTop: '45px' }}>설정</SectionTitle>
+              <List className='jua-regular text-xl'>
                 <ListItem
                   isActive={activePanel === 'accountSettings'}
                   onClick={() => setActivePanel('accountSettings')}

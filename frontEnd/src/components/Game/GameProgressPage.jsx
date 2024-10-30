@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion'; // framer-motion 라이브러리 사용
-import axios from 'axios';
+
+
 // const questions = [
 //     // 4지선다 문법 문제
 //     {
@@ -97,18 +98,16 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
         const fetchQuestions = async () => {
             try {
                 setLoading(true);
-                const { data } = await axios.get('http://localhost:8085/api/questions/random', {
-                    params: {
-                        count: 10
-                    },
-                    headers: {
-                        'Accept': 'application/json'
-                    },
-                    withCredentials: true
-                });
+                const response = await fetch('http://localhost:5173/api/questions/random?count=10');
 
+                if (!response.ok) {
+                    throw new Error('Failed to fetch questions');
+                }
+
+                const data = await response.json();
                 console.log('Raw data:', data);
 
+                // 데이터 변환 부분
                 const formattedQuestions = data.map(q => {
                     if (q.questionFormat === 'MULTIPLE_CHOICE') {
                         const correctIndex = q.choices.findIndex(
@@ -123,7 +122,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                             passage: q.passage || null,
                             explanation: q.explanation
                         };
-                    } else if (q.questionFormat === 'SHORT_ANSWER') {
+                    } else if (q.questionFormat === 'SHORT_ANSWER') {  // SHORT_ANSWER 케이스 처리
                         return {
                             type: 'shortAnswer',
                             question: q.question,
@@ -132,15 +131,15 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                             explanation: q.explanation
                         };
                     }
-                    return null;
-                }).filter(q => q !== null);
+                });
+
 
                 console.log('Formatted questions:', formattedQuestions);
                 setQuestions(formattedQuestions);
-            } catch (error) {
-                console.error('Fetch error:', error);
-                setError(error.response?.data?.message || error.message);
-            } finally {
+                setLoading(false);
+            } catch (err) {
+                console.error('Fetch error:', err);
+                setError(err.message);
                 setLoading(false);
             }
         };
@@ -196,71 +195,42 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
 
         return (
             <motion.div
-                initial={{opacity: 0}}
-                animate={{opacity: 1}}
-                className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="fixed bottom-0 left-0 right-0 p-4 bg-white shadow-lg"
             >
-                <motion.div
-                    initial={{opacity: 0, y: 20}}
-                    animate={{opacity: 1, y: 0}}
-                    className="relative bg-white rounded-xl shadow-2xl w-[800px] m-4"
-                >
-                    {/* 상단 결과 표시 */}
-                    <div className="p-6 border-b">
-                        <h3 className="text-2xl font-bold text-center text-gray-800">
-                            {feedback ? '정답입니다! 🎉' : '틀렸습니다. 😢'}
-                        </h3>
+                <div className="max-w-4xl mx-auto flex justify-between items-center">
+                    <div className="flex-1">
+                        <button
+                            onClick={() => setShowExplanation(!showExplanation)}
+                            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                        >
+                            {showExplanation ? '해설 닫기' : '해설 보기'}
+                        </button>
                     </div>
-
-                    {/* 해설 영역 */}
-                    <div className="p-6 max-h-[60vh] overflow-y-auto">
-                        {showExplanation && (
-                            <motion.div
-                                initial={{opacity: 0}}
-                                animate={{opacity: 1}}
-                                className="bg-gray-50 p-6 rounded-lg"
-                            >
-                                <h4 className="font-bold mb-4 text-lg text-gray-700">💡 해설</h4>
-                                <div className="text-lg text-gray-600 leading-relaxed">
-                                    <p className="whitespace-pre-line break-words">
-                                        {currentQuestion.explanation}
-                                    </p>
-                                </div>
-                            </motion.div>
-                        )}
+                    {showExplanation && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="flex-2 px-6 text-gray-700"
+                        >
+                            <h3 className="font-bold mb-2">해설:</h3>
+                            <p>{currentQuestion.explanation}</p>
+                        </motion.div>
+                    )}
+                    <div className="flex-1 text-right">
+                        <button
+                            onClick={handleNextQuestion}
+                            className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                        >
+                            다음 문제
+                        </button>
                     </div>
-
-                    {/* 하단 버튼 영역 */}
-                    <div className="p-6 border-t bg-gray-50 rounded-b-xl">
-                        <div className="flex justify-center gap-4">
-                            <button
-                                onClick={() => setShowExplanation(!showExplanation)}
-                                className="py-3 px-6 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-lg font-medium"
-                            >
-                                {showExplanation ? '해설 닫기' : '해설 보기'}
-                            </button>
-                            <button
-                                onClick={handleNextQuestion}
-                                className="py-3 px-6 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-lg font-medium"
-                            >
-                                다음 문제
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* 닫기 버튼 (선택사항) */}
-                    <button
-                        onClick={handleNextQuestion}
-                        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </motion.div>
+                </div>
             </motion.div>
         );
     };
+
 
 
     const renderQuestion = () => {
@@ -296,11 +266,10 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                                         style={{
                                             backgroundColor: colors[index],
                                         }}
-                                        whileHover={{scale: 1.02}}
-                                        whileTap={{scale: 0.98}}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
                                     >
-                                        <div
-                                            className="w-full h-full flex flex-col items-center justify-center text-center p-6">
+                                        <div className="w-full h-full flex flex-col items-center justify-center text-center p-6">
                     <span className="text-2xl font-bold mb-3 text-white">
                         {['A', 'B', 'C', 'D'][index]}
                     </span>
@@ -311,9 +280,9 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                                         <AnimatePresence>
                                             {showFeedback && selectedAnswer === index && (
                                                 <motion.div
-                                                    initial={{opacity: 0}}
-                                                    animate={{opacity: 1}}
-                                                    exit={{opacity: 0}}
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    exit={{ opacity: 0 }}
                                                     className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center"
                                                 >
                             <span className="text-6xl font-bold text-white">
@@ -466,12 +435,8 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
 
     return (
         <div className="h-full w-full overflow-hidden bg-gray-50 relative">
-            <div className="flex h-full"> {/* flex 컨테이너 추가 */}
-                <div className={`flex-1 transition-all duration-300 ${showNextButtons ? 'mr-1/4' : ''}`}>
-                    {renderQuestion()}
-                </div>
-                {renderNextButtons()}
-            </div>
+            {renderQuestion()}
+            {renderNextButtons()}
         </div>
     );
 };

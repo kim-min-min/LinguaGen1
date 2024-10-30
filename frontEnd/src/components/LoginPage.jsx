@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import { Link, useNavigate,useLocation } from 'react-router-dom';
-
-
 import { Button } from "@components/ui/button";
 import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
 import '../App.css';
-import Stars from './Stars.jsx';
-import Overlay from './Overlay.jsx';
-import useStore from '../store/useStore.js';
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.jsx";
-import { Slider } from "@/components/ui/slider.jsx";
+import Stars from './Stars';
+import Overlay from './Overlay';
+import useStore from '../store/useStore';
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Slider } from "@/components/ui/slider";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip.jsx"
+} from "@/components/ui/tooltip"
 import axios from "axios";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
@@ -465,7 +463,7 @@ function SignupNext({ formData, onPreviousSignup }) {
                 <TooltipProvider >
                   <Tooltip >
                     <TooltipTrigger className='bg-transparent'>
-                      <img src="../assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
+                      <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>브론즈</p>
@@ -473,13 +471,13 @@ function SignupNext({ formData, onPreviousSignup }) {
                   </Tooltip>
                 </TooltipProvider>
                 <p>Bronze</p>
-                <img src="../assets/imgs/down.png" alt="이미지를 불러올 수 없습니다" className='w-8 h-8 mt-4' />
+                <img src="src/assets/imgs/down.png" alt="이미지를 불러올 수 없습니다" className='w-8 h-8 mt-4' />
               </div>
               <div className='flex flex-col justify-center items-center'>
                 <TooltipProvider >
                   <Tooltip >
                     <TooltipTrigger className='bg-transparent'>
-                      <img src="../assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
+                      <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>실버</p>
@@ -487,13 +485,13 @@ function SignupNext({ formData, onPreviousSignup }) {
                   </Tooltip>
                 </TooltipProvider>
                 <p>Silver</p>
-                <img src="../assets/imgs/down.png" alt="이미지를 불러올 수 없습니다" className='w-8 h-8 mt-4' />
+                <img src="src/assets/imgs/down.png" alt="이미지를 불러올 수 없습니다" className='w-8 h-8 mt-4' />
               </div>
               <div className='flex flex-col justify-center items-center'>
                 <TooltipProvider >
                   <Tooltip >
                     <TooltipTrigger className='bg-transparent'>
-                      <img src="../assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
+                      <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>골드</p>
@@ -501,7 +499,7 @@ function SignupNext({ formData, onPreviousSignup }) {
                   </Tooltip>
                 </TooltipProvider>
                 <p>Gold</p>
-                <img src="../assets/imgs/down.png" alt="이미지를 불러올 수 없습니다" className='w-8 h-8 mt-4' />
+                <img src="src/assets/imgs/down.png" alt="이미지를 불러올 수 없습니다" className='w-8 h-8 mt-4' />
               </div>
             </div>
             <Slider

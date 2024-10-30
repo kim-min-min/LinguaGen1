@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import Header from '../Header.jsx'; // Assuming Header is already imported
+import Header from '../Header'; // Assuming Header is already imported
 import '@fortawesome/fontawesome-free/css/all.min.css'; // Font Awesome CSS 추가
 import '../../App.css';
-import Notice from './Notice.jsx'; // 공지사항 컴포넌트 임포트
-import FreeBoard from './FreeBoard.jsx'; // 자유게시판 컴포넌트 임포트
-import ExchangeLearningTips from './ExchangeLearningTips.jsx'; // 학습 팁 교환 컴포넌트 임포트
-import ClubBoard from './ClubBoard.jsx'; // 동아리 게시판 컴포넌트 임포트
+import Notice from './Notice'; // 공지사항 컴포넌트 임포트
+import FreeBoard from './FreeBoard'; // 자유게시판 컴포넌트 임포트
+import ExchangeLearningTips from './ExchangeLearningTips'; // 학습 팁 교환 컴포넌트 임포트
+import ClubBoard from './ClubBoard'; // 동아리 게시판 컴포넌트 임포트
 import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
-import Writing from './Writing.jsx';
-import DetailView from './DetailView.jsx';
+import Writing from './Writing';
+import DetailView from './DetailView';
 import axios from 'axios';
 import {format} from "date-fns";
 
@@ -238,7 +238,7 @@ const Community = () => {
     <CommunityContainer className='overflow-y-auto custom-scrollbar'>
       <BackgroundVideoWrapper>
         <BackgroundVideo ref={videoRef} autoPlay muted loop>
-          <source src='/assets/video/CommunityBackground.mp4' type='video/mp4' />
+          <source src='/src/assets/video/CommunityBackground.mp4' type='video/mp4' />
         </BackgroundVideo>
       </BackgroundVideoWrapper>
       <Header />
@@ -246,7 +246,7 @@ const Community = () => {
       {/* 커뮤니티 타이틀 */}
       <div className='w-full flex justify-center items-center mt-8 mb-4'>
         <Link to='/community' onClick={() => handleTabClick('')}>
-          <h1 className='select-none kanit-semibold'>Community</h1>
+          <h1 className='select-none kanit-bold'>Community</h1>
         </Link>
       </div>
 
@@ -263,7 +263,7 @@ const Community = () => {
                 </SearchButton>
               </SearchBox>
             </div>
-            <div className='w-full my-8'>
+            <div className='w-full my-8 jua-regular text-xl'>
               <Item isActive={activeTab === 'Notice'} onClick={() => handleTabClick('Notice')}>
                 공지사항
               </Item>

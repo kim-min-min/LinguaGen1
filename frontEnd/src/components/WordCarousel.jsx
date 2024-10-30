@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card.jsx';
+import { Card, CardContent } from '@/components/ui/card';
 import {
     Carousel,
     CarouselContent,
     CarouselItem,
     CarouselNext,
     CarouselPrevious,
-} from '@/components/ui/carousel.jsx';
+} from '@/components/ui/carousel';
 
 const WordCarousel = () => {
     const [words, setWords] = useState([]);
@@ -32,7 +32,7 @@ const WordCarousel = () => {
                         {words.map((word, index) => (
                             <CarouselItem key={index}>
                                 <div className="p-1">
-                                    <Card>
+                                    <Card style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2'}}>
                                         <CardContent className="flex flex-col aspect-square items-center justify-center p-6">
                                             <h2 className="text-4xl kanit-bold mb-2" style={{ userSelect: 'none' }}>
                                                 {word.word}

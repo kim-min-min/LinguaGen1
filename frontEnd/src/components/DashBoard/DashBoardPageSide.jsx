@@ -1,6 +1,6 @@
 import React from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.jsx';
-import { Separator } from '@/components/ui/separator.jsx';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import { useNavigate } from 'react-router-dom'; // useNavigate import
 import styled from 'styled-components';
 
@@ -22,7 +22,7 @@ const DashBoardPageSide = ({ activePanel, setActivePanel }) => {
   const navigate = useNavigate(); // useNavigate 사용
 
   return (
-    <div className='flex flex-col items-center justify-start w-80 border-2 border-gray-300 rounded-lg' style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2', height : 'auto'}}>
+    <div className='flex flex-col items-center justify-start w-80 border-2 border-gray-300 rounded-lg jua-regular' style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2', height : 'auto'}}>
       <div className='flex flex-col items-start justify-between w-full h-48 pt-4 p-4'>
         {/* Avatar 클릭 시 MyPageSettingPanel로 이동 */}
         <Avatar className='w-20 h-20 ml-4'>
@@ -34,7 +34,7 @@ const DashBoardPageSide = ({ activePanel, setActivePanel }) => {
           />
           <AvatarFallback>VC</AvatarFallback>
         </Avatar>
-        <p className='text-center w-1/2 mt-4'>Name</p>
+        <p className='text-center w-1/2 mt-4 kanit-regular'>Name</p>
       </div>
       <Separator className='w-full mt-8 mb-8 border-2' />
       <div className='flex flex-row justify-between w-full'>
@@ -48,7 +48,7 @@ const DashBoardPageSide = ({ activePanel, setActivePanel }) => {
         </div>
       </div>
       <Separator className='w-full mt-8 mb-8 border-2' />
-      <div className='flex flex-col w-full h-full items-start justify-start'>
+      <div className='flex flex-col w-full h-full items-start justify-start text-xl'>
         <Item
           isActive={activePanel === 'dashboard'}
           onClick={() => setActivePanel('dashboard')}

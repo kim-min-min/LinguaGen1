@@ -3,27 +3,27 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Card, CardHeader, CardContent } from "@/components/ui/card.jsx";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar.jsx";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card.jsx";
-import { Button } from "@/components/ui/button.jsx";
-import { Input } from "@/components/ui/input.jsx";
-import { Label } from "@/components/ui/label.jsx";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "@/components/ui/context-menu.jsx"
+} from "@/components/ui/context-menu"
 import BronzeTier from "../../assets/imgs/Tiers/Bronze Tier.png";
-import SilverTier from "../../assets/imgs/Tiers/Silver TIer.png";
+import SilverTier from "../../assets/imgs/Tiers/Silver Tier.png";
 import GoldTier from "../../assets/imgs/Tiers/Gold Tier.png";
 import PlatinumTier from "../../assets/imgs/Tiers/Platinum Tier.png";
 import DiamondTier from "../../assets/imgs/Tiers/Diamond Tier.png";
 import ChellengerTier from "../../assets/imgs/Tiers/Chellenger Tier.png";
 
-import { Separator } from "@/components/ui/separator.jsx";
-import useStore from '../../store/useStore.js';
+import { Separator } from "@/components/ui/separator";
+import useStore from '../../store/useStore';
 import "../../App.css";
 
 
@@ -168,7 +168,7 @@ function ProfileCard() {
 
   if (!isLoggedIn) {
     return (
-      <Card className="w-80 h-106 shadow-xl">
+      <Card className="w-80 h-106 shadow-xl" style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2'}}>
         <CardHeader>
           <h2 className="text-2xl font-semibold">로그인</h2>
           <p className="text-sm text-gray-500">
@@ -224,7 +224,7 @@ function ProfileCard() {
   }
 
   return (
-    <Card className="w-80 h-96 shadow-xl">
+    <Card className="w-80 h-96 shadow-xl" style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2'}}>
       <CardHeader style={{
         display: "flex",
         flexDirection: "row",
@@ -284,7 +284,7 @@ function ProfileCard() {
       </CardHeader>
       <Separator className="w-full bg-gray-300" />
       <CardContent className="flex flex-col items-center justify-center h-60 gap-12">
-        <ul className="flex flex-col items-center justify-center gap-12 Texthover font-bold">
+        <ul className="flex flex-col items-center justify-center gap-12 Texthover jua-regular text-xl">
           <li>
             <Link to="/mypage" style={{ fontWeight: 'bold' }}>마이페이지</Link>
           </li>
