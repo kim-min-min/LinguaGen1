@@ -1,7 +1,22 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import axios from "axios";
 import Header from "./Header.jsx";
+
+// 페이드 인 애니메이션 정의
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+// 페이드 인 애니메이션을 적용한 컨테이너
+const FadeInContainer = styled.div`
+  animation: ${fadeIn} 1s ease-in-out;
+`;
 
 // 스타일 정의
 const GameBoard = styled.div`
@@ -396,7 +411,7 @@ const DailyQuiz = () => {
 
 
     return (
-        <div className="h-full w-full relative">
+        <FadeInContainer className="h-full w-full relative">
             <BackgroundVideo autoPlay muted loop>
                 <source src='/assets/video/MainBackground.mp4' type='video/mp4' />
             </BackgroundVideo>
@@ -467,7 +482,7 @@ const DailyQuiz = () => {
                     </KeyboardLine>
                 </GameKeyboard>
             </div>
-        </div>
+        </FadeInContainer>
     );
 };
 

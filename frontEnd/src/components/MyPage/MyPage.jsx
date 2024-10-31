@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from '../Header';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import MyPageSettingPanel from './MyPageSettingPanel'; // 계정 설정 패널
 import MyPagePlayHistoryPanel from './MyPagePlayHistoryPanel'; // 플레이 내역 패널
 
@@ -55,6 +55,21 @@ const BackgroundVideo = styled.video`
   z-index: -1; /* 다른 요소 뒤에 배치 */
 `;
 
+// 페이드 인 애니메이션 정의
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+// 페이드 인 애니메이션을 적용한 컨테이너
+const FadeInContainer = styled.div`
+  animation: ${fadeIn} 1s ease-in-out;
+`;
+
 const MyPage = () => {
   const location = useLocation(); // useLocation으로 URL 정보 가져오기
   const queryParams = new URLSearchParams(location.search);
@@ -73,7 +88,7 @@ const MyPage = () => {
   };
 
   return (
-    <div className='flex flex-col items-center justify-start h-screen w-full relative overflow-y-auto custom-scrollbar'>
+    <FadeInContainer className='flex flex-col items-center justify-start h-screen w-full relative overflow-y-auto custom-scrollbar '>
       <BackgroundVideo autoPlay muted loop>
         <source src='src/assets/video/MainBackground.mp4' type='video/mp4' />
       </BackgroundVideo>
@@ -142,7 +157,7 @@ const MyPage = () => {
           )}
         </div>
       </main>
-    </div>
+    </FadeInContainer>
   );
 };
 
