@@ -127,14 +127,15 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
 
         return (
             <motion.div
-                initial={{opacity: 0}}
-                animate={{opacity: 1}}
-                className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 overflow-visible"
             >
                 <motion.div
-                    initial={{opacity: 0, y: 20}}
-                    animate={{opacity: 1, y: 0}}
-                    className="relative bg-white rounded-xl shadow-2xl w-[800px] m-4"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="absolute bg-white rounded-xl shadow-2xl w-[800px] m-4 z-10 h-auto"
+                    style={{ top: '0%' }}
                 >
                     {/* 상단 결과 표시 */}
                     <div className="p-6 border-b">
@@ -144,22 +145,31 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                     </div>
 
                     {/* 해설 영역 */}
-                    <div className="p-6 max-h-[60vh] overflow-y-auto">
-                        {showExplanation && (
-                            <motion.div
-                                initial={{opacity: 0}}
-                                animate={{opacity: 1}}
-                                className="bg-gray-50 p-6 rounded-lg"
-                            >
+                    {showExplanation && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="absolute bg-gray-50 p-6 rounded-lg"
+                            style={{ top: '-200%', transform: 'translateY(-100%)' }}
+                        >
+                            <div className='flex justify-between items-center'>
                                 <h4 className="font-bold mb-4 text-lg text-gray-700">💡 해설</h4>
-                                <div className="text-lg text-gray-600 leading-relaxed">
-                                    <p className="whitespace-pre-line break-words">
-                                        {currentQuestion.explanation}
-                                    </p>
-                                </div>
-                            </motion.div>
-                        )}
-                    </div>
+                                <button
+                                    onClick={handleNextQuestion}
+                                    className="text-gray-400 hover:text-gray-600"
+                                >
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div className="text-lg text-gray-600 leading-relaxed">
+                                <p className="whitespace-pre-line break-words">
+                                    {currentQuestion.explanation}
+                                </p>
+                            </div>
+                        </motion.div>
+                    )}
 
                     {/* 하단 버튼 영역 */}
                     <div className="p-6 border-t bg-gray-50 rounded-b-xl">
@@ -180,14 +190,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                     </div>
 
                     {/* 닫기 버튼 (선택사항) */}
-                    <button
-                        onClick={handleNextQuestion}
-                        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+
                 </motion.div>
             </motion.div>
         );
@@ -400,7 +403,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
     }
 
     return (
-        <div className="h-full w-full overflow-hidden bg-gray-50 relative">
+        <div className="h-full w-full overflow-visible bg-gray-50 relative">
             {showTutorial ? (
                 <TutorialMessage 
                     onStart={handleStart}

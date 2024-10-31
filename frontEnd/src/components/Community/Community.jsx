@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import Header from '../Header'; // Assuming Header is already imported
 import '@fortawesome/fontawesome-free/css/all.min.css'; // Font Awesome CSS 추가
 import '../../App.css';
@@ -103,6 +103,21 @@ const CommunityContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
+`;
+
+// 페이드 인 애니메이션 정의
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+// 페이드 인 애니메이션을 적용한 컨테이너
+const FadeInContainer = styled.div`
+  animation: ${fadeIn} 1s ease-in-out;
 `;
 
 // 기본 시판 컴포넌트
@@ -235,63 +250,65 @@ const Community = () => {
   };
 
   return (
-    <CommunityContainer className='overflow-y-auto custom-scrollbar'>
-      <BackgroundVideoWrapper>
-        <BackgroundVideo ref={videoRef} autoPlay muted loop>
-          <source src='/src/assets/video/CommunityBackground.mp4' type='video/mp4' />
-        </BackgroundVideo>
-      </BackgroundVideoWrapper>
-      <Header />
-      
-      {/* 커뮤니티 타이틀 */}
-      <div className='w-full flex justify-center items-center mt-8 mb-4'>
-        <Link to='/community' onClick={() => handleTabClick('')}>
-          <h1 className='select-none kanit-bold'>Community</h1>
-        </Link>
-      </div>
+    <FadeInContainer>
+      <CommunityContainer className='overflow-y-auto custom-scrollbar'>
+        <BackgroundVideoWrapper>
+          <BackgroundVideo ref={videoRef} autoPlay muted loop>
+            <source src='/src/assets/video/CommunityBackground.mp4' type='video/mp4' />
+          </BackgroundVideo>
+        </BackgroundVideoWrapper>
+        <Header />
+        
+        {/* 커뮤니티 타이틀 */}
+        <div className='w-full flex justify-center items-center mt-8 mb-4'>
+          <Link to='/community' onClick={() => handleTabClick('')}>
+            <h1 className='select-none kanit-bold'>Community</h1>
+          </Link>
+        </div>
 
-      {/* 메인 컨텐츠 영역을 grid로 구성 */}
-      <main className='w-full h-full grid grid-cols-12 gap-4 p-4 pt-0'>
-        {/* 왼쪽 사이드바 */}
-        <div className='col-span-3 col-start-2 flex flex-col items-center'>
-          <div className='w-80 flex flex-col border-2 border-gray-300 rounded-lg backdrop-blur-md bg-white/20 mt-8'>
-            <div className='w-full p-4'>
-              <SearchBox>
-                <SearchInput type="text" placeholder="Search..." />
-                <SearchButton>
-                  <i className="fas fa-search"></i>
-                </SearchButton>
-              </SearchBox>
-            </div>
-            <div className='w-full my-8 jua-regular text-xl'>
-              <Item isActive={activeTab === 'Notice'} onClick={() => handleTabClick('Notice')}>
-                공지사항
-              </Item>
-              <Item isActive={activeTab === 'FreeBoard'} onClick={() => handleTabClick('FreeBoard')}>
-                자유게시판
-              </Item>
-              <Item isActive={activeTab === 'ExchangeLearningTips'} onClick={() => handleTabClick('ExchangeLearningTips')}>
-                학습 팁 교환
-              </Item>
-              <Item isActive={activeTab === 'ClubBoard'} onClick={() => handleTabClick('ClubBoard')}>
-                동아리 게시판
-              </Item>
+        {/* 메인 컨텐츠 영역을 grid로 구성 */}
+        <main className='w-full h-full grid grid-cols-12 gap-4 p-4 pt-0'>
+          {/* 왼쪽 사이드바 */}
+          <div className='col-span-3 col-start-2 flex flex-col items-center'>
+            <div className='w-80 flex flex-col border-2 border-gray-300 rounded-lg backdrop-blur-md bg-white/20 mt-8'>
+              <div className='w-full p-4'>
+                <SearchBox>
+                  <SearchInput type="text" placeholder="Search..." />
+                  <SearchButton>
+                    <i className="fas fa-search"></i>
+                  </SearchButton>
+                </SearchBox>
+              </div>
+              <div className='w-full my-8 jua-regular text-xl'>
+                <Item isActive={activeTab === 'Notice'} onClick={() => handleTabClick('Notice')}>
+                  공지사항
+                </Item>
+                <Item isActive={activeTab === 'FreeBoard'} onClick={() => handleTabClick('FreeBoard')}>
+                  자유게시판
+                </Item>
+                <Item isActive={activeTab === 'ExchangeLearningTips'} onClick={() => handleTabClick('ExchangeLearningTips')}>
+                  학습 팁 교환
+                </Item>
+                <Item isActive={activeTab === 'ClubBoard'} onClick={() => handleTabClick('ClubBoard')}>
+                  동아리 게시판
+                </Item>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* 오른쪽 메인 컨테이너 */}
-        <div className='col-span-7 flex flex-col'>
-          {activeTab === '' && <DefaultBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
-          {activeTab === 'notice' && <Notice handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
-          {activeTab === 'freeboard' && <FreeBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
-          {activeTab === 'exchangelearningtips' && <ExchangeLearningTips handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
-          {activeTab === 'clubboard' && <ClubBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
-          {activeTab === 'writing' && <Writing handleTabClick={handleTabClick} currentBoard={board} />}
-          {activeTab === 'detailview' && <DetailView idx={idx} handleTabClick={handleTabClick} />}
-        </div>
-      </main>
-    </CommunityContainer>
+          {/* 오른쪽 메인 컨테이너 */}
+          <div className='col-span-7 flex flex-col'>
+            {activeTab === '' && <DefaultBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+            {activeTab === 'notice' && <Notice handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+            {activeTab === 'freeboard' && <FreeBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+            {activeTab === 'exchangelearningtips' && <ExchangeLearningTips handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+            {activeTab === 'clubboard' && <ClubBoard handleTabClick={handleTabClick} setSelectedItem={setSelectedItem} />}
+            {activeTab === 'writing' && <Writing handleTabClick={handleTabClick} currentBoard={board} />}
+            {activeTab === 'detailview' && <DetailView idx={idx} handleTabClick={handleTabClick} />}
+          </div>
+        </main>
+      </CommunityContainer>
+    </FadeInContainer>
   );
 };
 

@@ -1,6 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import styled, { keyframes } from 'styled-components';
 import Header from './Header.jsx';
 import _ from 'lodash'; // lodash 라이브러리 사용 (npm install lodash)
+
+// 페이드 인 애니메이션 정의
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+// 페이드 인 애니메이션을 적용한 컨테이너
+const FadeInContainer = styled.div`
+  animation: ${fadeIn} 1s ease-in-out;
+`;
 
 const RankingPage = () => {
     const initialRankingData = [
@@ -94,7 +110,7 @@ const RankingPage = () => {
     }
 
     return (
-        <div className='h-screen w-full overflow-y-scroll'>
+        <FadeInContainer className='h-screen w-full overflow-y-scroll'>
             <Header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }} />
             <div className="w-full h-auto flex flex-row">
                 <div
@@ -130,7 +146,6 @@ const RankingPage = () => {
                                 <th className='cursor-pointer'>아이디</th>
                                 <th className='cursor-pointer' onClick={() => handleSort('grade')}>등급</th>
                                 <th className='cursor-pointer' onClick={() => handleSort('exp')}>경험치</th>
-
                             </tr>
                             </thead>
                             <tbody>
@@ -145,7 +160,6 @@ const RankingPage = () => {
                                     <td>{`${user.exp} XP`}</td> {/* 경험치로 표시 */}
                                 </tr>
                             ))}
-
                             </tbody>
                         </table>
                     </div>
@@ -155,7 +169,7 @@ const RankingPage = () => {
                     style={{ background: 'linear-gradient(to left, black, white)' }}
                 ></div>
             </div>
-        </div>
+        </FadeInContainer>
     );
 };
 
