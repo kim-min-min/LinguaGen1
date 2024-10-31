@@ -1,12 +1,13 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import MountainImage from '@/assets/CanvasImage/Mountain.png';
+import DungeonImage from '@/assets/CanvasImage/Dungeon.jpg';
 import HP_Full from '@/assets/CanvasImage/HP_Full.png';
 import HP_Empty from '@/assets/CanvasImage/HP_Empty.png';
+import TutorialProgress from '@/components/Game/TutorialProgress.jsx';
 import SoundOn from '@/assets/CanvasImage/sound_on.png';
 import SoundOff from '@/assets/CanvasImage/sound_off.png';
-import GameProgressPage from '@/components/Game/GameProgressPage.jsx';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+
 // 스프라이트 이미지를 동적으로 임포트하고 정렬하는 함수
 const importAll = (r) => {
   return Object.values(r)
@@ -28,7 +29,7 @@ const knightTakeHitSprites = importAll(import.meta.glob('../../assets/CanvasImag
 const knightDeathSprites = importAll(import.meta.glob('../../assets/CanvasImage/knight_death_*.png', { eager: true }));
 const knightSpAttackSprites = importAll(import.meta.glob('../../assets/CanvasImage/knight_sp_atk_*.png', { eager: true }));
 
-const MountainCanvas = () => {
+const TutorialCanvas = () => {
   const canvasRef = useRef(null);
   const [bossState, setBossState] = useState('idle');
   const [knightState, setKnightState] = useState('idle');
@@ -50,9 +51,10 @@ const MountainCanvas = () => {
   const [opacity, setOpacity] = useState(0);
   const [isSoundOn, setIsSoundOn] = useState(true);
   const [isSoundHovered, setIsSoundHovered] = useState(false);
+  const [isHighlightingHealthBar, setIsHighlightingHealthBar] = useState(false);
+  const [isHighlightingSoundButton, setIsHighlightingSoundButton] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const navigate = useNavigate();
-
 
   // 이미지 로드 함수 추가
   const loadImages = useCallback((sprites) => {
@@ -80,7 +82,7 @@ const MountainCanvas = () => {
 
   // 배경 이미지 캐싱
   const backgroundRef = useRef(new Image());
-  backgroundRef.current.src = MountainImage;
+  backgroundRef.current.src = DungeonImage;
 
   const drawHealthBar = useCallback((ctx, x, y, health) => {
     const barWidth = 150;
@@ -150,8 +152,21 @@ const MountainCanvas = () => {
     // 배경 그리기
     if (backgroundRef.current.complete) {
       ctx.drawImage(backgroundRef.current, 0, 0, canvas.width, canvas.height);
+      
+      // 하이라이트 효과가 있을 때 전체 화면을 어둡게
+      if (isHighlightingHealthBar || isHighlightingSoundButton) {
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.globalAlpha = 1.0;
+      }
     }
 
+    // 보스와 기사 스프라이트 그리기 (체력바 하이라이트 중일 때 어둡게)
+    if (isHighlightingHealthBar) {
+      ctx.globalAlpha = 0.5;
+    }
+    
     // 보스 스프라이트 그리기
     const bossImages = {
       idle: bossIdleImages.current,
@@ -159,7 +174,7 @@ const MountainCanvas = () => {
       takeHit: bossTakeHitImages.current,
       death: bossDeathImages.current
     }[bossState];
-
+    
     const bossImage = bossImages[bossFrameIndex];
     if (bossImage && bossImage.complete) {
       const bossScale = 2; // 보스 크기 증가
@@ -196,9 +211,21 @@ const MountainCanvas = () => {
       );
     }
 
-    // 체력 바 그리기
-    drawHealthBar(ctx, 10, 10, knightHP); // 기사 체력 바 (왼쪽)
-    drawHealthBar(ctx, canvas.width - 160, 10, bossHP); // 보스 체력 바 (오른쪽)
+    // 체력바 그리기 (원래 밝기로)
+    ctx.globalAlpha = 1.0;
+    drawHealthBar(ctx, 10, 10, knightHP);
+    drawHealthBar(ctx, canvas.width - 160, 10, bossHP);
+
+    // 체력바 하이라이트 효과
+    if (isHighlightingHealthBar) {
+      // 왼쪽 체력바 하이라이트
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(8, 8, 154, 24);
+      
+      // 오른쪽 체력바 하이라이트
+      ctx.strokeRect(canvas.width - 162, 8, 154, 24);
+    }
 
     // 텍스트 그리기
     if (fontLoadedRef.current) {
@@ -231,11 +258,28 @@ const MountainCanvas = () => {
         ctx.fillStyle = `rgba(0, 255, 0, ${gameClearOpacity})`;
         ctx.fillText('Game Clear', canvas.width / 2, canvas.height / 1.7);
       }
+
+      // Sound 아이콘 그리기
       const soundImage = isSoundOn ? soundOnImage.current : soundOffImage.current;
       if (soundImage && soundImage.complete) {
         const iconSize = 30; // 아이콘 크기
         const iconX = canvas.width / 30 - iconSize / 2;
         const iconY = 115;
+        
+        // 사운드 버튼 하이라이트 효과
+        if (isHighlightingSoundButton) {
+          ctx.strokeStyle = '#FFD700';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(
+            iconX + iconSize/2,
+            iconY + iconSize/2,
+            iconSize * 0.8, 
+            0, 
+            Math.PI * 2
+          );
+          ctx.stroke();
+        }
         
         // 마우스 호버 효과
         if (isSoundHovered) {
@@ -248,8 +292,11 @@ const MountainCanvas = () => {
       }
     }
 
+
+
     animationRef.current = requestAnimationFrame(animate);
-  }, [bossState, bossFrameIndex, knightState, knightFrameIndex, bossHP, knightHP, drawHealthBar, currentQuestion, isExitHovered, isGameOver, gameOverOpacity, isGameClear, gameClearOpacity,isSoundOn,isSoundHovered]);
+  }, [bossState, knightState, bossFrameIndex, knightFrameIndex, bossHP, knightHP, 
+      isHighlightingHealthBar, isHighlightingSoundButton, isSoundOn]);
 
   const handleMouseMove = useCallback((event) => {
     const canvas = canvasRef.current;
@@ -473,37 +520,40 @@ const MountainCanvas = () => {
 
   return (
     <>
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        opacity: opacity,
-        transition: 'opacity 1s ease-in',
-      }}
-    >
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%', height: '60vh' }}>
-        <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
+      <div 
+        style={{ 
+          width: '100%', 
+          height: '100%', 
+          opacity: opacity, 
+          transition: 'opacity 1s ease-in',
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%', height: '60vh' }}>
+          <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
+        </div>
+        <div style={{ height: '40vh' }}>
+          {!isGameOver && !isGameClear && (
+            <TutorialProgress
+              onCorrectAnswer={handleCorrectAnswer}
+              onWrongAnswer={handleWrongAnswer}
+              currentQuestion={currentQuestion}
+              totalQuestions={totalQuestions}
+              setIsHighlightingHealthBar={setIsHighlightingHealthBar}
+              setIsHighlightingSoundButton={setIsHighlightingSoundButton}
+            />
+          )}
+          {(isGameOver || isGameClear) && (
+            <TutorialProgress
+              isGameOver={isGameOver}
+              isGameClear={isGameClear}
+              onRestart={handleRestart}
+              onMainMenu={handleMainMenu}
+            />
+          )}
+        </div>
       </div>
-      <div style={{ height: '40vh' }}>
-        {!isGameOver && !isGameClear && (
-          <GameProgressPage
-            onCorrectAnswer={handleCorrectAnswer}
-            onWrongAnswer={handleWrongAnswer}
-            currentQuestion={currentQuestion}
-            totalQuestions={totalQuestions}
-          />
-        )}
-        {(isGameOver || isGameClear) && (
-          <GameProgressPage
-            isGameOver={isGameOver}
-            isGameClear={isGameClear}
-            onRestart={handleRestart}
-            onMainMenu={handleMainMenu}
-          />
-        )}
-      </div>
-    </div>
-    {/* Exit 다이얼로그 */}
+
+      {/* Exit 다이얼로그 */}
       {showExitDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <motion.div 
@@ -535,4 +585,4 @@ const MountainCanvas = () => {
   );
 };
 
-export default MountainCanvas;
+export default TutorialCanvas;

@@ -1,9 +1,12 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import DungeonImage from '@/assets/CanvasImage/Ruins.png';
+import RuinsImage from '@/assets/CanvasImage/Ruins.png';
 import HP_Full from '@/assets/CanvasImage/HP_Full.png';
 import HP_Empty from '@/assets/CanvasImage/HP_Empty.png';
+import SoundOn from '@/assets/CanvasImage/sound_on.png';
+import SoundOff from '@/assets/CanvasImage/sound_off.png';
 import GameProgressPage from '@/components/Game/GameProgressPage.jsx';
-
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 // 스프라이트 이미지를 동적으로 임포트하고 정렬하는 함수
 const importAll = (r) => {
   return Object.values(r)
@@ -45,6 +48,11 @@ const RuinsCanvas = () => {
   const [gameClearOpacity, setGameClearOpacity] = useState(0);
   const fadeIntervalRef = useRef(null);
   const [opacity, setOpacity] = useState(0);
+  const [isSoundOn, setIsSoundOn] = useState(true);
+  const [isSoundHovered, setIsSoundHovered] = useState(false);
+  const [showExitDialog, setShowExitDialog] = useState(false);
+  const navigate = useNavigate();
+
 
   // 이미지 로드 함수 추가
   const loadImages = useCallback((sprites) => {
@@ -67,10 +75,12 @@ const RuinsCanvas = () => {
   const knightSpAttackImages = useRef(loadImages(knightSpAttackSprites));
   const hpFullImage = useRef(loadImages([HP_Full])[0]);
   const hpEmptyImage = useRef(loadImages([HP_Empty])[0]);
+  const soundOnImage = useRef(loadImages([SoundOn])[0]);
+  const soundOffImage = useRef(loadImages([SoundOff])[0]);
 
-      // 배경 이미지 캐싱
-      const backgroundRef = useRef(new Image());
-      backgroundRef.current.src = DungeonImage;
+  // 배경 이미지 캐싱
+  const backgroundRef = useRef(new Image());
+  backgroundRef.current.src = RuinsImage;
 
   const drawHealthBar = useCallback((ctx, x, y, health) => {
     const barWidth = 150;
@@ -142,7 +152,6 @@ const RuinsCanvas = () => {
       ctx.drawImage(backgroundRef.current, 0, 0, canvas.width, canvas.height);
     }
 
-
     // 보스 스프라이트 그리기
     const bossImages = {
       idle: bossIdleImages.current,
@@ -150,7 +159,7 @@ const RuinsCanvas = () => {
       takeHit: bossTakeHitImages.current,
       death: bossDeathImages.current
     }[bossState];
-    
+
     const bossImage = bossImages[bossFrameIndex];
     if (bossImage && bossImage.complete) {
       const bossScale = 2; // 보스 크기 증가
@@ -191,10 +200,10 @@ const RuinsCanvas = () => {
     drawHealthBar(ctx, 10, 10, knightHP); // 기사 체력 바 (왼쪽)
     drawHealthBar(ctx, canvas.width - 160, 10, bossHP); // 보스 체력 바 (오른쪽)
 
-    // 텍스트 기
+    // 텍스트 그리기
     if (fontLoadedRef.current) {
       ctx.font = '30px AntiquityPrint';
-      ctx.fillStyle = 'white';
+      ctx.fillStyle = 'green';
       ctx.textAlign = 'center';
       ctx.fillText('LinguaGen', canvas.width / 2, 50);
 
@@ -204,7 +213,7 @@ const RuinsCanvas = () => {
 
       ctx.font = '24px AntiquityPrint';
       ctx.textAlign = 'center';
-      ctx.fillStyle = isExitHovered ? 'orange' : 'white';
+      ctx.fillStyle = isExitHovered ? 'green' : 'white';
       ctx.fillText('Exit', canvas.width / 30, 85);
 
       // GameOver 텍스트 그리기
@@ -222,10 +231,25 @@ const RuinsCanvas = () => {
         ctx.fillStyle = `rgba(0, 255, 0, ${gameClearOpacity})`;
         ctx.fillText('Game Clear', canvas.width / 2, canvas.height / 1.7);
       }
+      const soundImage = isSoundOn ? soundOnImage.current : soundOffImage.current;
+      if (soundImage && soundImage.complete) {
+        const iconSize = 30; // 아이콘 크기
+        const iconX = canvas.width / 30 - iconSize / 2;
+        const iconY = 115;
+        
+        // 마우스 호버 효과
+        if (isSoundHovered) {
+          ctx.globalAlpha = 0.7;
+        }
+        
+        // 사운드 아이콘 그리기
+        ctx.drawImage(soundImage, iconX, iconY, iconSize, iconSize);
+        ctx.globalAlpha = 1.0;
+      }
     }
 
     animationRef.current = requestAnimationFrame(animate);
-  }, [bossState, bossFrameIndex, knightState, knightFrameIndex, bossHP, knightHP, drawHealthBar, currentQuestion, isExitHovered, isGameOver, gameOverOpacity, isGameClear, gameClearOpacity]);
+  }, [bossState, bossFrameIndex, knightState, knightFrameIndex, bossHP, knightHP, drawHealthBar, currentQuestion, isExitHovered, isGameOver, gameOverOpacity, isGameClear, gameClearOpacity,isSoundOn,isSoundHovered]);
 
   const handleMouseMove = useCallback((event) => {
     const canvas = canvasRef.current;
@@ -233,9 +257,79 @@ const RuinsCanvas = () => {
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
-    // Exit 영역에 마우스가 있는지 확인
-    setIsExitHovered(x < canvas.width / 15 && y < 100);
+    // Exit 텍스트 영역 (좌상단)
+    const exitX = canvas.width / 30;
+    const exitY = 85;
+    const exitWidth = 40;
+    const exitHeight = 30;
+    
+    // Sound 아이콘 영역
+    const iconSize = 30;
+    const soundX = canvas.width / 30 - iconSize / 2;
+    const soundY = 115;
+
+    // Exit 영역 체크 (텍스트 주변 영역을 약간 아래로)
+    setIsExitHovered(
+      x >= exitX - exitWidth/2 && 
+      x <= exitX + exitWidth/2 && 
+      y >= exitY - exitHeight/2 + 30 &&
+      y <= exitY + exitHeight/2 + 30
+    );
+    
+    // Sound 아이콘 영역 체크 (영역을 약간 아래로)
+    setIsSoundHovered(
+      x >= soundX && 
+      x <= soundX + iconSize && 
+      y >= soundY + 75 &&
+      y <= soundY + iconSize + 75
+    );
   }, []);
+
+  const handleExitClick = useCallback((event) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    
+    const exitX = canvas.width / 30;
+    const exitY = 85;
+    const exitWidth = 40;
+    const exitHeight = 30;
+
+    // Exit 영역 클릭 감지
+    if (
+      x >= exitX - exitWidth/2 && 
+      x <= exitX + exitWidth/2 && 
+      y >= exitY - exitHeight/2 + 30 &&
+      y <= exitY + exitHeight/2 + 30
+    ) {
+      setShowExitDialog(true);
+    }
+  }, []);
+
+  const handleCanvasClick = useCallback((event) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    // Sound 아이콘 클릭 처리
+    const iconSize = 30;
+    const soundX = canvas.width / 30 - iconSize / 2;
+    const soundY = 115;
+
+    if (
+      x >= soundX && 
+      x <= soundX + iconSize && 
+      y >= soundY + 75 &&
+      y <= soundY + iconSize + 75
+    ) {
+      setIsSoundOn(prev => !prev);
+    }
+
+    // Exit 클릭 처리
+    handleExitClick(event);  // 이벤트 객체를 전달
+  }, [handleExitClick]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -254,17 +348,19 @@ const RuinsCanvas = () => {
     }
 
     canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('click', handleCanvasClick);
 
     animationRef.current = requestAnimationFrame(animate);
 
     return () => {
       cancelAnimationFrame(animationRef.current);
       canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('click', handleCanvasClick);
       if (fadeIntervalRef.current) {
         cancelAnimationFrame(fadeIntervalRef.current);
       }
     };
-  }, [animate, handleMouseMove]);
+  }, [animate, handleMouseMove, handleCanvasClick]);
 
   useEffect(() => {
     if (isGameOver || isGameClear) {
@@ -376,11 +472,12 @@ const RuinsCanvas = () => {
   }, []);
 
   return (
-    <div 
-      style={{ 
-        width: '100%', 
-        height: '100%', 
-        opacity: opacity, 
+    <>
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        opacity: opacity,
         transition: 'opacity 1s ease-in',
       }}
     >
@@ -389,7 +486,7 @@ const RuinsCanvas = () => {
       </div>
       <div style={{ height: '40vh' }}>
         {!isGameOver && !isGameClear && (
-          <GameProgressPage 
+          <GameProgressPage
             onCorrectAnswer={handleCorrectAnswer}
             onWrongAnswer={handleWrongAnswer}
             currentQuestion={currentQuestion}
@@ -397,7 +494,7 @@ const RuinsCanvas = () => {
           />
         )}
         {(isGameOver || isGameClear) && (
-          <GameProgressPage 
+          <GameProgressPage
             isGameOver={isGameOver}
             isGameClear={isGameClear}
             onRestart={handleRestart}
@@ -406,6 +503,35 @@ const RuinsCanvas = () => {
         )}
       </div>
     </div>
+    {/* Exit 다이얼로그 */}
+      {showExitDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-xl p-6 shadow-2xl max-w-sm w-full mx-4"
+          >
+            <h3 className="text-xl font-bold text-center mb-4">
+              메인 메뉴로 돌아가시겠습니까?
+            </h3>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={() => navigate('/main')}
+                className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => setShowExitDialog(false)}
+                className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                No
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </>
   );
 };
 
