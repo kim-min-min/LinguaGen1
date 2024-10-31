@@ -1,11 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
 import useStore from '../store/useStore.js'
-import DungeonCanvas from './Game/DungeonCanvas.jsx'
-import RuinsCanvas from './Game/RuinsCanvas.jsx'
-import MountainCanvas from './Game/MountainCanvas.jsx'
+import TutorialCanvas from './Game/TutorialCanvas.jsx'
 import PageLoader from './PageLoader.jsx'
-
-const canvases = [DungeonCanvas, RuinsCanvas, MountainCanvas]
 
 const WelcomeMessage = () => {
   const {
@@ -19,7 +15,6 @@ const WelcomeMessage = () => {
     setShowWelcomeMessage2,
   } = useStore()
 
-  const [selectedCanvas, setSelectedCanvas] = useState(null)
   const [isLoaderReady, setIsLoaderReady] = useState(false)
   const [showLoader, setShowLoader] = useState(false)
   const [showCanvas, setShowCanvas] = useState(false)
@@ -55,11 +50,6 @@ const WelcomeMessage = () => {
     preloadResources()
   }, [preloadResources])
 
-  const selectRandomCanvas = useCallback(() => {
-    const randomCanvas = canvases[Math.floor(Math.random() * canvases.length)]
-    setSelectedCanvas(() => randomCanvas)
-  }, [])
-
   const showWelcomeMessages = useCallback(() => {
     setWelcomeMessage1('링구아젠에 오신걸 환영합니다.')
     setTimeout(() => setShowWelcomeMessage1(true), 100)
@@ -74,13 +64,12 @@ const WelcomeMessage = () => {
         setTimeout(() => {
           setShowWelcomeMessage2(false)
           setTimeout(() => {
-            selectRandomCanvas()
             setShowLoader(true)
           }, 1000)
         }, 3000)
       }, 1000)
     }, 3000)
-  }, [setWelcomeMessage1, setShowWelcomeMessage1, setWelcomeMessage2, setShowWelcomeMessage2, setShowLoader, selectRandomCanvas])
+  }, [setWelcomeMessage1, setShowWelcomeMessage1, setWelcomeMessage2, setShowWelcomeMessage2, setShowLoader])
 
   useEffect(() => {
     showWelcomeMessages()
@@ -97,9 +86,8 @@ const WelcomeMessage = () => {
     )
   }
 
-  if (showCanvas && selectedCanvas) {
-    const SelectedCanvas = selectedCanvas
-    return <SelectedCanvas />
+  if (showCanvas) {
+    return <TutorialCanvas />
   }
 
   return (

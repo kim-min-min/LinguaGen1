@@ -2,9 +2,9 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion'; // framer-motion 라이브러리 사용
 import axios from 'axios';
+import TutorialMessage from './TutorialMessage';
 
-
-const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: currentQuestionNumber, totalQuestions, isGameOver, isGameClear, onRestart, onMainMenu }) => {
+const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: currentQuestionNumber, totalQuestions, isGameOver, isGameClear, onRestart, onMainMenu, setIsHighlightingHealthBar, setIsHighlightingSoundButton }) => {
     const navigate = useNavigate();
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -19,6 +19,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
     const [showFeedback, setShowFeedback] = useState(false);
     const [showExplanation, setShowExplanation] = useState(false);
     const [showNextButtons, setShowNextButtons] = useState(false);
+    const [showTutorial, setShowTutorial] = useState(true);
 
     const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'];
 
@@ -320,6 +321,10 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
         }
     };
 
+    const handleStart = () => {
+        setShowTutorial(false);
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-full">
@@ -396,12 +401,28 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
 
     return (
         <div className="h-full w-full overflow-hidden bg-gray-50 relative">
-            <div className="flex h-full"> {/* flex 컨테이너 추가 */}
-                <div className={`flex-1 transition-all duration-300 ${showNextButtons ? 'mr-1/4' : ''}`}>
-                    {renderQuestion()}
-                </div>
-                {renderNextButtons()}
-            </div>
+            {showTutorial ? (
+                <TutorialMessage 
+                    onStart={handleStart}
+                    setIsHighlightingHealthBar={setIsHighlightingHealthBar}
+                    setIsHighlightingSoundButton={setIsHighlightingSoundButton}
+                />
+            ) : (
+                <motion.div 
+                    className="flex h-full"
+                    initial={{ opacity: 0, y: -50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ 
+                        duration: 1.2,
+                        ease: "easeOut"
+                    }}
+                >
+                    <div className={`flex-1 transition-all duration-300 ${showNextButtons ? 'mr-1/4' : ''}`}>
+                        {renderQuestion()}
+                    </div>
+                    {renderNextButtons()}
+                </motion.div>
+            )}
         </div>
     );
 };
