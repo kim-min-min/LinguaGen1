@@ -203,28 +203,29 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                 return (
                     <div className="flex h-full w-full">
                         {/* 왼쪽 패널: 지문과 문제 */}
-                        <div className="w-1/3 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto">
+                        <div className="w-1/2 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto custom-scrollbar">
                             {/* 지문이 있는 경우 */}
-                            {currentQuestion.passage && (
-                                <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
-                                    <h3 className="text-lg font-semibold mb-2 text-gray-700">Passage</h3>
-                                    <p className="text-base text-gray-600 leading-relaxed">{currentQuestion.passage}</p>
-                                </div>
-                            )}
                             {/* 문제 */}
                             <div className="bg-white p-4 rounded-lg shadow-sm">
                                 <h2 className="text-xl font-semibold text-gray-800">{currentQuestion.question}</h2>
                             </div>
+                            {currentQuestion.passage && (
+                                <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
+                                    <h3 className="text-lg kanit-semibold mb-2 text-gray-700">Passage</h3>
+                                    <p className="kanit-regular text-lg text-gray-600 leading-relaxed">{currentQuestion.passage}</p>
+                                </div>
+                            )}
+
                         </div>
 
                         {/* 오른쪽 패널: 선택지들 */}
-                        <div className="w-2/3 h-full p-6">
-                            <div className="grid grid-cols-2 gap-6 h-full">
+                        <div className="w-1/2 h-full p-6">
+                            <div className="grid grid-cols-2 gap-4 h-full">
                                 {currentQuestion.options.map((option, index) => (
                                     <motion.button
                                         key={index}
                                         onClick={() => handleAnswer(index)}
-                                        className="relative rounded-lg shadow-md transition-all duration-300 hover:shadow-lg h-32 flex flex-col"
+                                        className="relative h-full rounded-lg shadow-md transition-all duration-300 hover:shadow-lg h-32 flex flex-col"
                                         style={{
                                             backgroundColor: colors[index],
                                         }}
@@ -233,9 +234,9 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                                     >
                                         <div
                                             className="w-full h-full flex flex-col items-center justify-center text-center p-6">
-                    <span className="text-2xl font-bold mb-3 text-white">
-                        {['A', 'B', 'C', 'D'][index]}
-                    </span>
+                                            <span className="text-2xl font-bold mb-2 text-white">
+                                                {['A', 'B', 'C', 'D'][index]}
+                                            </span>
                                             <p className="text-lg text-white w-full px-4">
                                                 {option}
                                             </p>
@@ -260,27 +261,27 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                         </div>
                     </div>
                 );
-
             case 'shortAnswer':
                 return (
                     <div className="flex h-full w-full">
                         {/* 왼쪽 패널: 지문과 문제 */}
-                        <div className="w-1/3 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto">
+                        <div className="w-1/2 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto custom-scrollbar">
                             {/* 지문이 있는 경우 */}
-                            {currentQuestion.passage && (
-                                <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
-                                    <h3 className="text-lg font-semibold mb-2 text-gray-700">Passage</h3>
-                                    <p className="text-base text-gray-600 leading-relaxed">{currentQuestion.passage}</p>
-                                </div>
-                            )}
                             {/* 문제 */}
                             <div className="bg-white p-4 rounded-lg shadow-sm">
                                 <h2 className="text-xl font-semibold text-gray-800">{currentQuestion.question}</h2>
                             </div>
+                            {currentQuestion.passage && (
+                                <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
+                                    <h3 className="text-lg kanit-semibold mb-2 text-gray-700">Passage</h3>
+                                    <p className="kanit-regular text-lg text-gray-600 leading-relaxed">{currentQuestion.passage}</p>
+                                </div>
+                            )}
+
                         </div>
 
                         {/* 오른쪽 패널: 답안 입력 */}
-                        <div className="w-2/3 h-full p-6 flex flex-col items-center justify-center">
+                        <div className="w-1/2 h-full p-6 flex flex-col items-center justify-center">
                             <div className="w-full max-w-md">
                                 <input
                                     type="text"
