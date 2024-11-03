@@ -67,9 +67,9 @@ public class QuestionController {
     // 난이도별 문제 조회 (개수 제한 추가)
     @GetMapping("/questions/difficulty")
     public ResponseEntity<List<QuestionDTO>> getQuestionsByDifficulty(
-        @RequestParam Byte grade,
-        @RequestParam Byte tier,
-        @RequestParam(defaultValue = "10") int count) {
+        @RequestParam("grade") Byte grade,
+        @RequestParam("tier") Byte tier,
+        @RequestParam("count") int count) {
         return ResponseEntity.ok(questionService.getQuestionsByDifficultyWithCount(grade, tier, count));
     }
 

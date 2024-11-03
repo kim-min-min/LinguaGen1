@@ -27,7 +27,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
         const fetchQuestions = async () => {
             try {
                 setLoading(true);
-                const { data } = await axios.get('http://localhost:8085/api/questions/random', {
+                const { data } = await axios.get('http://localhost:5173/api/questions/difficulty?grade=1&tier=4&count=10', {
                     params: {
                         count: 10
                     },
