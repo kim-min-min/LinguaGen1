@@ -212,7 +212,42 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                             {currentQuestion.passage && (
                                 <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
                                     <h3 className="text-lg kanit-semibold mb-2 text-gray-700">Passage</h3>
-                                    <p className="kanit-regular text-lg text-gray-600 leading-relaxed">{currentQuestion.passage}</p>
+                                    {currentQuestion.passage.includes('A:') || currentQuestion.passage.includes('B:') ? (
+                                        // 대화형 passage인 경우
+                                        <div className="space-y-4">
+                                            {currentQuestion.passage.split(/(?=[AB]:)/).map((line, index) => {
+                                                const speaker = line.trim().startsWith('A:') ? 'A' : 'B';
+                                                const content = line.replace(/^[AB]:/, '').trim();
+
+                                                return (
+                                                    <div key={index} className={`flex items-start gap-2 ${speaker === 'B' ? 'flex-row-reverse' : ''}`}>
+                                                        {/* 화자 아바타 */}
+                                                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                                                            speaker === 'A' ? 'bg-blue-500' : 'bg-green-500'
+                                                        }`}>
+                                                            <span className="text-white font-bold">{speaker}</span>
+                                                        </div>
+                                                        
+                                                        {/* 대화 내용 */}
+                                                        <div className={`max-w-[75%] p-3 rounded-lg ${
+                                                            speaker === 'A' 
+                                                                ? 'bg-white shadow-sm rounded-tl-none border border-gray-100' 
+                                                                : 'bg-white shadow-sm rounded-tr-none border border-gray-100'
+                                                        }`}>
+                                                            <p className="kanit-regular text-lg leading-relaxed">
+                                                                {content}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    ) : (
+                                        // 일반 passage인 경우
+                                        <p className="kanit-regular text-lg text-gray-600 leading-relaxed">
+                                            {currentQuestion.passage}
+                                        </p>
+                                    )}
                                 </div>
                             )}
 
@@ -266,7 +301,6 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                     <div className="flex h-full w-full">
                         {/* 왼쪽 패널: 지문과 문제 */}
                         <div className="w-1/2 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto custom-scrollbar">
-                            {/* 지문이 있는 경우 */}
                             {/* 문제 */}
                             <div className="bg-white p-4 rounded-lg shadow-sm">
                                 <h2 className="text-xl font-semibold text-gray-800">{currentQuestion.question}</h2>
@@ -274,10 +308,44 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                             {currentQuestion.passage && (
                                 <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
                                     <h3 className="text-lg kanit-semibold mb-2 text-gray-700">Passage</h3>
-                                    <p className="kanit-regular text-lg text-gray-600 leading-relaxed">{currentQuestion.passage}</p>
+                                    {currentQuestion.passage.includes('A:') || currentQuestion.passage.includes('B:') ? (
+                                        // 대화형 passage인 경우
+                                        <div className="space-y-4">
+                                            {currentQuestion.passage.split(/(?=[AB]:)/).map((line, index) => {
+                                                const speaker = line.trim().startsWith('A:') ? 'A' : 'B';
+                                                const content = line.replace(/^[AB]:/, '').trim();
+
+                                                return (
+                                                    <div key={index} className={`flex items-start gap-2 ${speaker === 'B' ? 'flex-row-reverse' : ''}`}>
+                                                        {/* 화자 아바타 */}
+                                                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                                                            speaker === 'A' ? 'bg-blue-500' : 'bg-green-500'
+                                                        }`}>
+                                                            <span className="text-white font-bold">{speaker}</span>
+                                                        </div>
+                                                        
+                                                        {/* 대화 내용 */}
+                                                        <div className={`max-w-[75%] p-3 rounded-lg ${
+                                                            speaker === 'A' 
+                                                                ? 'bg-white shadow-sm rounded-tl-none border border-gray-100' 
+                                                                : 'bg-white shadow-sm rounded-tr-none border border-gray-100'
+                                                        }`}>
+                                                            <p className="kanit-regular text-lg leading-relaxed">
+                                                                {content}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    ) : (
+                                        // 일반 passage인 경우
+                                        <p className="kanit-regular text-lg text-gray-600 leading-relaxed">
+                                            {currentQuestion.passage}
+                                        </p>
+                                    )}
                                 </div>
                             )}
-
                         </div>
 
                         {/* 오른쪽 패널: 답안 입력 */}
