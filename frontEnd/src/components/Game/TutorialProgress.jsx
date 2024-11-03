@@ -13,7 +13,6 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
     const [userAnswer, setUserAnswer] = useState('');
     const [isSliding, setIsSliding] = useState(false);
     const [slideDirection, setSlideDirection] = useState('left');
-    const [gameOverAnimation, setGameOverAnimation] = useState(false);
     const [feedback, setFeedback] = useState(null);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [showFeedback, setShowFeedback] = useState(false);
@@ -129,50 +128,16 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 overflow-visible"
+                className="fixed inset-0 flex items-end justify-center bg-black bg-opacity-50 z-50 overflow-visible"
             >
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="absolute bg-white rounded-xl shadow-2xl w-[800px] m-4 z-10 h-auto"
-                    style={{ top: '0%' }}
+                    className="absolute bg-white rounded-xl shadow-2xl w-[800px] m-4 z-10"
+                    style={{ bottom: '0%' }}
                 >
-                    {/* 상단 결과 표시 */}
-                    <div className="p-6 border-b">
-                        <h3 className="text-2xl font-bold text-center text-gray-800">
-                            {feedback ? '정답입니다! 🎉' : '틀렸습니다. 😢'}
-                        </h3>
-                    </div>
-
-                    {/* 해설 영역 */}
-                    {showExplanation && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="absolute bg-gray-50 p-6 rounded-lg"
-                            style={{ top: '-200%', transform: 'translateY(-100%)' }}
-                        >
-                            <div className='flex justify-between items-center'>
-                                <h4 className="font-bold mb-4 text-lg text-gray-700">💡 해설</h4>
-                                <button
-                                    onClick={handleNextQuestion}
-                                    className="text-gray-400 hover:text-gray-600"
-                                >
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <div className="text-lg text-gray-600 leading-relaxed">
-                                <p className="whitespace-pre-line break-words">
-                                    {currentQuestion.explanation}
-                                </p>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {/* 하단 버튼 영역 */}
-                    <div className="p-6 border-t bg-gray-50 rounded-b-xl">
+                    {/* 하단 버튼 영역 - 순서 변경 */}
+                    <div className="p-6 border-t bg-gray-50 rounded-t-xl">
                         <div className="flex justify-center gap-4">
                             <button
                                 onClick={() => setShowExplanation(!showExplanation)}
@@ -189,8 +154,41 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                         </div>
                     </div>
 
-                    {/* 닫기 버튼 (선택사항) */}
+                    {/* 해설 영역 */}
+                    <AnimatePresence>
+                        {showExplanation && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="relative bg-gray-50 p-6 rounded-lg"
+                            >
+                                <div className='flex justify-between items-center'>
+                                    <h4 className="font-bold mb-4 text-lg text-gray-700">💡 해설</h4>
+                                    <button
+                                        onClick={handleNextQuestion}
+                                        className="text-gray-400 hover:text-gray-600"
+                                    >
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div className="text-lg text-gray-600 leading-relaxed">
+                                    <p className="whitespace-pre-line break-words">
+                                        {currentQuestion.explanation}
+                                    </p>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
+                    {/* 상단 결과 표시 */}
+                    <div className="p-6 border-t">
+                        <h3 className="text-2xl font-bold text-center text-gray-800">
+                            {feedback ? '정답입니다! 🎉' : '틀렸습니다. 😢'}
+                        </h3>
+                    </div>
                 </motion.div>
             </motion.div>
         );
@@ -205,28 +203,29 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                 return (
                     <div className="flex h-full w-full">
                         {/* 왼쪽 패널: 지문과 문제 */}
-                        <div className="w-1/3 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto">
+                        <div className="w-1/2 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto custom-scrollbar">
                             {/* 지문이 있는 경우 */}
-                            {currentQuestion.passage && (
-                                <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
-                                    <h3 className="text-lg font-semibold mb-2 text-gray-700">Passage</h3>
-                                    <p className="text-base text-gray-600 leading-relaxed">{currentQuestion.passage}</p>
-                                </div>
-                            )}
                             {/* 문제 */}
                             <div className="bg-white p-4 rounded-lg shadow-sm">
                                 <h2 className="text-xl font-semibold text-gray-800">{currentQuestion.question}</h2>
                             </div>
+                            {currentQuestion.passage && (
+                                <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
+                                    <h3 className="text-lg kanit-semibold mb-2 text-gray-700">Passage</h3>
+                                    <p className="kanit-regular text-lg text-gray-600 leading-relaxed">{currentQuestion.passage}</p>
+                                </div>
+                            )}
+
                         </div>
 
                         {/* 오른쪽 패널: 선택지들 */}
-                        <div className="w-2/3 h-full p-6">
-                            <div className="grid grid-cols-2 gap-6 h-full">
+                        <div className="w-1/2 h-full p-6">
+                            <div className="grid grid-cols-2 gap-4 h-full">
                                 {currentQuestion.options.map((option, index) => (
                                     <motion.button
                                         key={index}
                                         onClick={() => handleAnswer(index)}
-                                        className="relative rounded-lg shadow-md transition-all duration-300 hover:shadow-lg h-32 flex flex-col"
+                                        className="relative h-full rounded-lg shadow-md transition-all duration-300 hover:shadow-lg h-32 flex flex-col"
                                         style={{
                                             backgroundColor: colors[index],
                                         }}
@@ -235,9 +234,9 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                                     >
                                         <div
                                             className="w-full h-full flex flex-col items-center justify-center text-center p-6">
-                    <span className="text-2xl font-bold mb-3 text-white">
-                        {['A', 'B', 'C', 'D'][index]}
-                    </span>
+                                            <span className="text-2xl font-bold mb-2 text-white">
+                                                {['A', 'B', 'C', 'D'][index]}
+                                            </span>
                                             <p className="text-lg text-white w-full px-4">
                                                 {option}
                                             </p>
@@ -262,27 +261,27 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                         </div>
                     </div>
                 );
-
             case 'shortAnswer':
                 return (
                     <div className="flex h-full w-full">
                         {/* 왼쪽 패널: 지문과 문제 */}
-                        <div className="w-1/3 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto">
+                        <div className="w-1/2 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto custom-scrollbar">
                             {/* 지문이 있는 경우 */}
-                            {currentQuestion.passage && (
-                                <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
-                                    <h3 className="text-lg font-semibold mb-2 text-gray-700">Passage</h3>
-                                    <p className="text-base text-gray-600 leading-relaxed">{currentQuestion.passage}</p>
-                                </div>
-                            )}
                             {/* 문제 */}
                             <div className="bg-white p-4 rounded-lg shadow-sm">
                                 <h2 className="text-xl font-semibold text-gray-800">{currentQuestion.question}</h2>
                             </div>
+                            {currentQuestion.passage && (
+                                <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
+                                    <h3 className="text-lg kanit-semibold mb-2 text-gray-700">Passage</h3>
+                                    <p className="kanit-regular text-lg text-gray-600 leading-relaxed">{currentQuestion.passage}</p>
+                                </div>
+                            )}
+
                         </div>
 
                         {/* 오른쪽 패널: 답안 입력 */}
-                        <div className="w-2/3 h-full p-6 flex flex-col items-center justify-center">
+                        <div className="w-1/2 h-full p-6 flex flex-col items-center justify-center">
                             <div className="w-full max-w-md">
                                 <input
                                     type="text"
@@ -413,7 +412,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
             ) : (
                 <motion.div 
                     className="flex h-full"
-                    initial={{ opacity: 0, y: -50 }}
+                    initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ 
                         duration: 1.2,
