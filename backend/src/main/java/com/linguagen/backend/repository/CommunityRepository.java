@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     // 삭제되지 않은 게시글만 조회
-    List<Community> findByIsDeletedFalse();
+    List<Community> findByIsDeletedFalseOrderByCreatedAtDesc();
 
     // 특정 idx에 해당하는 삭제되지 않은 게시글만 조회
     Optional<Community> findByIdxAndIsDeletedFalse(Long idx);

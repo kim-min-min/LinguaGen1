@@ -44,7 +44,7 @@ public class CommunityService {
 
     // 모든 게시글 조회 (삭제되지 않은 게시글만)
     public List<CommunityDTO> getAllCommunityPosts() {
-        List<Community> communities = repository.findByIsDeletedFalse();
+        List<Community> communities = repository.findByIsDeletedFalseOrderByCreatedAtDesc();
         return communities.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
