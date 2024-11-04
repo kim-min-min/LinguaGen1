@@ -353,7 +353,7 @@ const MainContainer = ({ selectedGame }) => {
     // 다른 메뉴들의 컨텐츠
     return (
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+        <div className="grid auto-rows-min gap-4 md:grid-cols-3 grid-cols-1">
           <div className="aspect-video rounded-xl bg-muted/50" />
           <div className="aspect-video rounded-xl bg-muted/50" />
           <div className="aspect-video rounded-xl bg-muted/50" />
