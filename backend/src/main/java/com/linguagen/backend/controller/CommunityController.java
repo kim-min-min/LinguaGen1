@@ -55,6 +55,13 @@ public class CommunityController {
         return ResponseEntity.ok(communities);
     }
 
+    // 카테고리별 게시글 조회
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<CommunityDTO>> getPostsByCategory(@PathVariable String category) {
+        List<CommunityDTO> communities = service.getPostsByCategory(category);
+        return ResponseEntity.ok(communities);
+    }
+
     // 게시글 검색 (제목, 글 작성자)
     @GetMapping("/search")
     public ResponseEntity<List<CommunityDTO>> searchCommunity(
