@@ -76,11 +76,11 @@ function ProfileCard() {
         const userData = JSON.parse(user);
         try {
           // 사용자 정보 가져오기
-          const userResponse = await axios.get(`http://localhost:8085/api/users/${userData.id}`, { withCredentials: true });
+          const userResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/users/${userData.id}`, { withCredentials: true });
           setUserInfo(userResponse.data);
 
           // 사용자의 등급 정보 가져오기
-          const gradeResponse = await axios.get(`http://localhost:8085/api/grade/${userData.id}`, { withCredentials: true });
+          const gradeResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/grade/${userData.id}`, { withCredentials: true });
           const numericGrade = gradeResponse.data.grade;
           setUserGrade(numericGrade);
           setUserGradeString(gradeNames[numericGrade] || "알 수 없음");
@@ -99,7 +99,7 @@ function ProfileCard() {
 
     try {
       const response = await axios.post(
-        'http://localhost:8085/api/users/login',
+          `${import.meta.env.VITE_APP_API_BASE_URL}/users/login`,
         { id, password },
         { withCredentials: true }
       );
@@ -110,7 +110,7 @@ function ProfileCard() {
 
         // 로그인 성공 후 사용자 정보와 등급 정보 가져오기
         try {
-          const userResponse = await axios.get(`http://localhost:8085/api/users/${id}`, { withCredentials: true });
+          const userResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/users/${id}`, { withCredentials: true });
           const userInfo = userResponse.data; // 사용자 정보 저장
 
           // 세션 스토리지에 사용자 정보 저장
@@ -121,7 +121,7 @@ function ProfileCard() {
 
           setUserInfo(userInfo);
 
-          const gradeResponse = await axios.get(`http://localhost:8085/api/grade/${id}`, { withCredentials: true });
+          const gradeResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/grade/${id}`, { withCredentials: true });
           setUserGrade(gradeResponse.data.grade);
           setUserTier(gradeResponse.data.tier);
         } catch (error) {
@@ -138,17 +138,9 @@ function ProfileCard() {
     }
   };
 
-  /*
-    const handleLogout = () => {
-      setIsLoggedIn(false);
-      sessionStorage.removeItem('user'); // 세션에서 사용자 정보 삭제
-      // 필요한 경우 추가적인 로그아웃 로직을 여기에 구현할 수 있습니다.
-      // 예: 로컬 스토리지 클리어, 서버에 로그아웃 요청 등
-    };
-  */
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:8085/api/users/logout', {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/users/logout`, {
         method: 'POST',
         credentials: 'include',  // 세션 쿠키 포함
       });
