@@ -168,7 +168,7 @@ function ProfileCard() {
 
   if (!isLoggedIn) {
     return (
-      <Card className="w-80 h-106 shadow-xl" style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2'}}>
+      <Card className="w-80 h-106 shadow-xl" style={{ backdropFilter: 'blur(15px)', background: 'rgba(255, 255, 255, 0.2' }}>
         <CardHeader>
           <h2 className="text-2xl font-semibold">로그인</h2>
           <p className="text-sm text-gray-500">
@@ -224,7 +224,7 @@ function ProfileCard() {
   }
 
   return (
-    <Card className="w-80 h-96 shadow-xl" style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2'}}>
+    <Card className="w-80 h-96 shadow-xl" style={{ backdropFilter: 'blur(15px)', background: 'rgba(255, 255, 255, 0.2' }}>
       <CardHeader style={{
         display: "flex",
         flexDirection: "row",
@@ -246,11 +246,13 @@ function ProfileCard() {
             </ContextMenuContent>
           </ContextMenu>
           <HoverCard>
-            <HoverCardTrigger
-              style={{ textDecoration: "none", color: "gray", fontWeight: "bold", cursor: "default" }}
-              className='hover:bg-gray-200 transition-colors duration-300 rounded-md'
-            >
-              {userGradeString && userTier ? `${userGradeString} ${userTier}` : 'Grade & Tier'}
+            <HoverCardTrigger asChild>
+              <div
+                style={{ textDecoration: "none", fontWeight: "bold", cursor: "pointer" }}
+                className='text-gray-500 hover:text-green-400 transition-all duration-300 rounded-md'
+              >
+                {userGradeString && userTier ? `${userGradeString} ${userTier}` : 'Grade & Tier'}
+              </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-80">
               <div className="flex justify-between space-x-4 flex-col h-64 items-center">
