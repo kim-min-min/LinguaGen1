@@ -3,8 +3,12 @@ package com.linguagen.backend.service;
 import com.linguagen.backend.dto.CommunityDTO;
 import com.linguagen.backend.entity.Community;
 import com.linguagen.backend.entity.User;
+import com.linguagen.backend.repository.CommentRepository;
 import com.linguagen.backend.repository.CommunityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +21,7 @@ public class CommunityService {
     @Autowired
     private CommunityRepository repository;
     @Autowired
-    private CommunityRepository communityRepository;
+    private CommentRepository commentRepository;
 
     // 게시글 생성
     public CommunityDTO createCommunityPost(CommunityDTO communityDTO) {
@@ -40,7 +44,7 @@ public class CommunityService {
 
     // 모든 게시글 조회 (삭제되지 않은 게시글만)
     public List<CommunityDTO> getAllCommunityPosts() {
-        List<Community> communities = repository.findByIsDeletedFalse();
+        List<Community> communities = repository.findByIsDeletedFalseOrderByCreatedAtDesc();
         return communities.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
@@ -93,6 +97,15 @@ public class CommunityService {
     public List<CommunityDTO> getLatestPostsByCategory(String category) {
         List<Community> communities = repository.findTop4ByCategoryAndIsDeletedFalseOrderByCreatedAtDesc(category);
         return communities.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    // 사용자가 작성한 게시글 확인
+    public Page<CommunityDTO> getUserCommunityPosts(String userId, Pageable pageable) {
+        Page<Community> communities = repository.findByUserIdAndIsDeletedFalseOrderByCreatedAtDesc(userId, pageable);
+        return communities.map(community -> {
+            Long commentsCount = commentRepository.countByCommunityIdxAndIsDeletedFalse(community.getIdx());
+            return new CommunityDTO(community.getIdx(), community.getTitle(), community.getContent(), commentsCount);
+        });
     }
 
     // 엔티티를 DTO로 변환

@@ -16,16 +16,6 @@ import { format } from 'date-fns';
 
 const FreeBoard = ({ handleTabClick, setSelectedItem }) => {
     const navigate = useNavigate();
-    /*  // 카페 게시판 형식의 데이터셋
-      const data = Array.from({ length: 30 }, (_, i) => ({
-        id: i + 1,
-        title: i % 2 === 0 ? '공지사항: 단체방 생성 안내' : '공지사항: 개인방 생성 안내',
-        author: i % 2 === 0 ? '관리자' : '운영팀',
-        date: `2024.10.${16 - (i % 15)}`, // 임의의 날짜
-        views: Math.floor(Math.random() * 1000), // 조회수
-        likes: Math.floor(Math.random() * 100), // 좋아요 수
-      }));*/
-
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(15); // 한 페이지에 표시할 항목 수 (초기값 15)
