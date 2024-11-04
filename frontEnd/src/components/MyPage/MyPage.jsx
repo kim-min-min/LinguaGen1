@@ -14,8 +14,9 @@ const SidebarContainer = styled.div`
   height: 545px;
   backdrop-filter : blur(15px);
   background : rgba(255, 255, 255, 0.2);
-  border : 2px gray solid;
+  border : 1px white solid;
   border-radius : 8px;
+  box-shadow : 0 0 10px 0 rgba(0, 0, 0, 0.1);
 `;
 
 // 섹션 제목 스타일

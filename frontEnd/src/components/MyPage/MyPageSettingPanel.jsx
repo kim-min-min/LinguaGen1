@@ -34,11 +34,11 @@ const Tab = styled.div`
   font-size: 16px;
   padding: 8px 0;
   cursor: pointer;
-  color: ${({ isActive }) => (isActive ? '#bbf7d0' : 'black')}; /* 활성화된 탭 색상 */
+  color: ${({ isActive }) => (isActive ? 'black' : '#5a5255')}; /* 활성화된 탭 색상 */
   transition: color 0.3s ease;
   user-select: none;
     &:hover {
-    color: ${({ isActive }) => (isActive ? '#bbf7d0' : '#bbf7d0')}; /* hover 상태에서 색상 변경 */
+    color: ${({ isActive }) => (isActive ? 'black' : 'black')}; /* hover 상태에서 색상 변경 */
   }
 `;
 
@@ -112,7 +112,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
         try {
             const response = await axios.post(
                 'http://localhost:8085/api/users/change-tell',
-                { id: email, tell:phoneNumber },
+                { id: email, tell: phoneNumber },
                 { withCredentials: true }
             );
 
@@ -174,54 +174,57 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                 <p className='pl-8 pt-4'>내 프로필</p>
                             </CardHeader>
                             <CardContent className='flex flex-col'>
-                                <div className='p-8 pt-0 w-full flex justify-start'>
-                                    <p className='font-bold'>이미지</p>
-                                    <img
-                                        src={selectedImage} // 선택된 이미지
-                                        alt="프로필"
-                                        className='ml-32 h-32 w-36 rounded-md cursor-pointer'
-                                        onClick={triggerFileInput} // 이미지 클릭 시 파일 선택 창 열기
-                                    />
-                                    {/* 파일 입력 요소 숨김 */}
-                                    <input
-                                        id="imageInput"
-                                        type="file"
-                                        style={{ display: 'none' }}
-                                        accept="image/*"
-                                        onChange={handleImageChange} // 이미지 선택 시 이벤트 처리
-                                    />
+                                <div className='grid grid-cols-12 items-center p-8 pt-0 w-full mb-4'>
+                                    <p className='font-bold col-span-2'>이미지</p>
+                                    <div className='col-span-8'>
+                                        <img
+                                            src={selectedImage}
+                                            alt="프로필"
+                                            className='h-32 w-36 rounded-md cursor-pointer'
+                                            onClick={triggerFileInput}
+                                        />
+                                        <input
+                                            id="imageInput"
+                                            type="file"
+                                            style={{ display: 'none' }}
+                                            accept="image/*"
+                                            onChange={handleImageChange}
+                                        />
+                                    </div>
+                                    <div className='col-span-2'></div>
                                 </div>
-                                <div className='p-8 pt-0 w-full flex justify-start'>
-                                    <p className='font-bold'>닉네임</p>
-                                    <p className='ml-32 font-bold'>{nickname}</p>
-                                </div>
-                                <div className='p-8 pt-0 w-full flex justify-start'>
-                                    <p className='font-bold'>자기소개</p>
-                                    <p className='text-gray-300 ml-28 font-bold'>자기소개를 작성해보세요</p>
-                                </div>
-                                <div className='p-8  pt-0 w-full flex justify-end'>
-                                    <Dialog>
-                                        <DialogTrigger className='bg-transparent'>
-                                            <Button>설정</Button>
-                                        </DialogTrigger>
-                                        <DialogContent>
-                                            <DialogHeader>
-                                                <DialogTitle>자기소개 수정</DialogTitle>
-                                                <DialogDescription>자기소개를 작성해보세요!</DialogDescription>
-                                            </DialogHeader>
-                                            <div className="grid gap-4 py-4">
-                                                <div className="grid grid-cols-4 items-center gap-4">
-                                                    <Label htmlFor="name" className="text-right">
-                                                        자기소개
-                                                    </Label>
-                                                    <Input id="name" placeholder='자기소개를 작성하세요' className="col-span-3" />
+
+                                <div className='grid grid-cols-12 items-center p-8 pt-0 w-full my-4 mt-12'>
+                                    <p className='font-bold col-span-2'>닉네임</p>
+                                    <p className='font-bold col-span-8'>{nickname}</p>
+                                    <div className='col-span-2 flex justify-end'>
+                                        <Dialog>
+                                            <DialogTrigger className='bg-transparent'>
+                                                <Button>설정</Button>
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle>닉네임 수정</DialogTitle>
+                                                    <DialogDescription>새로운 닉네임을 입력해주세요!</DialogDescription>
+                                                </DialogHeader>
+                                                <div className="grid gap-4 py-4">
+                                                    <div className="grid grid-cols-4 items-center gap-4">
+                                                        <Label htmlFor="nickname" className="text-right">
+                                                            닉네임
+                                                        </Label>
+                                                        <Input
+                                                            id="nickname"
+                                                            placeholder='새로운 닉네임'
+                                                            className="col-span-3"
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <DialogFooter>
-                                                <Button type="submit">Save changes</Button>
-                                            </DialogFooter>
-                                        </DialogContent>
-                                    </Dialog>
+                                                <DialogFooter>
+                                                    <Button type="submit">Save changes</Button>
+                                                </DialogFooter>
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -231,105 +234,112 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                     <p className='pl-8 pt-4'>기본 정보</p>
                                 </CardHeader>
                                 <CardContent className='flex flex-col'>
-                                    <div className='p-8 pt-0 pb-0 w-full flex justify-between mb-4'>
-                                        <p className='font-bold w-24'>이메일</p>
-                                        <p className='mr-52 font-bold'>{email}</p>
-                                        <Dialog>
-                                            <DialogTrigger className='bg-transparent w-0 h-0 mb-4'>
+                                    <div className='grid grid-cols-12 items-center p-8 pt-0 pb-0 w-full mb-4'>
+                                        <p className='font-bold col-span-2'>이메일</p>
+                                        <p className='font-bold col-span-8'>{email}</p>
+                                        <div className='col-span-2 flex justify-end'>
+                                            <Dialog>
+                                                <DialogTrigger className='bg-transparent w-0 h-0 mb-4'>
+                                                </DialogTrigger>
+                                                <DialogContent>
+                                                    <DialogHeader>
+                                                        <DialogTitle>이메일 수정</DialogTitle>
+                                                        <DialogDescription>수정할 이메일을 적어주세요</DialogDescription>
+                                                    </DialogHeader>
+                                                    <div className="grid gap-4 py-4">
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="name" className="text-right">
+                                                                이메일
+                                                            </Label>
+                                                            <Input id="email" placeholder='example@example'
+                                                                className="col-span-3" />
+                                                        </div>
+                                                    </div>
+                                                    <DialogFooter>
+                                                        <Button type="submit">Save changes</Button>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
+                                        </div>
+                                    </div>
 
-                                            </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader>
-                                                    <DialogTitle>이메일 수정</DialogTitle>
-                                                    <DialogDescription>수정할 이메일을 적어주세요</DialogDescription>
-                                                </DialogHeader>
-                                                <div className="grid gap-4 py-4">
-                                                    <div className="grid grid-cols-4 items-center gap-4">
-                                                        <Label htmlFor="name" className="text-right">
-                                                            이메일
-                                                        </Label>
-                                                        <Input id="email" placeholder='example@example'
-                                                               className="col-span-3"/>
+                                    <div className='grid grid-cols-12 items-center p-8 pt-0 pb-0 w-full mb-4'>
+                                        <p className='font-bold col-span-2'>비밀번호</p>
+                                        <p className='font-bold text-gray-300 col-span-8'>비밀번호를 설정해주세요</p>
+                                        <div className='col-span-2 flex justify-end'>
+                                            <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
+                                                <DialogTrigger className='bg-transparent w-0 h-0 mb-4'>
+                                                    <Button>설정</Button>
+                                                </DialogTrigger>
+                                                <DialogContent>
+                                                    <DialogHeader>
+                                                        <DialogTitle>비밀번호 설정</DialogTitle>
+                                                        <DialogDescription>신중하게 변경하세요!</DialogDescription>
+                                                    </DialogHeader>
+                                                    <div className="grid gap-4 py-4">
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="password" className="text-right">
+                                                                비밀번호
+                                                            </Label>
+                                                            <Input
+                                                                id="password"
+                                                                type="password"
+                                                                value={password}
+                                                                onChange={(e) => setPassword(e.target.value)}
+                                                                placeholder="8~12자리 비밀번호"
+                                                                className="col-span-3" />
+                                                        </div>
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="confirmPassword" className="text-right">
+                                                                비밀번호 확인
+                                                            </Label>
+                                                            <Input id="confirmPassword"
+                                                                type="password"
+                                                                value={confirmPassword}
+                                                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                                                placeholder="비밀번호 재입력"
+                                                                className="col-span-3" />
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <DialogFooter>
-                                                    <Button type="submit">Save changes</Button>
-                                                </DialogFooter>
-                                            </DialogContent>
-                                        </Dialog>
+                                                    <DialogFooter>
+                                                        <Button onClick={handlePasswordChange} >Save changes</Button>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
+                                        </div>
                                     </div>
-                                    <div className='p-8 pt-0 pb-0 w-full flex justify-between mb-4'>
-                                        <p className='font-bold w-24'>비밀번호</p>
-                                        <p className='mr-36 font-bold text-gray-300'> 비밀번호를 설정해주세요</p>
-                                        <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
-                                            <DialogTrigger className='bg-transparent w-0 h-0 mb-4'>
-                                                <Button>설정</Button>
-                                            </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader>
-                                                    <DialogTitle>비밀번호 설정</DialogTitle>
-                                                    <DialogDescription>신중하게 변경하세요!</DialogDescription>
-                                                </DialogHeader>
-                                                <div className="grid gap-4 py-4">
-                                                    <div className="grid grid-cols-4 items-center gap-4">
-                                                        <Label htmlFor="password" className="text-right">
-                                                            비밀번호
-                                                        </Label>
-                                                        <Input
-                                                               id="password"
-                                                               type="password"
-                                                               value={password}
-                                                               onChange={(e) => setPassword(e.target.value)}
-                                                               placeholder="8~12자리 비밀번호"
-                                                               className="col-span-3"/>
-                                                    </div>
-                                                    <div className="grid grid-cols-4 items-center gap-4">
-                                                        <Label htmlFor="confirmPassword" className="text-right">
-                                                            비밀번호 확인
-                                                        </Label>
-                                                        <Input id="confirmPassword"
-                                                               type="password"
-                                                               value={confirmPassword}
-                                                               onChange={(e) => setConfirmPassword(e.target.value)}
-                                                               placeholder="비밀번호 재입력"
-                                                               className="col-span-3"/>
-                                                    </div>
-                                                </div>
-                                                <DialogFooter>
-                                                    <Button onClick={handlePasswordChange} >Save changes</Button>
-                                                </DialogFooter>
-                                            </DialogContent>
-                                        </Dialog>
-                                    </div>
-                                    <div className='p-8 pt-0 w-full flex justify-between mb-4'>
-                                        <p className='font-bold'>전화번호</p>
-                                        <p className='mr-48 font-bold'>{phone}</p>
-                                        <Dialog open={isPhoneDialogOpen} onOpenChange={setIsPhoneDialogOpen}>
-                                            <DialogTrigger className='bg-transparent w-0 h-0 mb-4'>
-                                                <Button>설정</Button>
-                                            </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader>
-                                                    <DialogTitle>전화번호 수정</DialogTitle>
-                                                    <DialogDescription>전화번호를 적어주세요!</DialogDescription>
-                                                </DialogHeader>
-                                                <div className="grid gap-4 py-4">
-                                                    <div className="grid grid-cols-4 items-center gap-4">
-                                                        <Label htmlFor="phone" className="text-right">
-                                                            전화번호
-                                                        </Label>
-                                                        <Input  type="tel"
+
+                                    <div className='grid grid-cols-12 items-center p-8 pt-0 pb-0 w-full mb-4'>
+                                        <p className='font-bold col-span-2'>전화번호</p>
+                                        <p className='font-bold col-span-8'>{phone}</p>
+                                        <div className='col-span-2 flex justify-end'>
+                                            <Dialog open={isPhoneDialogOpen} onOpenChange={setIsPhoneDialogOpen}>
+                                                <DialogTrigger className='bg-transparent w-0 h-0 mb-4'>
+                                                    <Button>설정</Button>
+                                                </DialogTrigger>
+                                                <DialogContent>
+                                                    <DialogHeader>
+                                                        <DialogTitle>전화번호 수정</DialogTitle>
+                                                        <DialogDescription>전화번호를 적어주세요!</DialogDescription>
+                                                    </DialogHeader>
+                                                    <div className="grid gap-4 py-4">
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="phone" className="text-right">
+                                                                전화번호
+                                                            </Label>
+                                                            <Input type="tel"
                                                                 value={phoneNumber}
                                                                 onChange={(e) => setPhoneNumber(e.target.value)}
                                                                 id="phone" placeholder='- 없이 작성하세요'
-                                                               className="col-span-3"/>
+                                                                className="col-span-3" />
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <DialogFooter>
-                                                    <Button onClick={handlePhoneNumberChange} >Save changes</Button>
-                                                </DialogFooter>
-                                            </DialogContent>
-                                        </Dialog>
+                                                    <DialogFooter>
+                                                        <Button onClick={handlePhoneNumberChange} >Save changes</Button>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
+                                        </div>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -337,7 +347,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                     </>
                 )}
 
-                {activeTab === 'notification' && <NotificationPanel/>} {/* 알림 설정 탭 */}
+                {activeTab === 'notification' && <NotificationPanel />} {/* 알림 설정 탭 */}
             </div>
         </div>
     );

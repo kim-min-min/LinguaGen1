@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Header from './Header.jsx';
 import _ from 'lodash';
+import { ChevronUp } from 'lucide-react';
 
 // 애니메이션과 스타일 컴포넌트 정의
 const fadeIn = keyframes`
@@ -31,8 +32,9 @@ const SidebarContainer = styled.div`
   height: 300px;
   backdrop-filter: blur(15px);
   background: rgba(255, 255, 255, 0.2);
-  border: 2px gray solid;
-  border-radius: 8px;
+  border : 1px white solid;
+  border-radius : 8px;
+  box-shadow : 0 0 10px 0 rgba(0, 0, 0, 0.1);
 `;
 
 const SectionTitle = styled.p`
@@ -68,6 +70,7 @@ const RankingPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [activePanel, setActivePanel] = useState('weeklyRanking');
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     // 각 랭킹 데이터를 저장할 상태 추가
     const [weeklyRankingData, setWeeklyRankingData] = useState([]);
@@ -75,6 +78,9 @@ const RankingPage = () => {
     const [groupRankingData, setGroupRankingData] = useState([]);
 
     const tierOrder = ['Challenger', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
+
+    const [showScrollTop, setShowScrollTop] = useState(false);
+    const tableRef = useRef(null);
 
     useEffect(() => {
         // 개인 랭킹 데이터 fetch
@@ -154,6 +160,8 @@ const RankingPage = () => {
 
     const handleScroll = (e) => {
         const { scrollTop, clientHeight, scrollHeight } = e.target;
+        setShowScrollTop(scrollTop > 300);
+        
         if (scrollHeight - scrollTop === clientHeight) {
             loadMore();
         }
@@ -165,8 +173,12 @@ const RankingPage = () => {
         const end = nextPage * itemsPerPage;
         
         if (start < filteredData.length) {
-            setDisplayedData([...displayedData, ...filteredData.slice(start, end)]);
-            setPage(nextPage);
+            setLoading(true);
+            setTimeout(() => {
+                setDisplayedData([...displayedData, ...filteredData.slice(start, end)]);
+                setPage(nextPage);
+                setLoading(false);
+            }, 500);
         }
     };
 
@@ -182,6 +194,15 @@ const RankingPage = () => {
             setDisplayedData(filtered.slice(0, itemsPerPage));
         }
         setPage(1);
+    };
+
+    const scrollToTop = () => {
+        if (tableRef.current) {
+            tableRef.current.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
     };
 
     if (error) return <p>{error}</p>;
@@ -222,7 +243,9 @@ const RankingPage = () => {
                 </div>
 
                 {/* 오른쪽 메인 컨테이너 */}
-                <div className='col-span-7 flex items-start justify-start flex-col backdrop-blur-[15px] max-h-[850px] overflow-y-auto custom-scrollbar' style={{ background: 'rgba(255, 255, 255, 0.2)', border : '2px gray solid', borderRadius : '8px' }} onScroll={handleScroll}>
+                <div className='col-span-7 flex items-start justify-start flex-col backdrop-blur-[15px]' 
+                    style={{ background: 'rgba(255, 255, 255, 0.2)', border: '1px white solid', borderRadius: '8px', boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)' }}>
+                    
                     {/* 검색 영역 */}
                     <div className="flex w-full justify-between my-4 pr-8">
                         <div className='pl-8 jua-regular text-xl flex items-center'>
@@ -232,49 +255,72 @@ const RankingPage = () => {
                                 {activePanel === 'groupRanking' && '단체 랭킹'}
                             </p>
                         </div>
-                        <div><input
-                            type="text"
-                            placeholder="닉네임 검색"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                            className="h-8 border-2 border-gray-400 rounded-md pl-2 mr-2"
-                        />
-                        <button
-                            onClick={handleSearch}
-                            className="px-4 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                        >
-                            검색
-                        </button>
+                        <div className='flex items-center'>
+                            <input
+                                type="text"
+                                placeholder="닉네임 검색"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                                className="h-8 border-2 border-gray-400 rounded-md pl-2 mr-2"
+                            />
+                            <button
+                                onClick={handleSearch}
+                                className="px-4 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                            >
+                                검색
+                            </button>
                         </div>
                     </div>
 
                     {/* 랭킹 테이블 */}
-                    <div className="w-full bg-white/80 backdrop-blur-md rounded-lg shadow-lg p-6">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="text-left border-b-2 border-gray-300">
-                                    <th className="p-3">순위</th>
-                                    <th className="p-3">
-                                        {activePanel === 'groupRanking' ? '그룹명' : '아이디'}
-                                    </th>
-                                    <th className="p-3">등급</th>
-                                    <th className="p-3">경험치</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {displayedData.map((item, index) => (
-                                    <tr key={item.id || index} className="border-b border-gray-200">
-                                        <td className="p-3">{index + 1}</td>
-                                        <td className="p-3">
-                                            {activePanel === 'groupRanking' ? item.groupName : item.userId}
-                                        </td>
-                                        <td className="p-3">{tierOrder[item.grade - 1] || 'Unknown'}</td>
-                                        <td className="p-3">{`${item.exp} XP`}</td>
+                    <div className="w-full bg-white/80 backdrop-blur-md rounded-lg shadow-lg p-6 relative">
+                        <div 
+                            ref={tableRef}
+                            className="max-h-[650px] overflow-y-auto custom-scrollbar relative" 
+                            onScroll={handleScroll}
+                        >
+                            <table className="w-full">
+                                <thead className="sticky top-0 bg-white/80 backdrop-blur-md">
+                                    <tr className="text-left border-b-2 border-gray-300">
+                                        <th className="p-3">순위</th>
+                                        <th className="p-3">
+                                            {activePanel === 'groupRanking' ? '그룹명' : '아이디'}
+                                        </th>
+                                        <th className="p-3">등급</th>
+                                        <th className="p-3">경험치</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {displayedData.map((item, index) => (
+                                        <tr key={item.id || index} className="border-b border-gray-200">
+                                            <td className="p-3">{index + 1}</td>
+                                            <td className="p-3">
+                                                {activePanel === 'groupRanking' ? item.groupName : item.userId}
+                                            </td>
+                                            <td className="p-3">{tierOrder[item.grade - 1] || 'Unknown'}</td>
+                                            <td className="p-3">{`${item.exp} XP`}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            {loading && (
+                                <div className="w-full flex justify-center items-center p-4">
+                                    <div className="loader"></div>
+                                </div>
+                            )}
+                        </div>
+                        
+                        {/* 맨 위로 가기 버튼 */}
+                        {showScrollTop && (
+                            <button
+                                onClick={scrollToTop}
+                                className="fixed bottom-8 right-8 p-3 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+                                aria-label="맨 위로 가기"
+                            >
+                                <ChevronUp size={24} />
+                            </button>
+                        )}
                     </div>
                 </div>
             </main>
