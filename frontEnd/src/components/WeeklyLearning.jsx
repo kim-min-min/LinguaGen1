@@ -156,7 +156,7 @@ const WeeklyLearning = () => {
   };
 
   return (
-    <Card className='w-full h-full ml-4 px-10 pb-10 pt-4'>
+    <Card className='w-full h-full px-10 pb-10 pt-4'>
       <Header style={{ marginBottom: '50px', userSelect: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <span>주간 학습</span>

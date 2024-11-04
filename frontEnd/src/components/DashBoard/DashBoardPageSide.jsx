@@ -22,7 +22,10 @@ const DashBoardPageSide = ({ activePanel, setActivePanel }) => {
   const navigate = useNavigate(); // useNavigate 사용
 
   return (
-    <div className='flex flex-col items-center justify-start w-80 border-2 border-gray-300 rounded-lg jua-regular' style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2', height : 'auto'}}>
+    <div className='flex flex-col items-center justify-start w-80 border-2 border-gray-300 rounded-lg jua-regular
+        max-lg:w-full max-lg:flex-row max-lg:justify-between' 
+      style={{backdropFilter : 'blur(15px)' , background : 'rgba(255, 255, 255, 0.2', height : 'auto'}}
+    >
       <div className='flex flex-col items-start justify-between w-full h-48 pt-4 p-4'>
         {/* Avatar 클릭 시 MyPageSettingPanel로 이동 */}
         <Avatar className='w-20 h-20 ml-4'>
@@ -36,8 +39,8 @@ const DashBoardPageSide = ({ activePanel, setActivePanel }) => {
         </Avatar>
         <p className='text-center w-1/2 mt-4 kanit-regular'>Name</p>
       </div>
-      <Separator className='w-full mt-8 mb-8 border-2' />
-      <div className='flex flex-row justify-between w-full'>
+      <Separator className='w-full mt-8 mb-8 border-2 max-lg:hidden' />
+      <div className='flex flex-row justify-between w-full max-lg:hidden'>
         <div className='flex flex-col w-full h-12 items-center justify-start'>
           <p className='font-bold'> 게임 진행 수</p>
           <p> - </p>
@@ -47,7 +50,8 @@ const DashBoardPageSide = ({ activePanel, setActivePanel }) => {
           <p> - </p>
         </div>
       </div>
-      <Separator className='w-full mt-8 mb-8 border-2' />
+      
+      <Separator className='w-full mt-8 mb-8 border-2 max-lg:hidden' />
       <div className='flex flex-col w-full h-full items-start justify-start text-xl'>
         <Item
           isActive={activePanel === 'dashboard'}
@@ -58,7 +62,7 @@ const DashBoardPageSide = ({ activePanel, setActivePanel }) => {
         <Item
           isActive={activePanel === 'badge'}
           onClick={() => setActivePanel('badge')}
-          style={{marginBottom : '45px'}}
+          className='mb-8 max-lg:mb-0'
         >
           뱃지 / 업적
         </Item>
