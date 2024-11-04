@@ -110,59 +110,61 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
 
     const handleAnswer = useCallback((answerIndex) => {
         let isCorrect = false;
-        let answer;  // 서버로 보낼 선택지 레이블 ('a', 'b', 'c', 'd')
+        let answer;
 
         if (currentQuestion.type === 'multipleChoice' && currentQuestion.options && currentQuestion.options.length > answerIndex) {
             // 인덱스를 a, b, c, d와 매핑
             const optionsMap = ['a', 'b', 'c', 'd'];
-            answer = optionsMap[answerIndex];  // 선택한 답안의 레이블 가져오기 ('a', 'b', 'c', 'd')
+            answer = optionsMap[answerIndex];  // 선택한 답안의 레이블 가져오기
 
             isCorrect = answerIndex === currentQuestion.correctAnswer;
         } else if (currentQuestion.type === 'shortAnswer') {
-            answer = answerIndex.trim();  // 주관식의 경우 사용자가 입력한 답안 그대로 사용
+            answer = answerIndex.trim();
             isCorrect = answer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase();
         } else {
             console.error("Invalid question or choice index:", currentQuestion, answerIndex);
-            return;  // 오류가 발생하면 함수를 종료
+            return;
         }
 
-        setSelectedAnswer(answer);
+        setSelectedAnswer(answerIndex); // 여기서는 인덱스를 저장 (UI 표시용)
         setFeedback(isCorrect);
         setShowFeedback(true);
-        setShowAnimation(true); // 답안 제출 후 버튼들 표시
+        setShowAnimation(true);
+
+        // 서버에 답안 제출 시 questionId를 올바르게 전달
+        const questionId = currentQuestion.idx; // 문제의 고유 ID
+        
+        // 서버로 전송할 데이터 구조 단순화
+        const submitData = {
+            idx: questionId,
+            studentId: userId,
+            studentAnswer: answer // 'a', 'b', 'c', 'd' 중 하나
+        };
 
         // 서버에 답안 제출
-        submitAnswerToServer(currentQuestion.idx, userId, answer);  // answer를 전송 (이제 'a', 'b', 'c', 'd' 중 하나가 전송됨)
+        submitAnswerToServer(submitData);
 
         if (isCorrect) {
             onCorrectAnswer();
         } else {
             onWrongAnswer();
         }
-    }, [currentQuestion, onCorrectAnswer, onWrongAnswer]);
+    }, [currentQuestion, onCorrectAnswer, onWrongAnswer, userId]);
 
-    // 서버에 답안을 제출하는 함수
-    const submitAnswerToServer = async (questionId, studentId, answer) => {
-        console.log("Submitting answer with idx:", questionId);  // 로그 추가
-
-        const payload = {
-            idx: questionId,
-            studentId: studentId,
-            studentAnswer: answer
-        };
-        console.log("Submitting payload:", JSON.stringify(payload)); // 직렬화된 JSON 확인
-
+    // submitAnswerToServer 함수 수정
+    const submitAnswerToServer = async (submitData) => {
         try {
             const response = await fetch("http://localhost:5173/api/answers/submit", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(payload),  // JSON 직렬화
+                body: JSON.stringify(submitData),
+                credentials: 'include'
             });
 
             if (!response.ok) {
-                throw new Error("Failed to submit answer");
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const result = await response.json();
