@@ -14,7 +14,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/community")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class CommunityController {
 
     @Autowired
