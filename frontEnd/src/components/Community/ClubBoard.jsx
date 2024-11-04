@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator.jsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx';
@@ -14,22 +14,21 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination.jsx';
 import { Button } from '@/components/ui/button.jsx';
+import { format } from 'date-fns';
 
-const ClubBoard = ({ handleTabClick, setSelectedItem }) => {
+const ClubBoard = ({ setSelectedItem }) => {
   const navigate = useNavigate();
-
-  // 카페 게시판 형식의 데이터셋
-  const data = Array.from({ length: 30 }, (_, i) => ({
-    id: i + 1,
-    title: i % 2 === 0 ? '공지사항: 단체방 생성 안내' : '공지사항: 개인방 생성 안내',
-    author: i % 2 === 0 ? '관리자' : '운영팀',
-    date: `2024.10.${16 - (i % 15)}`, // 임의의 날짜
-    views: Math.floor(Math.random() * 1000), // 조회수
-    likes: Math.floor(Math.random() * 100), // 좋아요 수
-  }));
-
+  const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(15); // 한 페이지에 표시할 항목 수 (초기값 15)
+
+  // 데이터 가져오기
+  useEffect(() => {
+    fetch('http://localhost:8085/api/community/category/clubboard') // 백엔드 API URL
+        .then(response => response.json())
+        .then(data => setData(data))
+        .catch(error => console.error('Error fetching data:', error));
+  }, []); // 빈 배열을 두 번째 인자로 전달하여 컴포넌트 마운트 시 한 번만 실행
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const selectedData = data.slice(startIndex, startIndex + itemsPerPage);
@@ -52,7 +51,7 @@ const ClubBoard = ({ handleTabClick, setSelectedItem }) => {
 
   const handleRowClick = (item) => {
     setSelectedItem(item);
-    handleTabClick('detailview', 'clubboard');
+    navigate(`/community/clubboard/detailview/${item.idx}`);
   };
 
   return (
@@ -93,13 +92,13 @@ const ClubBoard = ({ handleTabClick, setSelectedItem }) => {
           </TableHeader>
           <TableBody>
             {selectedData.map((item) => (
-              <TableRow key={item.id} onClick={() => handleRowClick(item)} className="cursor-pointer">
-                <TableCell className="font-medium text-center h-14">{item.id}</TableCell>
+              <TableRow key={item.idx} onClick={() => handleRowClick(item)} className="cursor-pointer">
+                <TableCell className="font-medium text-center h-14">{item.idx}</TableCell>
                 <TableCell>{item.title}</TableCell>
-                <TableCell className="text-center">{item.author}</TableCell>
-                <TableCell className="text-center">{item.date}</TableCell>
-                <TableCell className="text-center">{item.views}</TableCell>
-                <TableCell className="text-right">{item.likes}</TableCell>
+                <TableCell className="text-center">{item.nickname ? item.nickname : (item.userId.includes('@') ? item.userId.split('@')[0] : item.userId)}</TableCell>
+                <TableCell className="text-center">{format(new Date(item.createdAt), 'yyyy-MM-dd')}</TableCell>
+                <TableCell className="text-center">{item.viewCount}</TableCell>
+                <TableCell className="text-right">{item.likeCount}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -1,11 +1,13 @@
 package com.linguagen.backend.service;
 
+import com.linguagen.backend.dto.DailyPlayCountDto;
 import com.linguagen.backend.dto.LatestStudyInfoDto;
 import com.linguagen.backend.entity.Question;
 import com.linguagen.backend.entity.StudentAnswer;
 import com.linguagen.backend.repository.StudentAnswerRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,5 +36,9 @@ public class DashBoardService {
             );
         }
         return null; // 로그나 문제가 없는 경우
+    }
+
+    public List<DailyPlayCountDto> getDailyPlayCounts(String studentId) {
+        return studentAnswerRepository.findDailyPlayCountsByStudentId(studentId);
     }
 }

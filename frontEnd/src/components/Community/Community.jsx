@@ -200,6 +200,7 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
               <div className='w-1/2 flex justify-between mt-4 text-sm text-gray-400'>
                 <p>{format(new Date(post.createdAt), 'yyyy-MM-dd')}</p>
                 <p>조회 {post.viewCount}</p>
+                <p>좋아요 {post.likeCount}</p>
               </div>
             </div>
           ))}

@@ -353,10 +353,24 @@ function SignupNext({ formData, onPreviousSignup }) {
   const [sliderValue, setSliderValue] = useState(33); // 초기 값 33
   const [selectedInterests, setSelectedInterests] = useState([]); // 관심사 선택 상태
 
+  // 세분화된 티어와 등급을 계산하는 함수
   const getTier = () => {
-    if (sliderValue < 49) return "Bronze";
-    if (sliderValue < 80) return "Silver";
-    return "Gold";
+    if (sliderValue <= 48) {
+      if (sliderValue <= 12) return "Bronze 4";
+      if (sliderValue <= 24) return "Bronze 3";
+      if (sliderValue <= 36) return "Bronze 2";
+      return "Bronze 1";
+    } else if (sliderValue <= 79) {
+      if (sliderValue <= 58) return "Silver 4";
+      if (sliderValue <= 64) return "Silver 3";
+      if (sliderValue <= 71) return "Silver 2";
+      return "Silver 1";
+    } else {
+      if (sliderValue <= 86) return "Gold 4";
+      if (sliderValue <= 92) return "Gold 3";
+      if (sliderValue <= 96) return "Gold 2";
+      return "Gold 1";
+    }
   };
 
   // ToggleGroup에서 선택된 항목 업데이트
@@ -466,7 +480,7 @@ function SignupNext({ formData, onPreviousSignup }) {
                       <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>브론즈</p>
+                      <p>일상적인 기초 영어 표현을 사용하고 이해할 수 있습니다.</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -480,7 +494,7 @@ function SignupNext({ formData, onPreviousSignup }) {
                       <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>실버</p>
+                      <p>기본적인 개인, 가족, 업무 관련 용어를 이해하고 사용할 수 있습니다.</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -494,7 +508,7 @@ function SignupNext({ formData, onPreviousSignup }) {
                       <img src="src/assets/imgs/info.png" alt="이미지를 불러올 수 없습니다." className='w-8 h-8 mb-4' />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>골드</p>
+                      <p>일상생활, 직장, 학교 등에서 자주 접하는 주제의 핵심을 이해할 수 있습니다.</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

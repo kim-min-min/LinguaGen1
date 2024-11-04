@@ -54,9 +54,10 @@ const Notice = ({ handleTabClick, setSelectedItem }) => {
   };
 
   const handleRowClick = (item) => {
-    setSelectedItem(item); // 선택한 데이터를 설정
-    handleTabClick('detailview', 'notice'); // 'notice'를 추가로 전달
+    setSelectedItem(item);
+    navigate(`/community/Notice/detailview/${item.idx}`);
   };
+
 
   return (
     <div className="w-full bg-white rounded-md flex flex-col p-12 justify-start items-center min-h-screen mt-8">
@@ -99,10 +100,10 @@ const Notice = ({ handleTabClick, setSelectedItem }) => {
               <TableRow key={item.id} onClick={() => handleRowClick(item)} className="cursor-pointer">
                 <TableCell className="font-medium text-center h-14">{item.idx}</TableCell>
                 <TableCell>{item.title}</TableCell>
-                <TableCell className="text-center">{item.author}</TableCell>
+                <TableCell className="text-center">{item.nickname ? item.nickname : (item.userId.includes('@') ? item.userId.split('@')[0] : item.userId)}</TableCell>
                 <TableCell className="text-center">{format(new Date(item.createdAt), 'yyyy-MM-dd')}</TableCell>
-                <TableCell className="text-center">{item.views}</TableCell>
-                <TableCell className="text-right">{item.likes}</TableCell>
+                <TableCell className="text-center">{item.viewCount}</TableCell>
+                <TableCell className="text-right">{item.likeCount}</TableCell>
               </TableRow>
             ))}
           </TableBody>

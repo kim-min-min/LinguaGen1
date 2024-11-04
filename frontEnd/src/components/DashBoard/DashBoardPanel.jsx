@@ -148,15 +148,15 @@ const DashBoardPanel = () => {
                                     {latestStudyInfo ? (
                                         <>
                                             <span>{latestStudyInfo.questionType} </span>
-                                            <span>{gradeNames[latestStudyInfo.difficultyGrade] || "Unknown Grade"}</span>
-                                            <span>
+                                           
                                                 <img
                                                     src={tierImages[latestStudyInfo.difficultyGrade]}
                                                     alt={`${gradeNames[latestStudyInfo.difficultyGrade]} 이미지`}
                                                     className='inline-block w-5 h-5 ml-2'
                                                 />
                                                 {` Tier ${latestStudyInfo.difficultyTier}`}
-                                            </span>
+                                            <span>{gradeNames[latestStudyInfo.difficultyGrade] || "Unknown Grade"}</span>
+                                            <span> {` ${latestStudyInfo.difficultyTier}`}</span>
                                         </>
                                     ) : '로딩 중...'}
                                 </p>
