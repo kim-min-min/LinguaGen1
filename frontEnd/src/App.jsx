@@ -16,6 +16,7 @@ import RuinsCanvas from './components/Game/RuinsCanvas.jsx';
 import PageLoader from './components/PageLoader.jsx';
 import Writing from "./components/Community/Writing.jsx";
 
+
 import WelcomeMessage from './components/WelcomeMessage.jsx';
 function App() {
   return (

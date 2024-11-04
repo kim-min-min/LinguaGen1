@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion'; // framer-motion 라이브러리 사용
 import axios from 'axios';
 import TutorialMessage from './TutorialMessage';
+import Lottie from 'react-lottie';
+import CorrectAnimation from '../../assets/LottieAnimation/Correct.json';
+import IncorrectAnimation from '../../assets/LottieAnimation/Incorrect.json';
+import EndingMessage from './EndingMessage';
 
 const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: currentQuestionNumber, totalQuestions, isGameOver, isGameClear, onRestart, onMainMenu, setIsHighlightingHealthBar, setIsHighlightingSoundButton }) => {
     const navigate = useNavigate();
@@ -17,10 +21,31 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [showFeedback, setShowFeedback] = useState(false);
     const [showExplanation, setShowExplanation] = useState(false);
-    const [showNextButtons, setShowNextButtons] = useState(false);
     const [showTutorial, setShowTutorial] = useState(true);
+    const [showAnimation, setShowAnimation] = useState(false);
+    const [hoveredAnswer, setHoveredAnswer] = useState(null);
+    const [showEndingMessage, setShowEndingMessage] = useState(false);
 
     const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'];
+
+    // Lottie 옵션 설정
+    const correctOptions = {
+        loop: false,
+        autoplay: true,
+        animationData: CorrectAnimation,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+        }
+    };
+
+    const incorrectOptions = {
+        loop: false,
+        autoplay: true,
+        animationData: IncorrectAnimation,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+        }
+    };
 
     // 문제 데이터 가져오기
     useEffect(() => {
@@ -81,6 +106,8 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
     const currentQuestion = questions[currentQuestionIndex];
 
     const handleAnswer = useCallback((answer) => {
+        if (showFeedback) return;
+
         let isCorrect = false;
         if (currentQuestion.type === 'multipleChoice') {
             isCorrect = answer === currentQuestion.correctAnswer;
@@ -91,14 +118,14 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
         setSelectedAnswer(answer);
         setFeedback(isCorrect);
         setShowFeedback(true);
-        setShowNextButtons(true); // 답안 제출 후 버튼들 표시
+        setShowAnimation(true);
 
         if (isCorrect) {
             onCorrectAnswer();
         } else {
             onWrongAnswer();
         }
-    }, [currentQuestion, onCorrectAnswer, onWrongAnswer]);
+    }, [currentQuestion, onCorrectAnswer, onWrongAnswer, showFeedback]);
 
     // 다음 문제로 이동하는 함수
     const handleNextQuestion = () => {
@@ -112,88 +139,12 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
             setSelectedAnswer(null);
             setShowFeedback(false);
             setShowExplanation(false);
-            setShowNextButtons(false);
         }, 500);
 
         setTimeout(() => {
             setIsSliding(false);
         }, 1000);
     };
-
-// 해설 및 다음 문제 버튼 컴포넌트
-    const renderNextButtons = () => {
-        if (!showNextButtons) return null;
-
-        return (
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="fixed inset-0 flex items-end justify-center bg-black bg-opacity-50 z-50 overflow-visible"
-            >
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="absolute bg-white rounded-xl shadow-2xl w-[800px] m-4 z-10"
-                    style={{ bottom: '0%' }}
-                >
-                    {/* 하단 버튼 영역 - 순서 변경 */}
-                    <div className="p-6 border-t bg-gray-50 rounded-t-xl">
-                        <div className="flex justify-center gap-4">
-                            <button
-                                onClick={() => setShowExplanation(!showExplanation)}
-                                className="py-3 px-6 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-lg font-medium"
-                            >
-                                {showExplanation ? '해설 닫기' : '해설 보기'}
-                            </button>
-                            <button
-                                onClick={handleNextQuestion}
-                                className="py-3 px-6 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-lg font-medium"
-                            >
-                                다음 문제
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* 해설 영역 */}
-                    <AnimatePresence>
-                        {showExplanation && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                className="relative bg-gray-50 p-6 rounded-lg"
-                            >
-                                <div className='flex justify-between items-center'>
-                                    <h4 className="font-bold mb-4 text-lg text-gray-700">💡 해설</h4>
-                                    <button
-                                        onClick={handleNextQuestion}
-                                        className="text-gray-400 hover:text-gray-600"
-                                    >
-                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-                                </div>
-                                <div className="text-lg text-gray-600 leading-relaxed">
-                                    <p className="whitespace-pre-line break-words">
-                                        {currentQuestion.explanation}
-                                    </p>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {/* 상단 결과 표시 */}
-                    <div className="p-6 border-t">
-                        <h3 className="text-2xl font-bold text-center text-gray-800">
-                            {feedback ? '정답입니다! 🎉' : '틀렸습니다. 😢'}
-                        </h3>
-                    </div>
-                </motion.div>
-            </motion.div>
-        );
-    };
-
 
     const renderQuestion = () => {
         if (!currentQuestion) return null;
@@ -259,16 +210,19 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                                 {currentQuestion.options.map((option, index) => (
                                     <motion.button
                                         key={index}
-                                        onClick={() => handleAnswer(index)}
-                                        className="relative h-full rounded-lg shadow-md transition-all duration-300 hover:shadow-lg h-32 flex flex-col"
+                                        onClick={() => !showFeedback && handleAnswer(index)}
+                                        onMouseEnter={() => showFeedback && selectedAnswer === index && setHoveredAnswer(index)}
+                                        onMouseLeave={() => setHoveredAnswer(null)}
+                                        className={`relative h-full rounded-lg shadow-md transition-all duration-300 hover:shadow-lg h-32 flex flex-col ${
+                                            showFeedback && selectedAnswer !== index ? 'cursor-not-allowed opacity-50' : ''
+                                        }`}
                                         style={{
                                             backgroundColor: colors[index],
                                         }}
-                                        whileHover={{scale: 1.02}}
-                                        whileTap={{scale: 0.98}}
+                                        whileHover={!showFeedback || selectedAnswer === index ? {scale: 1.02} : {}}
+                                        whileTap={!showFeedback || selectedAnswer === index ? {scale: 0.98} : {}}
                                     >
-                                        <div
-                                            className="w-full h-full flex flex-col items-center justify-center text-center p-6">
+                                        <div className="w-full h-full flex flex-col items-center justify-center text-center p-6">
                                             <span className="text-2xl font-bold mb-2 text-white">
                                                 {['A', 'B', 'C', 'D'][index]}
                                             </span>
@@ -276,6 +230,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                                                 {option}
                                             </p>
                                         </div>
+                                        
                                         <AnimatePresence>
                                             {showFeedback && selectedAnswer === index && (
                                                 <motion.div
@@ -283,10 +238,47 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                                                     animate={{opacity: 1}}
                                                     exit={{opacity: 0}}
                                                     className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center"
+                                                    onMouseEnter={() => setHoveredAnswer(index)}
+                                                    onMouseLeave={() => setHoveredAnswer(null)}
                                                 >
-                            <span className="text-6xl font-bold text-white">
-                                {feedback ? 'O' : 'X'}
-                            </span>
+                                                    {showAnimation && (
+                                                        <div className="absolute inset-0 flex items-center justify-center">
+                                                            <Lottie
+                                                                options={feedback ? correctOptions : incorrectOptions}
+                                                                height={200}
+                                                                width={200}
+                                                                isClickToPauseDisabled={true}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    
+                                                    {hoveredAnswer === index && (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, y: 10 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            exit={{ opacity: 0, y: 10 }}
+                                                            className="absolute bottom-4 flex gap-4 z-50"
+                                                        >
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setShowExplanation(true);
+                                                                }}
+                                                                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                                                            >
+                                                                해설 보기
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleNextQuestion();
+                                                                }}
+                                                                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                                                            >
+                                                                다음 문제
+                                                            </button>
+                                                        </motion.div>
+                                                    )}
                                                 </motion.div>
                                             )}
                                         </AnimatePresence>
@@ -349,7 +341,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                         </div>
 
                         {/* 오른쪽 패널: 답안 입력 */}
-                        <div className="w-1/2 h-full p-6 flex flex-col items-center justify-center">
+                        <div className="w-1/2 h-full p-6 flex flex-col items-center justify-center relative">
                             <div className="w-full max-w-md">
                                 <input
                                     type="text"
@@ -358,12 +350,14 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                                     onKeyPress={(e) => e.key === 'Enter' && handleAnswer(userAnswer)}
                                     className="w-full p-4 text-lg border-2 border-gray-300 rounded-lg mb-4 focus:border-blue-500 focus:outline-none"
                                     placeholder="Enter your answer..."
+                                    disabled={showFeedback}
                                 />
                                 <motion.button
                                     onClick={() => handleAnswer(userAnswer)}
                                     className="w-full p-4 bg-blue-500 text-white rounded-lg text-lg font-semibold"
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
+                                    disabled={showFeedback}
                                 >
                                     Submit
                                 </motion.button>
@@ -371,14 +365,54 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                                 <AnimatePresence>
                                     {showFeedback && (
                                         <motion.div
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -20 }}
-                                            className={`mt-4 p-4 rounded-lg text-center text-white text-xl font-bold ${
-                                                feedback ? 'bg-green-500' : 'bg-red-500'
-                                            }`}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="absolute inset-0 flex items-center justify-center"
+                                            onMouseEnter={() => setHoveredAnswer(true)}
+                                            onMouseLeave={() => setHoveredAnswer(false)}
                                         >
-                                            {feedback ? 'Correct!' : 'Incorrect!'}
+                                            <div className={`absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center`}>
+                                                {showAnimation && (
+                                                    <div className="mb-4">
+                                                        <Lottie
+                                                            options={feedback ? correctOptions : incorrectOptions}
+                                                            height={200}
+                                                            width={200}
+                                                            isClickToPauseDisabled={true}
+                                                        />
+                                                    </div>
+                                                )}
+                                                
+                                                {/* 호버 시 나타나는 버튼들 */}
+                                                {hoveredAnswer && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, y: 10 }}
+                                                        className="flex gap-4 mt-4"
+                                                    >
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setShowExplanation(true);
+                                                            }}
+                                                            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-lg font-medium"
+                                                        >
+                                                            해설 보기
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleNextQuestion();
+                                                            }}
+                                                            className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-lg font-medium"
+                                                        >
+                                                            다음 문제
+                                                        </button>
+                                                    </motion.div>
+                                                )}
+                                            </div>
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
@@ -393,6 +427,17 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
 
     const handleStart = () => {
         setShowTutorial(false);
+    };
+
+    // isGameOver나 isGameClear가 변경될 때 엔딩 메시지 표시
+    useEffect(() => {
+        if (isGameOver || isGameClear) {
+            setShowEndingMessage(true);
+        }
+    }, [isGameOver, isGameClear]);
+
+    const handleEndingFinish = () => {
+        navigate('/main');
     };
 
     if (loading) {
@@ -418,55 +463,15 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
     }
 
     if (isGameOver) {
-        return (
-            <motion.div
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col items-center justify-center h-full"
-            >
-                <h2 className="text-4xl font-bold text-red-600 mb-8">Game Over</h2>
-                <div className="flex space-x-4">
-                    <button
-                        onClick={onRestart}
-                        className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                    >
-                        Try Again
-                    </button>
-                    <button
-                        onClick={() => navigate('/main')}
-                        className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-                    >
-                        Main Menu
-                    </button>
-                </div>
-            </motion.div>
-        );
+        return showEndingMessage ? (
+            <EndingMessage isGameClear={false} onFinish={handleEndingFinish} />
+        ) : null;
     }
 
     if (isGameClear) {
-        return (
-            <motion.div
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col items-center justify-center h-full"
-            >
-                <h2 className="text-4xl font-bold text-green-600 mb-8">Game Clear!</h2>
-                <div className="flex space-x-4">
-                    <button
-                        onClick={onRestart}
-                        className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                    >
-                        Play Again
-                    </button>
-                    <button
-                        onClick={() => navigate('/main')}
-                        className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-                    >
-                        Main Menu
-                    </button>
-                </div>
-            </motion.div>
-        );
+        return showEndingMessage ? (
+            <EndingMessage isGameClear={true} onFinish={handleEndingFinish} />
+        ) : null;
     }
 
     return (
@@ -487,10 +492,47 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                         ease: "easeOut"
                     }}
                 >
-                    <div className={`flex-1 transition-all duration-300 ${showNextButtons ? 'mr-1/4' : ''}`}>
+                    <div className="flex-1">
                         {renderQuestion()}
                     </div>
-                    {renderNextButtons()}
+
+                    {/* 해설 모달 */}
+                    <AnimatePresence>
+                        {showExplanation && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-visible"
+                                onClick={() => setShowExplanation(false)}
+                            >
+                                <motion.div
+                                    initial={{ scale: 0.9, opacity: 0, y: -20 }}
+                                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                                    exit={{ scale: 0.9, opacity: 0, y: -20 }}
+                                    className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 absolute top-[-50%] transform -translate-x-1/2"
+                                    onClick={e => e.stopPropagation()}
+                                >
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h4 className="font-bold text-xl text-gray-700">💡 해설</h4>
+                                        <button
+                                            onClick={() => setShowExplanation(false)}
+                                            className="text-gray-400 hover:text-gray-600"
+                                        >
+                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div className="text-lg text-gray-600 leading-relaxed">
+                                        <p className="whitespace-pre-line break-words">
+                                            {currentQuestion.explanation}
+                                        </p>
+                                    </div>
+                                </motion.div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </motion.div>
             )}
         </div>

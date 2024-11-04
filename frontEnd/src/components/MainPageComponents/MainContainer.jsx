@@ -5,6 +5,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import useStore from '../../store/useStore';
 import '../../App.css';
 import Word3D from '../Word3D';
+import Lottie from 'react-lottie';
+import ClickAnimation from '../../assets/LottieAnimation/ClickAnimation.json';
 import { useNavigate } from 'react-router-dom';
 import DungeonCanvas from '../Game/DungeonCanvas';
 import RuinsCanvas from '../Game/RuinsCanvas';
@@ -204,6 +206,10 @@ const MainContainer = ({ selectedGame }) => {
   const [activeMenu, setActiveMenu] = useState('Listening');
   const [selectedMenu, setSelectedMenu] = useState('Listening');
   const [visibleCards, setVisibleCards] = useState([]);
+  const [isHovered, setIsHovered] = useState(false);
+  const [showAnimation, setShowAnimation] = useState(false);
+  const [animationPosition, setAnimationPosition] = useState({ x: 0, y: 0 });
+  const [isExiting, setIsExiting] = useState(false);
 
   // 예시 단어 목록 (실제로는 API나 상태에서 가져와야 합니다)
   const wrongWords = [
@@ -357,15 +363,75 @@ const MainContainer = ({ selectedGame }) => {
     );
   };
 
+  // Lottie 옵션 수정
+  const defaultOptions = {
+    loop: false,
+    autoplay: true,
+    animationData: ClickAnimation,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  };
+
+  const handleButtonClick = (e) => {
+    const buttonRect = e.currentTarget.getBoundingClientRect();
+    setAnimationPosition({
+      x: buttonRect.left + buttonRect.width / 2,
+      y: buttonRect.top + buttonRect.height / 2
+    });
+    
+    setShowAnimation(true);
+
+    // 애니메이션 종료 후 페이지 전환 시작
+    setTimeout(() => {
+      setShowAnimation(false);
+      setIsExiting(true);  // Fade out 시작
+      
+      // Fade out 애니메이션이 끝난 후 페이지 전환
+      setTimeout(() => {
+        handleStartGame();
+      }, 500); // Fade out 지속 시간
+    }, 1000); // Lottie 애니메이션 지속 시간
+  };
+
   return (
-    <div className="w-full h-full flex flex-col items-center justify-start mx-12 bg-white rounded-lg">
+    <div className={`w-full h-full flex flex-col items-center justify-start mx-12 bg-white rounded-lg
+      transition-opacity duration-500 ${isExiting ? 'opacity-0' : 'opacity-100'}`}
+    >
       {isLoggedIn ? (
         <>
           <div className="w-full flex justify-between mb-4 mt-4">
             <div className='w-40 h-14 ml-4'></div>
-            <Button onClick={handleStartGame} className="w-40 h-14 text-white rounded-md font-bold text-xl hover:scale-125 transition-all duration-500 jua-regular">
-              게임 시작하기
-            </Button>
+            <div className="relative w-40 h-14">
+              <Button 
+                onClick={handleButtonClick}
+                className="w-full h-full text-white rounded-md font-bold text-xl hover:scale-125 transition-all duration-500 jua-regular"
+                disabled={showAnimation || isExiting}  // 애니메이션 중 클릭 방지
+              >
+                게임 시작하기
+              </Button>
+              
+              {/* 애니메이션 컨테이너 */}
+              {showAnimation && (
+                <div 
+                  className="fixed pointer-events-none"
+                  style={{
+                    left: animationPosition.x - 100,
+                    top: animationPosition.y - 100,
+                    width: '200px',
+                    height: '200px',
+                    zIndex: 100
+                  }}
+                >
+                  <Lottie 
+                    options={defaultOptions}
+                    height={200}
+                    width={200}
+                    isClickToPauseDisabled={true}
+                  />
+                </div>
+              )}
+            </div>
             <div className='w-40 flex items-center justify-center'>
               <DropdownMenu className='mr-4 w-40'>
                 <DropdownMenuTrigger asChild className='mr-4'>

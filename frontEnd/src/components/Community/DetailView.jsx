@@ -171,6 +171,7 @@ const DetailView = ({handleTabClick}) => {
                         <div className="text-gray-500 flex items-center space-x-2">
                             <span>{selectedItem.nickname || selectedItem.userId.split('@')[0]}</span>
                             <span>· 조회 {selectedItem.viewCount}</span>
+                            <span>· 좋아요 {selectedItem.likeCount}</span>
                             <span>· 댓글 {comments.length}</span>
                         </div>
                         {/* 작성 날짜는 항상 표시하고, 수정 날짜는 있을 때만 추가로 표시 */}

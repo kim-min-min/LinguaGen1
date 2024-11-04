@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator.jsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx';
@@ -12,21 +12,28 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination.jsx';
 import { Button } from '@/components/ui/button.jsx';
+import { format } from 'date-fns';
 
 const Notice = ({ handleTabClick, setSelectedItem }) => {
   const navigate = useNavigate();
-  // 카페 게시판 형식의 데이터셋
-  const data = Array.from({ length: 30 }, (_, i) => ({
-    id: i + 1,
-    title: i % 2 === 0 ? '공지사항: 단체방 생성 안내' : '공지사항: 개인방 생성 안내',
-    author: i % 2 === 0 ? '관리자' : '운영팀',
-    date: `2024.10.${16 - (i % 15)}`, // 임의의 날짜
-    views: Math.floor(Math.random() * 1000), // 조회수
-    likes: Math.floor(Math.random() * 100), // 좋아요 수
-  }));
-
+  const [data, setData] = useState([]);  // 서버에서 가져올 공지사항 데이터
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(15); // 한 페이지에 표시할 항목 수 (초기값 15)
+
+// 공지사항 데이터 가져오기
+  useEffect(() => {
+    fetch('http://localhost:8085/api/community/category/Notice') // 공지사항 데이터를 가져오는 백엔드 API URL
+        .then(response => response.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setData(data);
+          } else {
+            console.error("API returned data that is not an array:", data);
+            setData([]); // 비정상 데이터의 경우 빈 배열로 설정
+          }
+        })
+        .catch(error => console.error('Error fetching notice data:', error));
+  }, []);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const selectedData = data.slice(startIndex, startIndex + itemsPerPage);
@@ -47,9 +54,10 @@ const Notice = ({ handleTabClick, setSelectedItem }) => {
   };
 
   const handleRowClick = (item) => {
-    setSelectedItem(item); // 선택한 데이터를 설정
-    handleTabClick('detailview', 'notice'); // 'notice'를 추가로 전달
+    setSelectedItem(item);
+    navigate(`/community/Notice/detailview/${item.idx}`);
   };
+
 
   return (
     <div className="w-full bg-white rounded-md flex flex-col p-12 justify-start items-center min-h-screen mt-8">
@@ -90,12 +98,12 @@ const Notice = ({ handleTabClick, setSelectedItem }) => {
           <TableBody>
             {selectedData.map((item) => (
               <TableRow key={item.id} onClick={() => handleRowClick(item)} className="cursor-pointer">
-                <TableCell className="font-medium text-center h-14">{item.id}</TableCell>
+                <TableCell className="font-medium text-center h-14">{item.idx}</TableCell>
                 <TableCell>{item.title}</TableCell>
-                <TableCell className="text-center">{item.author}</TableCell>
-                <TableCell className="text-center">{item.date}</TableCell>
-                <TableCell className="text-center">{item.views}</TableCell>
-                <TableCell className="text-right">{item.likes}</TableCell>
+                <TableCell className="text-center">{item.nickname ? item.nickname : (item.userId.includes('@') ? item.userId.split('@')[0] : item.userId)}</TableCell>
+                <TableCell className="text-center">{format(new Date(item.createdAt), 'yyyy-MM-dd')}</TableCell>
+                <TableCell className="text-center">{item.viewCount}</TableCell>
+                <TableCell className="text-right">{item.likeCount}</TableCell>
               </TableRow>
             ))}
           </TableBody>

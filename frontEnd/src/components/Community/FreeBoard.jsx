@@ -22,7 +22,7 @@ const FreeBoard = ({ handleTabClick, setSelectedItem }) => {
 
     // 데이터 가져오기
     useEffect(() => {
-        fetch('http://localhost:8085/api/community') // 백엔드 API URL
+        fetch('http://localhost:8085/api/community/category/freeboard') // 백엔드 API URL
             .then(response => response.json())
             .then(data => setData(data))
             .catch(error => console.error('Error fetching data:', error));
