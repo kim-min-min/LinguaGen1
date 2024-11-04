@@ -14,8 +14,9 @@ const SidebarContainer = styled.div`
   height: 545px;
   backdrop-filter : blur(15px);
   background : rgba(255, 255, 255, 0.2);
-  border : 2px gray solid;
+  border : 1px white solid;
   border-radius : 8px;
+  box-shadow : 0 0 10px 0 rgba(0, 0, 0, 0.1);
 `;
 
 // 섹션 제목 스타일
@@ -36,11 +37,11 @@ const ListItem = styled.li`
   list-style-position: inside;
   padding: 14px;
   font-weight: bold;
-  color: ${({ isActive }) => (isActive ? '#bbf7d0' : 'black')}; /* 클릭된 상태일 때 색상 변경 */
+  color: ${({ isActive }) => (isActive ? 'black' : '#5a5255')}; /* 클릭된 상태일 때 색상 변경 */
   cursor: pointer;
   user-select: none;
   &:hover {
-    color: ${({ isActive }) => (isActive ? '#bbf7d0' : '#bbf7d0')}; /* hover 상태에서 색상 변경 */
+    color: ${({ isActive }) => (isActive ? 'black' : 'black')}; /* hover 상태에서 색상 변경 */
   }
   transition: color 0.3s ease; /* 부드러운 색상 전환 애니메이션 */
 `;

@@ -33,14 +33,14 @@ public class User {
     @Column(name = "tell", nullable = false, length = 11)
     private String tell;
 
-    @Column(name = "objective", length = 255)
-    private String objective;
-
     @Column(name = "points", columnDefinition = "INT DEFAULT 0")
     private Integer points = 0;
 
     @Column(name = "join_date", nullable = false, updatable = false)
     private LocalDateTime joinDate;
+
+    @Column(name = "picture")
+    private String picture;
 
     // 엔티티 저장 전 현재 시간 설정
     @PrePersist

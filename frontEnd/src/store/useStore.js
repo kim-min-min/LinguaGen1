@@ -58,8 +58,8 @@ const useStore = create((set, get) => ({
 
   handleNext: () => set((state) => {
     if (state.currentQuestion < 4) {
-      return { 
-        currentQuestion: state.currentQuestion + 1, 
+      return {
+        currentQuestion: state.currentQuestion + 1,
         showResult: false,
         progress: ((state.currentQuestion + 1) / 5) * 100
       };
@@ -70,8 +70,8 @@ const useStore = create((set, get) => ({
 
   handleBack: () => set((state) => {
     if (state.currentQuestion > 0) {
-      return { 
-        currentQuestion: state.currentQuestion - 1, 
+      return {
+        currentQuestion: state.currentQuestion - 1,
         showResult: false,
         progress: ((state.currentQuestion - 1) / 5) * 100
       };
@@ -108,9 +108,9 @@ const useStore = create((set, get) => ({
   loadMoreCards: () => {
     const state = get();
     if (state.loading) return;
-  
+
     set({ loading: true });
-    
+
     // 실제 API 호출 대신 setTimeout 사용
     setTimeout(() => {
       const newCards = [
@@ -118,7 +118,7 @@ const useStore = create((set, get) => ({
         { date: '2024.xx.xx', category: '문법', level: 'Level 3', score: '7/10', rank: 'Bronz 3' },
         { date: '2024.xx.xx', category: '문법', level: 'Level 2', score: '8/10', rank: 'Bronz 2' },
       ];
-      set((state) => ({ 
+      set((state) => ({
         cards: [...state.cards, ...newCards],
         loading: false
       }));

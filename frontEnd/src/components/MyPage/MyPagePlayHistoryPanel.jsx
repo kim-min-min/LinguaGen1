@@ -13,6 +13,7 @@ const TabContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   margin-bottom: 16px;
+  padding-top : 16px;
 `;
 
 const Tab = styled.div`
@@ -22,11 +23,11 @@ const Tab = styled.div`
   font-size: 16px;
   padding: 8px 0;
   cursor: pointer;
-  color: ${({ isActive }) => (isActive ? '#bbf7d0' : 'black')};
+  color: ${({ isActive }) => (isActive ? 'black' : '#5a5255')};
   transition: color 0.3s ease;
   user-select: none;
     &:hover {
-    color: ${({ isActive }) => (isActive ? '#bbf7d0' : '#bbf7d0')}; /* hover 상태에서 색상 변경 */
+    color: ${({ isActive }) => (isActive ? 'black' : 'black')}; /* hover 상태에서 색상 변경 */
   }
 `;
 
