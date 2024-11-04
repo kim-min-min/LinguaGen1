@@ -1,48 +1,52 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LandingPage from './components/LandingPage.jsx';
-import LoginPage from './components/LoginPage.jsx';
-import MainPage from './components/MainPage.jsx';
-import './styles/global.css';  // 전역 CSS import
-import DashBoard from './components/DashBoard/DashBoard.jsx';
-import MyPage from './components/MyPage/MyPage.jsx';
-import Community from './components/Community/Community.jsx';
-import DailyQuiz from './components/DailyQuiz.jsx';
-import User from './components/Test/User.jsx';
-import RankingPage from './components/RankingPage.jsx';
-import DungeonCanvas from './components/Game/DungeonCanvas.jsx';
-import MountainCanvas from './components/Game/MountainCanvas.jsx';
-import RuinsCanvas from './components/Game/RuinsCanvas.jsx';
 import PageLoader from './components/PageLoader.jsx';
-import Writing from "./components/Community/Writing.jsx";
+import LoadingSpiner from './components/LoadingSpiner.jsx';
+import './styles/global.css';
 
+// Lazy loading components
+const LandingPage = lazy(() => import('./components/LandingPage.jsx'));
+const LoginPage = lazy(() => import('./components/LoginPage.jsx'));
+const MainPage = lazy(() => import('./components/MainPage.jsx'));
+const DashBoard = lazy(() => import('./components/DashBoard/DashBoard.jsx'));
+const MyPage = lazy(() => import('./components/MyPage/MyPage.jsx'));
+const Community = lazy(() => import('./components/Community/Community.jsx'));
+const DailyQuiz = lazy(() => import('./components/DailyQuiz.jsx'));
+const User = lazy(() => import('./components/Test/User.jsx'));
+const RankingPage = lazy(() => import('./components/RankingPage.jsx'));
+const DungeonCanvas = lazy(() => import('./components/Game/DungeonCanvas.jsx'));
+const MountainCanvas = lazy(() => import('./components/Game/MountainCanvas.jsx'));
+const RuinsCanvas = lazy(() => import('./components/Game/RuinsCanvas.jsx'));
+const Writing = lazy(() => import('./components/Community/Writing.jsx'));
+const WelcomeMessage = lazy(() => import('./components/WelcomeMessage.jsx'));
 
-import WelcomeMessage from './components/WelcomeMessage.jsx';
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/main" element={<MainPage />} />
-        <Route path="/dashboard" element={<DashBoard />} />
-        <Route path='/mypage' element={<MyPage />} />
-        <Route path='/community' element={<Community />} />
-        <Route path="/community/writing" element={<Writing />} />
-        <Route path='/dailyQuiz' element={<DailyQuiz />} />
-        <Route path="/users/:id" element={<User />} />
-        <Route path='/ranking' element={<RankingPage />} />
-        <Route path='/Test' element={<User />} />
-        <Route path='/dungeon' element={<DungeonCanvas />} />
-        <Route path='/mountain' element={<MountainCanvas />} />
-        <Route path='/ruins' element={<RuinsCanvas />} />
-        <Route path='/loading' element={<PageLoader />} />
-        <Route path='/demo' element={<WelcomeMessage />} />
-        <Route path="/community/:board" element={<Community />} />
-        <Route path="/community/:board/detailview/:idx" element={<Community />} />
-        <Route path="/community/:board/detailview" element={<Community />} />
-        <Route path='/community/:board/writing' element={<Community />} />
-      </Routes>
+      <Suspense fallback={<LoadingSpiner />}>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/main" element={<MainPage />} />
+          <Route path="/dashboard" element={<DashBoard />} />
+          <Route path='/mypage' element={<MyPage />} />
+          <Route path='/community' element={<Community />} />
+          <Route path="/community/writing" element={<Writing />} />
+          <Route path='/dailyQuiz' element={<DailyQuiz />} />
+          <Route path="/users/:id" element={<User />} />
+          <Route path='/ranking' element={<RankingPage />} />
+          <Route path='/Test' element={<User />} />
+          <Route path='/dungeon' element={<DungeonCanvas />} />
+          <Route path='/mountain' element={<MountainCanvas />} />
+          <Route path='/ruins' element={<RuinsCanvas />} />
+          <Route path='/loading' element={<PageLoader />} />
+          <Route path='/demo' element={<WelcomeMessage />} />
+          <Route path="/community/:board" element={<Community />} />
+          <Route path="/community/:board/detailview/:idx" element={<Community />} />
+          <Route path="/community/:board/detailview" element={<Community />} />
+          <Route path='/community/:board/writing' element={<Community />} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 }
