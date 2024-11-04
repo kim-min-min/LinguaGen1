@@ -77,4 +77,11 @@ public class CommunityController {
     public List<CommunityDTO> getLatestPostsByCategory(@PathVariable String category) {
         return service.getLatestPostsByCategory(category);
     }
+
+    // 사용자가 작성한 게시글 확인
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<CommunityDTO>> getUserCommunityPosts(@PathVariable String userId) {
+        List<CommunityDTO> communities = service.getUserCommunityPosts(userId);
+        return ResponseEntity.ok(communities);
+    }
 }
