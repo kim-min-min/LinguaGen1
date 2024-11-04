@@ -1,7 +1,8 @@
 import * as React from "react"
 import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons"
 import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight } from "lucide-react";  // 이 줄을 파일 상단에 추가
+import { ChevronLeft, ChevronRight, SkipBack, SkipForward } from "lucide-react";  // 이 줄을 파일 상단에 추가
+
 
 import { cn } from "@/lib/utils.js"
 import { Button } from "@/components/ui/button.jsx"
@@ -149,45 +150,55 @@ const CarouselItem = React.forwardRef(({ className, ...props }, ref) => {
 })
 CarouselItem.displayName = "CarouselItem"
 
-const CarouselPrevious = React.forwardRef(({ className, variant = "outline", size = "icon", ...props }, ref) => {
+const CarouselPrevious = React.forwardRef(({ className, variant = "outline", size = "icon24", ...props }, ref) => {
   const { orientation, scrollPrev, canScrollPrev } = useCarousel()
 
   return (
-    (<Button
+    <Button
       ref={ref}
       variant={variant}
       size={size}
-      className={cn("absolute h-16 w-16 rounded-full border-none bg-transparent", orientation === "horizontal"
-        ? "-left-12 top-1/2 -translate-y-1/2"
-        : "-top-12 left-1/2 -translate-x-1/2 rotate-90", className)}
+      className={cn(
+        "absolute h-32 w-32 rounded-full border-none bg-transparent",
+        orientation === "horizontal"
+          ? "-left-24 top-1/2 -translate-y-1/2"
+          : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
+        className
+      )}
       disabled={!canScrollPrev}
       onClick={scrollPrev}
-      {...props}>
-      <ChevronLeft className="h-12 w-12" />
+      {...props}
+    >
+      <SkipBack style={{ width: "32px", height: "32px" }} />
       <span className="sr-only">Previous slide</span>
-    </Button>)
-  );
+    </Button>
+  )
 })
 CarouselPrevious.displayName = "CarouselPrevious"
 
-const CarouselNext = React.forwardRef(({ className, variant = "outline", size = "icon", ...props }, ref) => {
+const CarouselNext = React.forwardRef(({ className, variant = "outline", size = "icon24", ...props }, ref) => {
   const { orientation, scrollNext, canScrollNext } = useCarousel()
 
   return (
-    (<Button
+    <Button
       ref={ref}
       variant={variant}
       size={size}
-      className={cn("absolute h-16 w-16 rounded-full border-none bg-transparent", orientation === "horizontal"
-        ? "-right-12 top-1/2 -translate-y-1/2"
-        : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90", className)}
+      className={cn(
+        "absolute h-32 w-32 rounded-full border-none bg-transparent",
+        orientation === "horizontal"
+          ? "-right-24 top-1/2 -translate-y-1/2"
+          : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
+        className
+      )}
       disabled={!canScrollNext}
       onClick={scrollNext}
-      {...props}>
-      <ChevronRight className="h-12 w-12" />
+      {...props}
+    >
+      <SkipForward style={{ width: "32px", height: "32px" }} />
       <span className="sr-only">Next slide</span>
-    </Button>)
-  );
+    </Button>
+  )
 })
 CarouselNext.displayName = "CarouselNext"
 
