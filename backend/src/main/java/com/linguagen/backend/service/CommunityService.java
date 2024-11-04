@@ -6,6 +6,9 @@ import com.linguagen.backend.entity.User;
 import com.linguagen.backend.repository.CommentRepository;
 import com.linguagen.backend.repository.CommunityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -96,14 +99,13 @@ public class CommunityService {
         return communities.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    //
-    public List<CommunityDTO> getUserCommunityPosts(String userId) {
-        List<Community> communities = repository.findByUserIdAndIsDeletedFalse(userId);
-
-        return communities.stream().map(community -> {
+    // 사용자가 작성한 게시글 확인
+    public Page<CommunityDTO> getUserCommunityPosts(String userId, Pageable pageable) {
+        Page<Community> communities = repository.findByUserIdAndIsDeletedFalseOrderByCreatedAtDesc(userId, pageable);
+        return communities.map(community -> {
             Long commentsCount = commentRepository.countByCommunityIdxAndIsDeletedFalse(community.getIdx());
             return new CommunityDTO(community.getIdx(), community.getTitle(), community.getContent(), commentsCount);
-        }).collect(Collectors.toList());
+        });
     }
 
     // 엔티티를 DTO로 변환

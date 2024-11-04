@@ -3,6 +3,9 @@ package com.linguagen.backend.controller;
 import com.linguagen.backend.dto.CommunityDTO;
 import com.linguagen.backend.service.CommunityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +42,7 @@ public class CommunityController {
     }
 
     // 게시글 조회 (단일)
-    @GetMapping("/{idx}")
+    @GetMapping("/post/{idx}")
     public ResponseEntity<CommunityDTO> getCommunityByIdx(@PathVariable Long idx) {
         Optional<CommunityDTO> community = service.getCommunityByIdx(idx);
         return community.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
@@ -79,9 +82,11 @@ public class CommunityController {
     }
 
     // 사용자가 작성한 게시글 확인
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<CommunityDTO>> getUserCommunityPosts(@PathVariable String userId) {
-        List<CommunityDTO> communities = service.getUserCommunityPosts(userId);
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Page<CommunityDTO>> getUserCommunityPosts(
+            @PathVariable String userId,
+            @PageableDefault(size = 12) Pageable pageable) {
+        Page<CommunityDTO> communities = service.getUserCommunityPosts(userId, pageable);
         return ResponseEntity.ok(communities);
     }
 }
