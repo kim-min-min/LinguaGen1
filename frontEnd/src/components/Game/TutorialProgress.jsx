@@ -6,6 +6,7 @@ import TutorialMessage from './TutorialMessage';
 import Lottie from 'react-lottie';
 import CorrectAnimation from '../../assets/LottieAnimation/Correct.json';
 import IncorrectAnimation from '../../assets/LottieAnimation/Incorrect.json';
+import EndingMessage from './EndingMessage';
 
 const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: currentQuestionNumber, totalQuestions, isGameOver, isGameClear, onRestart, onMainMenu, setIsHighlightingHealthBar, setIsHighlightingSoundButton }) => {
     const navigate = useNavigate();
@@ -23,6 +24,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
     const [showTutorial, setShowTutorial] = useState(true);
     const [showAnimation, setShowAnimation] = useState(false);
     const [hoveredAnswer, setHoveredAnswer] = useState(null);
+    const [showEndingMessage, setShowEndingMessage] = useState(false);
 
     const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'];
 
@@ -427,6 +429,17 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
         setShowTutorial(false);
     };
 
+    // isGameOver나 isGameClear가 변경될 때 엔딩 메시지 표시
+    useEffect(() => {
+        if (isGameOver || isGameClear) {
+            setShowEndingMessage(true);
+        }
+    }, [isGameOver, isGameClear]);
+
+    const handleEndingFinish = () => {
+        navigate('/main');
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-full">
@@ -450,55 +463,15 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
     }
 
     if (isGameOver) {
-        return (
-            <motion.div
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col items-center justify-center h-full"
-            >
-                <h2 className="text-4xl font-bold text-red-600 mb-8">Game Over</h2>
-                <div className="flex space-x-4">
-                    <button
-                        onClick={onRestart}
-                        className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                    >
-                        Try Again
-                    </button>
-                    <button
-                        onClick={() => navigate('/main')}
-                        className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-                    >
-                        Main Menu
-                    </button>
-                </div>
-            </motion.div>
-        );
+        return showEndingMessage ? (
+            <EndingMessage isGameClear={false} onFinish={handleEndingFinish} />
+        ) : null;
     }
 
     if (isGameClear) {
-        return (
-            <motion.div
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col items-center justify-center h-full"
-            >
-                <h2 className="text-4xl font-bold text-green-600 mb-8">Game Clear!</h2>
-                <div className="flex space-x-4">
-                    <button
-                        onClick={onRestart}
-                        className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                    >
-                        Play Again
-                    </button>
-                    <button
-                        onClick={() => navigate('/main')}
-                        className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-                    >
-                        Main Menu
-                    </button>
-                </div>
-            </motion.div>
-        );
+        return showEndingMessage ? (
+            <EndingMessage isGameClear={true} onFinish={handleEndingFinish} />
+        ) : null;
     }
 
     return (

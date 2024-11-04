@@ -5,6 +5,12 @@ import axios from 'axios';
 import Lottie from 'react-lottie';
 import CorrectAnimation from '../../assets/LottieAnimation/Correct.json';
 import IncorrectAnimation from '../../assets/LottieAnimation/Incorrect.json';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+  } from "@/components/ui/tooltip"
 
 const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: currentQuestionNumber, totalQuestions, isGameOver, isGameClear, onRestart, onMainMenu }) => {
     const navigate = useNavigate();
@@ -205,8 +211,22 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                         <div className="w-1/2 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto custom-scrollbar">
                             {/* 지문이 있는 경우 */}
                             {/* 문제 */}
-                            <div className="bg-white p-4 rounded-lg shadow-sm">
-                                <h2 className="text-xl font-semibold text-gray-800">{currentQuestion.question}</h2>
+                            <div className="bg-white p-4 rounded-lg shadow-sm flex flex-row justify-between">
+                                <h2 className="text-xl font-semibold text-gray-800">
+                                    {currentQuestion.question}
+                                </h2>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger className="bg-transparent m-0 p-0">
+                                            <h2 className="text-xl font-semibold text-gray-800 hover:text-gray-500">
+                                                Bronze-4
+                                            </h2>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Bronze-4 의 난이도 입니다.</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>  
                             </div>
                             {currentQuestion.passage && (
                                 <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
@@ -342,8 +362,22 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                         {/* 왼쪽 패널: 지문과 문제 */}
                         <div className="w-1/2 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto custom-scrollbar">
                             {/* 문제 */}
-                            <div className="bg-white p-4 rounded-lg shadow-sm">
-                                <h2 className="text-xl font-semibold text-gray-800">{currentQuestion.question}</h2>
+                            <div className="bg-white p-4 rounded-lg shadow-sm flex flex-row justify-between items-center">
+                                <h2 className="text-xl font-semibold text-gray-800">
+                                    {currentQuestion.question}
+                                </h2>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger className="bg-transparent m-0 p-0">
+                                            <h2 className="text-xl font-semibold text-gray-800 hover:text-gray-500">
+                                                Bronze-4
+                                            </h2>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Bronze-4 의 난이도 입니다.</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>  
                             </div>
                             {currentQuestion.passage && (
                                 <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
