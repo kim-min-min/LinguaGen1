@@ -3,6 +3,7 @@ package com.linguagen.backend.service;
 import com.linguagen.backend.dto.CommunityDTO;
 import com.linguagen.backend.entity.Community;
 import com.linguagen.backend.entity.User;
+import com.linguagen.backend.repository.CommentRepository;
 import com.linguagen.backend.repository.CommunityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class CommunityService {
     @Autowired
     private CommunityRepository repository;
     @Autowired
-    private CommunityRepository communityRepository;
+    private CommentRepository commentRepository;
 
     // 게시글 생성
     public CommunityDTO createCommunityPost(CommunityDTO communityDTO) {
@@ -93,6 +94,16 @@ public class CommunityService {
     public List<CommunityDTO> getLatestPostsByCategory(String category) {
         List<Community> communities = repository.findTop4ByCategoryAndIsDeletedFalseOrderByCreatedAtDesc(category);
         return communities.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    //
+    public List<CommunityDTO> getUserCommunityPosts(String userId) {
+        List<Community> communities = repository.findByUserIdAndIsDeletedFalse(userId);
+
+        return communities.stream().map(community -> {
+            Long commentsCount = commentRepository.countByCommunityIdxAndIsDeletedFalse(community.getIdx());
+            return new CommunityDTO(community.getIdx(), community.getTitle(), community.getContent(), commentsCount);
+        }).collect(Collectors.toList());
     }
 
     // 엔티티를 DTO로 변환

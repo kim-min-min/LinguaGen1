@@ -30,4 +30,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     // 특정 카테고리의 최신 4개 글, 삭제되지 않은 게시글만 조회
     List<Community> findTop4ByCategoryAndIsDeletedFalseOrderByCreatedAtDesc(String category);
+
+    // 사용자 아이디로 게시글 조회
+    List<Community> findByUserIdAndIsDeletedFalseOrderByCreatedAtDesc(String userId);
 }

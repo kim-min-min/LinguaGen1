@@ -22,4 +22,12 @@ public class CommunityDTO {
     private int likeCount;
     private boolean isDeleted;
     private String nickname;
+    private Long commentsCount;
+
+    public CommunityDTO(Long idx, String title, String content, Long commentsCount) {
+        this.idx = idx;
+        this.title = title;
+        this.content = content;
+        this.commentsCount = commentsCount;
+    }
 }
