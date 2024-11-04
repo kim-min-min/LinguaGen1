@@ -30,6 +30,9 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     @Query("SELECT c FROM Community c WHERE c.user.nickname = :nickname AND c.isDeleted = false")
     List<Community> findByNicknameAndIsDeletedFalse(@Param("nickname") String nickname);
 
+    // 카테고리별 게시글 조회
+    List<Community> findByCategoryAndIsDeletedFalseOrderByCreatedAtDesc(String category);
+
     // 특정 카테고리의 최신 4개 글, 삭제되지 않은 게시글만 조회
     List<Community> findTop4ByCategoryAndIsDeletedFalseOrderByCreatedAtDesc(String category);
 

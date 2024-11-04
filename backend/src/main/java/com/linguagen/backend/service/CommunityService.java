@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,15 +37,26 @@ public class CommunityService {
         }
     }
 
-    // 단일 게시글 조회 (삭제되지 않은 게시글만)
+    // 단일 게시글 조회 (삭제되지 않은 게시글만 + 조회수 증가)
+    @Transactional
     public Optional<CommunityDTO> getCommunityByIdx(Long idx) {
-        Optional<Community> community = repository.findByIdxAndIsDeletedFalse(idx);
-        return community.map(this::convertToDTO);
+        return repository.findByIdxAndIsDeletedFalse(idx).map(community -> {
+            int currentViewCount = community.getViewCount();
+            community.setViewCount(currentViewCount + 1); // 조회수 증가
+            repository.save(community); // 변경 사항 저장
+            return convertToDTO(community);
+        });
     }
 
     // 모든 게시글 조회 (삭제되지 않은 게시글만)
     public List<CommunityDTO> getAllCommunityPosts() {
         List<Community> communities = repository.findByIsDeletedFalseOrderByCreatedAtDesc();
+        return communities.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    // 카테고리별 데이터 조회
+    public List<CommunityDTO> getPostsByCategory(String category) {
+        List<Community> communities = repository.findByCategoryAndIsDeletedFalseOrderByCreatedAtDesc(category);
         return communities.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
