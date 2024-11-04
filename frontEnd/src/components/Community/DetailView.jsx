@@ -29,7 +29,7 @@ const DetailView = ({handleTabClick}) => {
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/community/${idx}`);
+                const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/community/post/${idx}`);
                 setSelectedItem(response.data);
             } catch (error) {
                 console.error('게시글을 불러오는 중 에러 발생:', error);
