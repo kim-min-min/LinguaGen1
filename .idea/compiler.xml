@@ -11,7 +11,6 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="backend" target="17" />
       <module name="com.linguagen.backend.main" target="17" />
     </bytecodeTargetLevel>
   </component>

@@ -89,6 +89,8 @@ const DashBoardPanel = () => {
     const [userGradeString, setUserGradeString] = useState(null);
     const [userTier, setUserTier] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [latestStudyInfo, setLatestStudyInfo] = useState(null); // 최신 학습 정보 상태 추가
+
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -108,6 +110,10 @@ const DashBoardPanel = () => {
                     setUserGradeString(gradeNames[numericGrade] || "알 수 없음");
                     setUserTier(gradeResponse.data.tier);
                     setUserExp(gradeResponse.data.exp);
+
+                    // 최신 학습 정보 가져오기
+                    const studyLogResponse = await axios.get(`http://localhost:8085/api/study-log/latest/${userData.id}`, { withCredentials: true });
+                    setLatestStudyInfo(studyLogResponse.data);
                 } catch (error) {
                     console.error('사용자 정보를 가져오는 중 오류 발생:', error);
                 }
@@ -134,13 +140,28 @@ const DashBoardPanel = () => {
                                 <CardDescription style={{ cursor: 'pointer' }}> Play 내역 {'>'} </CardDescription>
                             </CardHeader>
                             <CardContent className='flex flex-col '>
-                                <p className='font-bold text-xl'> 문법 Level 4  </p>
-                                <p> 3/10</p>
+                                <p className='font-bold text-xl'>
+                                    {latestStudyInfo ? (
+                                        <>
+                                            <span>{latestStudyInfo.questionType} </span>
+                                            <span>{gradeNames[latestStudyInfo.difficultyGrade] || "Unknown Grade"}</span>
+                                            <span>
+                                            <img
+                                                src={tierImages[latestStudyInfo.difficultyGrade]}
+                                                alt={`${gradeNames[latestStudyInfo.difficultyGrade]} 이미지`}
+                                                className='inline-block w-6 h-6 ml-2'
+                                            />
+                                                {` Tier ${latestStudyInfo.difficultyTier}`}
+                                        </span>
+                                        </>
+                                    ) : '로딩 중...'}
+                                </p>
                             </CardContent>
                         </Card>
                         <Card className='w-full h-74'>
                             <CardHeader className='flex flex-row justify-between items-center'>
-                                <CardTitle className='text-md'> 현재 티어 - {userGradeString && userTier ? `${userGradeString} ${userTier}` : '로딩 중...'}</CardTitle>
+                                <CardTitle className='text-md'> 현재 티어
+                                    - {userGradeString && userTier ? `${userGradeString} ${userTier}` : '로딩 중...'}</CardTitle>
                             </CardHeader>
                             <CardContent className='flex flex-row items-center'>
                                 <img
