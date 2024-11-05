@@ -213,7 +213,7 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
             >
               {/* 제목 */}
               <h3 className='font-bold text-base truncate w-full'>
-                {post.title.length > 35 ? post.title.slice(0, 35) + '...' : post.title}
+                {post.title.length > 30 ? post.title.slice(0, 30) + '...' : post.title}
               </h3>
               
               {/* 내용 */}
