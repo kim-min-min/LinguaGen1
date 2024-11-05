@@ -73,12 +73,12 @@ function LoginPage() {
         const userResponse = await axios.get(`http://localhost:8085/api/users/${id}`, {withCredentials: true});
 
         const userInfo = userResponse.data; // 사용자 정보 저장
-
         // 세션 스토리지에 사용자 정보 저장
         sessionStorage.setItem('user', JSON.stringify({ id: userInfo.id }));
         sessionStorage.setItem('id', userInfo.id);
         sessionStorage.setItem('nickname', userInfo.nickname);
         sessionStorage.setItem('tell', userInfo.tell);
+        sessionStorage.setItem('points', userInfo.points);
 
         navigate('/main');
       } else {
