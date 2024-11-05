@@ -84,7 +84,6 @@ public class UserController {
         }
     }
 
-
     // 유저 관심사 저장
     @PostMapping("/interests")
     public ResponseEntity<String> saveUserInterests(@RequestBody UserInterestDTO request) {

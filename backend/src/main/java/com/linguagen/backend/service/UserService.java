@@ -2,7 +2,9 @@ package com.linguagen.backend.service;
 
 
 
+import com.linguagen.backend.entity.PointLog;
 import com.linguagen.backend.entity.User;
+import com.linguagen.backend.repository.PointLogRepository;
 import com.linguagen.backend.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -15,11 +17,12 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-
+    private final PointLogRepository pointLogRepository;
 
     // 생성자 주입
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PointLogRepository pointLogRepository) {
         this.userRepository = userRepository;
+        this.pointLogRepository = pointLogRepository;
     }
 
     // 모든 유저 조회
@@ -54,17 +57,12 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-
-
-
-
     // User 객체를 사용하여 로그인 처리
     public boolean login(User user, HttpSession session) {
         // DB에서 사용자를 조회
         Optional<User> optionalUser = userRepository.findByIdAndPassword(user.getId(), user.getPassword());
 
         if (optionalUser.isPresent()) {
-
             return true;
         }
         return false;
@@ -99,8 +97,22 @@ public class UserService {
         session.invalidate();  // 세션 무효화
     }
 
+    // 포인트 업데이트
+    @Transactional
+    public void updateUserPoints(String userId, int changeAmount, String changeType) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        int newBalance = user.getPoints() + changeAmount;
+        user.setPoints(newBalance);
+        userRepository.save(user);
 
-
+        PointLog pointLog = new PointLog();
+        pointLog.setUser(user);
+        pointLog.setChangeAmount(changeAmount);
+        pointLog.setNewBalance(newBalance);
+        pointLog.setChangeType(changeType);
+        pointLogRepository.save(pointLog);
+    }
 
 }

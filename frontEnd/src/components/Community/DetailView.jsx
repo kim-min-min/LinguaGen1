@@ -35,12 +35,12 @@ const DetailView = ({handleTabClick}) => {
                 const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/community/post/${idx}`);
                 setSelectedItem(response.data);
                 setLikeCount(response.data.likeCount); // 초기 좋아요 수 설정
-                setUserPoints(response.data.points);
+                const storedPoints = sessionStorage.getItem('points');
+                setUserPoints(storedPoints);
             } catch (error) {
                 console.error('게시글을 불러오는 중 에러 발생:', error);
             }
         };
-
         fetchPostData();
     }, [idx]);
 

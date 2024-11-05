@@ -2,9 +2,11 @@ package com.linguagen.backend.service;
 
 import com.linguagen.backend.dto.CommunityDTO;
 import com.linguagen.backend.entity.Community;
+import com.linguagen.backend.entity.PointLog;
 import com.linguagen.backend.entity.User;
 import com.linguagen.backend.repository.CommentRepository;
 import com.linguagen.backend.repository.CommunityRepository;
+import com.linguagen.backend.repository.PointLogRepository;
 import com.linguagen.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,8 @@ public class CommunityService {
     private CommentRepository commentRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PointLogRepository pointLogRepository;
 
     // 게시글 생성
     public CommunityDTO createCommunityPost(CommunityDTO communityDTO) {
@@ -128,17 +132,26 @@ public class CommunityService {
         // 사용자 포인트 확인
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
         if (user.getPoints() < 10) {
-            throw new IllegalStateException("포인트가 부족합니다."); // 기본 예외 사용
+            throw new IllegalStateException("포인트가 부족합니다.");
         }
 
-        // 포인트 차감 및 좋아요 증가
-        user.setPoints(user.getPoints() - 10); // 포인트 10 차감
-        userRepository.save(user); // 사용자 포인트 업데이트
+        // 포인트 차감
+        int newBalance = user.getPoints() - 10; // 포인트 10 차감
+        user.setPoints(newBalance);
+        userRepository.save(user);
+
+        // 포인트 로그 기록
+        PointLog pointLog = new PointLog();
+        pointLog.setUser(user);
+        pointLog.setChangeAmount(-10); // 차감된 포인트 기록
+        pointLog.setNewBalance(newBalance);
+        pointLog.setChangeType("게시글 좋아요"); // 포인트 사용 이유를 기록
+        pointLogRepository.save(pointLog);
 
         // 게시글의 좋아요 수 증가
         Community community = repository.findById(communityIdx).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
         community.setLikeCount(community.getLikeCount() + 1); // 좋아요 수 증가
-        repository.save(community); // 게시글 업데이트
+        repository.save(community);
     }
 
     // 엔티티를 DTO로 변환
