@@ -218,7 +218,7 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
               
               {/* 내용 */}
               <p className='mt-2 mb-3 text-sm text-gray-600 line-clamp-2 w-full'> 
-                {post.content.length > 40 ? post.content.slice(0, 40) + '...' : post.content}
+                {post.content.length > 32 ? post.content.slice(0, 32) + '...' : post.content}
               </p>
               
               {/* 작성자 */}
