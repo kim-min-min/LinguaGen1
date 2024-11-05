@@ -23,7 +23,7 @@ const TutorialMessage = ({ onStart, setIsHighlightingHealthBar, setIsHighlightin
   useEffect(() => {
     // 비디오 소스 업데이트 및 재생
     if (videoRef.current) {
-      videoRef.current.src = `/src/assets/TutorialLipSync/${messageStep + 1}_Message.mp4`;
+      videoRef.current.src = `/src/assets/TutorialLipSync/Message_${messageStep + 1}.webm`;
       videoRef.current.volume = 1.0;
       videoRef.current.play().catch(error => {
         console.log("비디오 재생 에러:", error);
