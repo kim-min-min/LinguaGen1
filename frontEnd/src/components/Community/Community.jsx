@@ -213,12 +213,12 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
             >
               {/* 제목 */}
               <h3 className='font-bold text-base truncate w-full'>
-                {post.title.length > 30 ? post.title.slice(0, 30) + '...' : post.title}
+                {post.title.length > 35 ? post.title.slice(0, 35) + '...' : post.title}
               </h3>
               
               {/* 내용 */}
               <p className='mt-2 mb-3 text-sm text-gray-600 line-clamp-2 w-full'> 
-                {post.content.length > 50 ? post.content.slice(0, 50) + '...' : post.content}
+                {post.content.length > 40 ? post.content.slice(0, 40) + '...' : post.content}
               </p>
               
               {/* 작성자 */}
