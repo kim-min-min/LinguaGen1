@@ -279,10 +279,10 @@ const MainContainer = ({ selectedGame }) => {
         ...prev,
         [activeRoomId]: [
           ...(prev[activeRoomId] || []),
-          { 
-            sender: 'bot', 
+          {
+            sender: 'bot',
             text: response.data.response,  // response 객체에서 메시지 추출
-            timestamp: botTimestamp 
+            timestamp: botTimestamp
           }
         ]
       }));
@@ -290,15 +290,15 @@ const MainContainer = ({ selectedGame }) => {
     } catch (error) {
       console.error('메시지 전송 오류:', error);
       console.error('Response data:', error.response?.data);
-      
+
       // 에러 발생 시 사용자에게 알림
       setChatRooms(prev => ({
         ...prev,
         [activeRoomId]: [
           ...(prev[activeRoomId] || []),
-          { 
-            sender: 'bot', 
-            text: '죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', 
+          {
+            sender: 'bot',
+            text: '죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
             timestamp: new Date().toLocaleTimeString('ko-KR', {
               hour: '2-digit',
               minute: '2-digit',
@@ -349,9 +349,9 @@ const MainContainer = ({ selectedGame }) => {
     const handleScroll = () => {
       // 스크롤이 바닥에 도달했는지 확인
       const isBottom =
-        Math.abs(
-          container.scrollHeight - container.scrollTop - container.clientHeight
-        ) < 1;
+          Math.abs(
+              container.scrollHeight - container.scrollTop - container.clientHeight
+          ) < 1;
 
       if (isBottom && !loading) {
         console.log('Loading more cards...'); // 디버깅용
@@ -404,22 +404,22 @@ const MainContainer = ({ selectedGame }) => {
   const renderInsetContent = () => {
     if (selectedMenu === 'Reading') {
       return (
-        <LearningInsetContent 
-          scrollContainerRef={scrollContainerRef}
-          overscrollShadow={overscrollShadow}
-          visibleCards={visibleCards}
-          wrongWords={wrongWords}
-          loading={loading}
-        />
+          <LearningInsetContent
+              scrollContainerRef={scrollContainerRef}
+              overscrollShadow={overscrollShadow}
+              visibleCards={visibleCards}
+              wrongWords={wrongWords}
+              loading={loading}
+          />
       );
     } else if (selectedMenu === 'ChatBot') {
       return (
-        <ChatInsetContent 
-          activeRoomId={activeRoomId}
-          chatRooms={chatRooms}
-          addNewChatRoom={addNewChatRoom}
-          sendMessage={sendMessage}
-        />
+          <ChatInsetContent
+              activeRoomId={activeRoomId}
+              chatRooms={chatRooms}
+              addNewChatRoom={addNewChatRoom}
+              sendMessage={sendMessage}
+          />
       );
     }
     return null;
@@ -457,293 +457,293 @@ const MainContainer = ({ selectedGame }) => {
   };
 
   return (
-    <div className={`w-full h-full flex flex-col items-center justify-start mx-12 bg-white rounded-lg
+      <div className={`w-full h-full flex flex-col items-center justify-start mx-12 bg-white rounded-lg
       transition-opacity duration-500 ${isExiting ? 'opacity-0' : 'opacity-100'}`}
-    >
-      {isLoggedIn ? (
-        <>
-          <div className="w-full flex justify-between mb-4 mt-4">
-            <div className='w-40 h-14 ml-4'></div>
-            <div className="relative w-40 h-14">
-              <Button
-                onClick={handleButtonClick}
-                className="w-full h-full text-white rounded-md font-bold text-xl hover:scale-125 transition-all duration-500 jua-regular"
-                disabled={showAnimation || isExiting}  // 애니메이션 중 클릭 방지
-              >
-                게임 시작하기
-              </Button>
+      >
+        {isLoggedIn ? (
+            <>
+              <div className="w-full flex justify-between mb-4 mt-4">
+                <div className='w-40 h-14 ml-4'></div>
+                <div className="relative w-40 h-14">
+                  <Button
+                      onClick={handleButtonClick}
+                      className="w-full h-full text-white rounded-md font-bold text-xl hover:scale-125 transition-all duration-500 jua-regular"
+                      disabled={showAnimation || isExiting}  // 애니메이션 중 클릭 방지
+                  >
+                    게임 시작하기
+                  </Button>
 
-              {/* 애니메이션 컨테이너 */}
-              {showAnimation && (
-                <div
-                  className="fixed pointer-events-none"
-                  style={{
-                    left: animationPosition.x - 100,
-                    top: animationPosition.y - 100,
-                    width: '200px',
-                    height: '200px',
-                    zIndex: 100
-                  }}
-                >
-                  <Lottie
-                    options={defaultOptions}
-                    height={200}
-                    width={200}
-                    isClickToPauseDisabled={true}
-                  />
+                  {/* 애니메이션 컨테이너 */}
+                  {showAnimation && (
+                      <div
+                          className="fixed pointer-events-none"
+                          style={{
+                            left: animationPosition.x - 100,
+                            top: animationPosition.y - 100,
+                            width: '200px',
+                            height: '200px',
+                            zIndex: 100
+                          }}
+                      >
+                        <Lottie
+                            options={defaultOptions}
+                            height={200}
+                            width={200}
+                            isClickToPauseDisabled={true}
+                        />
+                      </div>
+                  )}
                 </div>
-              )}
-            </div>
-            <div className='w-40 flex items-center justify-center'>
-              <DropdownMenu className='mr-4 w-40'>
-                <DropdownMenuTrigger asChild className='mr-4'>
-                  <Button variant="outline" className='kanit-regular'>{position}</Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                  <DropdownMenuLabel className='kanit-regular'>Selected Game</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuRadioGroup className='jua-regular' value={position} onValueChange={setPosition}>
-                    <DropdownMenuRadioItem value="Listening">리스닝</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="Reading">리딩</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="ETC">기타</DropdownMenuRadioItem>
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
+                <div className='w-40 flex items-center justify-center'>
+                  <DropdownMenu className='mr-4 w-40'>
+                    <DropdownMenuTrigger asChild className='mr-4'>
+                      <Button variant="outline" className='kanit-regular'>{position}</Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56">
+                      <DropdownMenuLabel className='kanit-regular'>Selected Game</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuRadioGroup className='jua-regular' value={position} onValueChange={setPosition}>
+                        <DropdownMenuRadioItem value="Listening">리스닝</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="Reading">리딩</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="ETC">기타</DropdownMenuRadioItem>
+                      </DropdownMenuRadioGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
 
-          <div ref={containerRef} className="w-full h-[calc(100vh-200px)] relative flex">
-            {/* 메인 컨텐츠 영역 */}
-            <div className="flex-1 p-4 overflow-hidden">
-              <SidebarProvider>
-                <Sidebar variant="inset">
-                  <SidebarHeader>
-                    <SidebarMenu>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                          <a href="#">
-                            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                              <Command className="size-4" />
-                            </div>
-                            <div className="grid flex-1 text-left text-sm leading-tight">
-                              <span className="truncate font-semibold">LinguaGen</span>
-                              <span className="truncate text-xs">AI platform</span>
-                            </div>
-                          </a>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    </SidebarMenu>
-                  </SidebarHeader>
-                  <SidebarContent>
-                    <SidebarGroup>
-                      <SidebarGroupLabel>Learning</SidebarGroupLabel>
-                      <SidebarMenu>
-                        {data.navMain[0].items.map((item) => (
-                          <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton
-                              asChild
-                              isActive={selectedMenu === item.title}
-                              onClick={() => handleMenuClick(item.title)}
-                            >
-                              <a href={item.url}>
-                                <span>{item.title}</span>
+              <div ref={containerRef} className="w-full h-[calc(100vh-200px)] relative flex">
+                {/* 메인 컨텐츠 영역 */}
+                <div className="flex-1 p-4 overflow-hidden">
+                  <SidebarProvider>
+                    <Sidebar variant="inset">
+                      <SidebarHeader>
+                        <SidebarMenu>
+                          <SidebarMenuItem>
+                            <SidebarMenuButton size="lg" asChild>
+                              <a href="#">
+                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                                  <Command className="size-4" />
+                                </div>
+                                <div className="grid flex-1 text-left text-sm leading-tight">
+                                  <span className="truncate font-semibold">LinguaGen</span>
+                                  <span className="truncate text-xs">AI platform</span>
+                                </div>
                               </a>
                             </SidebarMenuButton>
                           </SidebarMenuItem>
-                        ))}
-                      </SidebarMenu>
-                    </SidebarGroup>
-                    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-                      <SidebarGroupLabel>ChatBot</SidebarGroupLabel>
-                      <SidebarMenu>
-                        {Object.keys(chatRooms).map((roomId) => (
-                          <SidebarMenuItem key={roomId}>
-                            <SidebarMenuButton asChild onClick={() => handleRoomSelect(roomId)}>
-                              <a href="#">
-                                <BotMessageSquare className="h-4 w-4 mr-2" />
-                                <span>{roomId}</span>
-                              </a>
-                            </SidebarMenuButton>
+                        </SidebarMenu>
+                      </SidebarHeader>
+                      <SidebarContent>
+                        <SidebarGroup>
+                          <SidebarGroupLabel>Learning</SidebarGroupLabel>
+                          <SidebarMenu>
+                            {data.navMain[0].items.map((item) => (
+                                <SidebarMenuItem key={item.title}>
+                                  <SidebarMenuButton
+                                      asChild
+                                      isActive={selectedMenu === item.title}
+                                      onClick={() => handleMenuClick(item.title)}
+                                  >
+                                    <a href={item.url}>
+                                      <span>{item.title}</span>
+                                    </a>
+                                  </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                          </SidebarMenu>
+                        </SidebarGroup>
+                        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+                          <SidebarGroupLabel>ChatBot</SidebarGroupLabel>
+                          <SidebarMenu>
+                            {Object.keys(chatRooms).map((roomId) => (
+                                <SidebarMenuItem key={roomId}>
+                                  <SidebarMenuButton asChild onClick={() => handleRoomSelect(roomId)}>
+                                    <a href="#">
+                                      <BotMessageSquare className="h-4 w-4 mr-2" />
+                                      <span>{roomId}</span>
+                                    </a>
+                                  </SidebarMenuButton>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <SidebarMenuAction showOnHover>
+                                        <MoreHorizontalIcon />
+                                        <span className="sr-only">More</span>
+                                      </SidebarMenuAction>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className="w-48" side="bottom" align="end">
+                                      <DropdownMenuItem>
+                                        <Folder className="text-muted-foreground" />
+                                        <span>Save Chatting</span>
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem>
+                                        <Share className="text-muted-foreground" />
+                                        <span>Share Chatting</span>
+                                      </DropdownMenuItem>
+                                      <DropdownMenuSeparator />
+                                      <DropdownMenuItem onClick={() => handleDeleteChatting(roomId)}>
+                                        <Trash2 className="text-muted-foreground" />
+                                        <span>Delete Chatting</span>
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </SidebarMenuItem>
+                            ))}
+
+                            <SidebarMenuItem>
+                              <SidebarMenuButton onClick={addNewChatRoom}>
+                                <Plus className="h-4 w-4 mr-2" />
+                                <span>New Chat</span>
+                              </SidebarMenuButton>
+                            </SidebarMenuItem>
+                          </SidebarMenu>
+                        </SidebarGroup>
+                        <SidebarGroup className="mt-auto">
+                          <SidebarGroupContent>
+                            <SidebarMenu>
+                              {data.navSecondary.map((item) => (
+                                  <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuButton asChild size="sm">
+                                      <a href={item.url}>
+                                        <item.icon />
+                                        <span>{item.title}</span>
+                                      </a>
+                                    </SidebarMenuButton>
+                                  </SidebarMenuItem>
+                              ))}
+                            </SidebarMenu>
+                          </SidebarGroupContent>
+                        </SidebarGroup>
+                      </SidebarContent>
+                      <SidebarFooter>
+                        <SidebarMenu>
+                          <SidebarMenuItem>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <SidebarMenuAction showOnHover>
-                                  <MoreHorizontalIcon />
-                                  <span className="sr-only">More</span>
-                                </SidebarMenuAction>
+                                <SidebarMenuButton
+                                    size="lg"
+                                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                                >
+                                  <Avatar className="h-8 w-8 rounded-lg">
+                                    <AvatarImage
+                                        src={data.user.avatar}
+                                        alt={data.user.name}
+                                    />
+                                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                                  </Avatar>
+                                  <div className="grid flex-1 text-left text-sm leading-tight">
+                                <span className="truncate font-semibold">
+                                  {data.user.name}
+                                </span>
+                                    <span className="truncate text-xs">
+                                  {data.user.email}
+                                </span>
+                                  </div>
+                                  <ChevronsUpDown className="ml-auto size-4" />
+                                </SidebarMenuButton>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent className="w-48" side="bottom" align="end">
-                                <DropdownMenuItem>
-                                  <Folder className="text-muted-foreground" />
-                                  <span>Save Chatting</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <Share className="text-muted-foreground" />
-                                  <span>Share Chatting</span>
-                                </DropdownMenuItem>
+                              <DropdownMenuContent
+                                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                                  side="bottom"
+                                  align="end"
+                                  sideOffset={4}
+                              >
+                                <DropdownMenuLabel className="p-0 font-normal">
+                                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                                    <Avatar className="h-8 w-8 rounded-lg">
+                                      <AvatarImage
+                                          src={data.user.avatar}
+                                          alt={data.user.name}
+                                      />
+                                      <AvatarFallback className="rounded-lg">
+                                        CN
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <div className="grid flex-1 text-left text-sm leading-tight">
+                                  <span className="truncate font-semibold">
+                                    {data.user.name}
+                                  </span>
+                                      <span className="truncate text-xs">
+                                    {data.user.email}
+                                  </span>
+                                    </div>
+                                  </div>
+                                </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => handleDeleteChatting(roomId)}>
-                                  <Trash2 className="text-muted-foreground" />
-                                  <span>Delete Chatting</span>
+                                <DropdownMenuGroup>
+                                  <DropdownMenuItem>
+                                    <Sparkles />
+                                    Upgrade to Pro
+                                  </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup>
+                                  <DropdownMenuItem>
+                                    <BadgeCheck />
+                                    Account
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    <CreditCard />
+                                    Billing
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    <Bell />
+                                    Notifications
+                                  </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>
+                                  <LogOut />
+                                  Log out
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </SidebarMenuItem>
-                        ))}
-                        
-                        <SidebarMenuItem>
-                          <SidebarMenuButton onClick={addNewChatRoom}>
-                            <Plus className="h-4 w-4 mr-2" />
-                            <span>New Chat</span>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      </SidebarMenu>
-                    </SidebarGroup>
-                    <SidebarGroup className="mt-auto">
-                      <SidebarGroupContent>
-                        <SidebarMenu>
-                          {data.navSecondary.map((item) => (
-                            <SidebarMenuItem key={item.title}>
-                              <SidebarMenuButton asChild size="sm">
-                                <a href={item.url}>
-                                  <item.icon />
-                                  <span>{item.title}</span>
-                                </a>
-                              </SidebarMenuButton>
-                            </SidebarMenuItem>
-                          ))}
                         </SidebarMenu>
-                      </SidebarGroupContent>
-                    </SidebarGroup>
-                  </SidebarContent>
-                  <SidebarFooter>
-                    <SidebarMenu>
-                      <SidebarMenuItem>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <SidebarMenuButton
-                              size="lg"
-                              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                            >
-                              <Avatar className="h-8 w-8 rounded-lg">
-                                <AvatarImage
-                                  src={data.user.avatar}
-                                  alt={data.user.name}
-                                />
-                                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                              </Avatar>
-                              <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-semibold">
-                                  {data.user.name}
-                                </span>
-                                <span className="truncate text-xs">
-                                  {data.user.email}
-                                </span>
-                              </div>
-                              <ChevronsUpDown className="ml-auto size-4" />
-                            </SidebarMenuButton>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent
-                            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                            side="bottom"
-                            align="end"
-                            sideOffset={4}
-                          >
-                            <DropdownMenuLabel className="p-0 font-normal">
-                              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                                <Avatar className="h-8 w-8 rounded-lg">
-                                  <AvatarImage
-                                    src={data.user.avatar}
-                                    alt={data.user.name}
-                                  />
-                                  <AvatarFallback className="rounded-lg">
-                                    CN
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div className="grid flex-1 text-left text-sm leading-tight">
-                                  <span className="truncate font-semibold">
-                                    {data.user.name}
-                                  </span>
-                                  <span className="truncate text-xs">
-                                    {data.user.email}
-                                  </span>
-                                </div>
-                              </div>
-                            </DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuGroup>
-                              <DropdownMenuItem>
-                                <Sparkles />
-                                Upgrade to Pro
-                              </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuGroup>
-                              <DropdownMenuItem>
-                                <BadgeCheck />
-                                Account
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <CreditCard />
-                                Billing
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <Bell />
-                                Notifications
-                              </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                              <LogOut />
-                              Log out
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </SidebarMenuItem>
-                    </SidebarMenu>
-                  </SidebarFooter>
-                </Sidebar>
-                <SidebarInset>
-                  <header className="flex h-16 shrink-0 items-center gap-2">
-                    <div className="flex items-center gap-2 px-4">
-                      <SidebarTrigger className="-ml-1" />
-                      <Separator orientation="vertical" className="mr-2 h-4" />
-                      <Breadcrumb>
-                        <BreadcrumbList>
-                          <BreadcrumbItem className="hidden md:block">
-                            <BreadcrumbLink href="#" onClick={() => handleMenuClick('Reading')}>
-                              {selectedMenu === 'ChatBot' ? 'ChatBot' : 'Learning'}
-                            </BreadcrumbLink>
-                          </BreadcrumbItem>
-                          {selectedMenu && (
-                            <>
-                              <BreadcrumbSeparator className="hidden md:block" />
-                              <BreadcrumbItem>
-                                <BreadcrumbPage>
-                                  {selectedMenu === 'ChatBot' ? activeRoomId : selectedMenu}
-                                </BreadcrumbPage>
+                      </SidebarFooter>
+                    </Sidebar>
+                    <SidebarInset>
+                      <header className="flex h-16 shrink-0 items-center gap-2">
+                        <div className="flex items-center gap-2 px-4">
+                          <SidebarTrigger className="-ml-1" />
+                          <Separator orientation="vertical" className="mr-2 h-4" />
+                          <Breadcrumb>
+                            <BreadcrumbList>
+                              <BreadcrumbItem className="hidden md:block">
+                                <BreadcrumbLink href="#" onClick={() => handleMenuClick('Reading')}>
+                                  {selectedMenu === 'ChatBot' ? 'ChatBot' : 'Learning'}
+                                </BreadcrumbLink>
                               </BreadcrumbItem>
-                            </>
-                          )}
-                        </BreadcrumbList>
-                      </Breadcrumb>
-                    </div>
-                  </header>
-                  {renderInsetContent()}
-                </SidebarInset>
-              </SidebarProvider>
-            </div>
-          </div>
+                              {selectedMenu && (
+                                  <>
+                                    <BreadcrumbSeparator className="hidden md:block" />
+                                    <BreadcrumbItem>
+                                      <BreadcrumbPage>
+                                        {selectedMenu === 'ChatBot' ? activeRoomId : selectedMenu}
+                                      </BreadcrumbPage>
+                                    </BreadcrumbItem>
+                                  </>
+                              )}
+                            </BreadcrumbList>
+                          </Breadcrumb>
+                        </div>
+                      </header>
+                      {renderInsetContent()}
+                    </SidebarInset>
+                  </SidebarProvider>
+                </div>
+              </div>
 
-        </>
-      ) : (
-        <div className="w-full h-[calc(100vh-200px)] flex flex-col items-center justify-center">
-          <h2 className="text-sm font-bold mb-8 mt-12 text-gray-400">* 로그인을 해야 게임을 할 수 있습니다 *</h2>
-          <div className="w-[800px] h-[800px] bg-transparent flex items-center justify-center">
-            <Word3D />
-          </div>
-        </div>
-      )}
-    </div>
+            </>
+        ) : (
+            <div className="w-full h-[calc(100vh-200px)] flex flex-col items-center justify-center">
+              <h2 className="text-sm font-bold mb-8 mt-12 text-gray-400">* 로그인을 해야 게임을 할 수 있습니다 *</h2>
+              <div className="w-[800px] h-[800px] bg-transparent flex items-center justify-center">
+                <Word3D />
+              </div>
+            </div>
+        )}
+      </div>
   );
 };
 

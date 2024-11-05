@@ -17,9 +17,9 @@ public class ChatGptService {
     private final OpenAiService openAiService;
     private final Map<String, List<ChatMessage>> chatHistories = new HashMap<>();
     private static final String SYSTEM_PROMPT = "당신은 영어 학습을 도와주는 AI 튜터입니다. " +
-            "학습자의 영어 실력 향상을 위해 친절하고 이해하기 쉽게 설명해주세요. " +
-            "필요한 경우 한국어로 설명할 수 있지만, 가능한 영어 사용을 권장해주세요. " +
-            "문법 오류를 교정해주고, 더 자연스러운 표현을 제안해주세요.";
+        "학습자의 영어 실력 향상을 위해 친절하고 이해하기 쉽게 설명해주세요. " +
+        "필요한 경우 한국어로 설명할 수 있지만, 가능한 영어 사용을 권장해주세요. " +
+        "문법 오류를 교정해주고, 더 자연스러운 표현을 제안해주세요.";
 
     public ChatGptService() {
         String apiKey = System.getenv("OPENAI_API_KEY");
@@ -43,11 +43,11 @@ public class ChatGptService {
 
         try {
             ChatCompletionRequest request = ChatCompletionRequest.builder()
-                    .model("gpt-4o-mini")
-                    .messages(messages)
-                    .temperature(0.7)
-                    .maxTokens(1000)
-                    .build();
+                .model("gpt-4o-mini")
+                .messages(messages)
+                .temperature(0.7)
+                .maxTokens(1000)
+                .build();
 
             ChatCompletionResult result = openAiService.createChatCompletion(request);
             String botResponse = result.getChoices().get(0).getMessage().getContent();
@@ -77,7 +77,7 @@ public class ChatGptService {
         if (messages == null) return 0;
 
         return messages.stream()
-                .mapToInt(msg -> msg.getContent().length())
-                .sum();
+            .mapToInt(msg -> msg.getContent().length())
+            .sum();
     }
 }
