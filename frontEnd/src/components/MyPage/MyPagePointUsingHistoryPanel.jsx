@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Table,
   TableBody,
@@ -16,18 +17,26 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination.jsx";
+import {format} from "date-fns";
 
 const MyPagePointUsingHistoryPanel = () => {
-  // 데이터를 배열로 준비
-  const data = Array.from({ length: 30 }, (_, i) => ({
-    id: i + 1,
-    points: `${Math.floor(Math.random() * 100)}pt`,
-    description: i % 2 === 0 ? '단체방 생성' : '개인방 생성',
-    date: `2024 / 10 / ${16 - (i % 15)}`, // 임의의 날짜
-  }));
-
+  const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 14; // 한 페이지에 표시할 항목 수
+  const itemsPerPage = 15; // 한 페이지에 표시할 항목 수
+
+  useEffect(() => {
+    const fetchPointHistory = async () => {
+      try {
+        const userId = sessionStorage.getItem('id'); // 세션 스토리지에서 사용자 ID 가져오기
+        const response = await axios.get(`http://localhost:8085/api/points/history/${userId}`);
+        setData(response.data); // 서버에서 받은 데이터를 상태에 설정
+      } catch (error) {
+        console.error('포인트 내역을 불러오는 중 에러 발생:', error);
+      }
+    };
+
+    fetchPointHistory();
+  }, []);
 
   // 현재 페이지에 해당하는 데이터만 가져오기
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -55,12 +64,12 @@ const MyPagePointUsingHistoryPanel = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {selectedData.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell className="font-medium">{item.id}</TableCell>
-              <TableCell>{item.points}</TableCell>
-              <TableCell>{item.description}</TableCell>
-              <TableCell className="text-right">{item.date}</TableCell>
+          {selectedData.map((item, index) => (
+            <TableRow key={item.idx}>
+              <TableCell className="font-medium">{startIndex + index + 1}</TableCell>
+              <TableCell>{item.changeAmount}</TableCell>
+              <TableCell>{item.changeType}</TableCell>
+              <TableCell className="text-right">{format(new Date(item.createdAt), 'yyyy-MM-dd')}</TableCell>
             </TableRow>
           ))}
         </TableBody>
