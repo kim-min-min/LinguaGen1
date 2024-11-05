@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import DungeonCanvas from '../Game/DungeonCanvas';
 import RuinsCanvas from '../Game/RuinsCanvas';
 import MountainCanvas from '../Game/MountainCanvas';
+import ChatInterface  from '../ui/ChatInterface.jsx'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -67,6 +68,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Separator } from "@/components/ui/separator"
+import axios from "axios";
 
 // 추가된 데이터 객체
 const data = {
@@ -211,6 +213,7 @@ const MainContainer = ({ selectedGame }) => {
   const [animationPosition, setAnimationPosition] = useState({ x: 0, y: 0 });
   const [isExiting, setIsExiting] = useState(false);
 
+
   // 예시 단어 목록 (실제로는 API나 상태에서 가져와야 합니다)
   const wrongWords = [
     { english: 'apple', korean: '사과' },
@@ -220,6 +223,62 @@ const MainContainer = ({ selectedGame }) => {
     { english: 'elderberry', korean: '엘더베리' },
     { english: 'fig', korean: '무화과' },
   ];
+
+  // 대화방 상태와 현재 활성 대화방을 관리하는 상태
+  const [chatRooms, setChatRooms] = useState({
+    Room_1: [],
+    Room_2: [],
+    Room_3: []
+  });
+  const [activeRoomId, setActiveRoomId] = useState('Room_1');
+
+  // 메시지 전송 함수
+  const sendMessage = async (message) => {
+    if (!activeRoomId) return;
+
+    try {
+      // 백엔드에 메시지 전송 요청
+      const response = await axios.post('/api/chat/message', {
+        roomId: activeRoomId,
+        message,
+      });
+
+      const botResponse = response.data.response;
+
+      // 대화방에 사용자와 봇 메시지를 추가
+      setChatRooms((prevRooms) => ({
+        ...prevRooms,
+        [activeRoomId]: [
+          ...prevRooms[activeRoomId],
+          { sender: 'user', text: message },
+          { sender: 'bot', text: botResponse },
+        ],
+      }));
+    } catch (error) {
+      console.error("메시지 전송 오류:", error);
+    }
+  };
+
+  // 대화방 선택 함수
+  const handleRoomSelect = (roomId) => {
+    setActiveRoomId(roomId);
+  };
+
+  // 대화방 삭제 함수
+  const handleDeleteChatting = async (roomId) => {
+    try {
+      // 백엔드에 대화방 삭제 요청
+      await axios.delete(`/api/chat/room/${roomId}`);
+
+      // 프론트엔드 상태에서도 대화 내용 초기화
+      setChatRooms((prevRooms) => ({
+        ...prevRooms,
+        [roomId]: [],
+      }));
+    } catch (error) {
+      console.error("대화 삭제 오류:", error);
+    }
+  };
 
   useEffect(() => {
     if (cards.length === 0) {
@@ -237,7 +296,7 @@ const MainContainer = ({ selectedGame }) => {
 
     const handleScroll = () => {
       // 스크롤이 바닥에 도달했는지 확인
-      const isBottom = 
+      const isBottom =
         Math.abs(
           container.scrollHeight - container.scrollTop - container.clientHeight
         ) < 1;
@@ -349,7 +408,7 @@ const MainContainer = ({ selectedGame }) => {
         </div>
       );
     }
-    
+
     // 다른 메뉴들의 컨텐츠
     return (
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -379,14 +438,14 @@ const MainContainer = ({ selectedGame }) => {
       x: buttonRect.left + buttonRect.width / 2,
       y: buttonRect.top + buttonRect.height / 2
     });
-    
+
     setShowAnimation(true);
 
     // 애니메이션 종료 후 페이지 전환 시작
     setTimeout(() => {
       setShowAnimation(false);
       setIsExiting(true);  // Fade out 시작
-      
+
       // Fade out 애니메이션이 끝난 후 페이지 전환
       setTimeout(() => {
         handleStartGame();
@@ -403,17 +462,17 @@ const MainContainer = ({ selectedGame }) => {
           <div className="w-full flex justify-between mb-4 mt-4">
             <div className='w-40 h-14 ml-4'></div>
             <div className="relative w-40 h-14">
-              <Button 
+              <Button
                 onClick={handleButtonClick}
                 className="w-full h-full text-white rounded-md font-bold text-xl hover:scale-125 transition-all duration-500 jua-regular"
                 disabled={showAnimation || isExiting}  // 애니메이션 중 클릭 방지
               >
                 게임 시작하기
               </Button>
-              
+
               {/* 애니메이션 컨테이너 */}
               {showAnimation && (
-                <div 
+                <div
                   className="fixed pointer-events-none"
                   style={{
                     left: animationPosition.x - 100,
@@ -423,7 +482,7 @@ const MainContainer = ({ selectedGame }) => {
                     zIndex: 100
                   }}
                 >
-                  <Lottie 
+                  <Lottie
                     options={defaultOptions}
                     height={200}
                     width={200}
@@ -478,8 +537,8 @@ const MainContainer = ({ selectedGame }) => {
                       <SidebarMenu>
                         {data.navMain[0].items.map((item) => (
                           <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton 
-                              asChild 
+                            <SidebarMenuButton
+                              asChild
                               isActive={selectedMenu === item.title}
                               onClick={() => handleMenuClick(item.title)}
                             >
@@ -495,49 +554,40 @@ const MainContainer = ({ selectedGame }) => {
                       <SidebarGroupLabel>ChatBot</SidebarGroupLabel>
                       <SidebarMenu>
                         {data.projects.map((item) => (
-                          <SidebarMenuItem key={item.name}>
-                            <SidebarMenuButton asChild>
-                              <a href={item.url}>
-                                <item.icon />
-                                <span>{item.name}</span>
-                              </a>
-                            </SidebarMenuButton>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <SidebarMenuAction showOnHover>
-                                  <MoreHorizontalIcon />
-                                  <span className="sr-only">More</span>
-                                </SidebarMenuAction>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent
-                                className="w-48"
-                                side="bottom"
-                                align="end"
-                              >
-                                <DropdownMenuItem>
-                                  <Folder className="text-muted-foreground" />
-                                  <span>Save Chatting</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <Share className="text-muted-foreground" />
-                                  <span>Share Chatting</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                  <Trash2 className="text-muted-foreground" />
-                                  <span>Delete Chatting</span>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </SidebarMenuItem>
+                            <SidebarMenuItem key={item.name}>
+                              <SidebarMenuButton asChild onClick={() => handleRoomSelect(item.name)}>
+                                <a href="#">
+                                  <item.icon />
+                                  <span>{item.name}</span>
+                                </a>
+                              </SidebarMenuButton>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <SidebarMenuAction showOnHover>
+                                    <MoreHorizontalIcon />
+                                    <span className="sr-only">More</span>
+                                  </SidebarMenuAction>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-48" side="bottom" align="end">
+                                  <DropdownMenuItem>
+                                    <Folder className="text-muted-foreground" />
+                                    <span>Save Chatting</span>
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    <Share className="text-muted-foreground" />
+                                    <span>Share Chatting</span>
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem onClick={() => handleDeleteChatting(item.name)}>
+                                    <Trash2 className="text-muted-foreground" />
+                                    <span>Delete Chatting</span>
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </SidebarMenuItem>
                         ))}
-                        <SidebarMenuItem>
-                          <SidebarMenuButton>
-                            <MoreHorizontalIcon />
-                            <span>More</span>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
                       </SidebarMenu>
+
                     </SidebarGroup>
                     <SidebarGroup className="mt-auto">
                       <SidebarGroupContent>
@@ -672,6 +722,9 @@ const MainContainer = ({ selectedGame }) => {
               </SidebarProvider>
             </div>
           </div>
+
+          {/* ChatInterface 렌더링 */}
+          <ChatInterface messages={chatRooms[activeRoomId]} onSendMessage={sendMessage} />
         </>
       ) : (
         <div className="w-full h-[calc(100vh-200px)] flex flex-col items-center justify-center">
