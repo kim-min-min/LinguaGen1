@@ -46,6 +46,7 @@ import {
   SquareTerminal,
   Trash2,
   BotMessageSquare,
+  Headphones,
   Plus,
 } from "lucide-react"
 
@@ -88,14 +89,17 @@ const data = {
       items: [
         {
           title: "Listening",
+          icon: Headphones,
           url: "#",
         },
         {
           title: "Reading",
+          icon: BookOpen,
           url: "#",
         },
         {
           title: "ETC",
+          icon: Command,
           url: "#",
         },
       ],
@@ -536,7 +540,10 @@ const MainContainer = ({ selectedGame }) => {
                       </SidebarHeader>
                       <SidebarContent>
                         <SidebarGroup>
-                          <SidebarGroupLabel>Learning</SidebarGroupLabel>
+                          
+                          <SidebarGroupLabel>
+                            Learning
+                          </SidebarGroupLabel>
                           <SidebarMenu>
                             {data.navMain[0].items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
@@ -546,7 +553,8 @@ const MainContainer = ({ selectedGame }) => {
                                       onClick={() => handleMenuClick(item.title)}
                                   >
                                     <a href={item.url}>
-                                      <span>{item.title}</span>
+                                      <item.icon />
+                                      <span className='ml-2'>{item.title}</span>
                                     </a>
                                   </SidebarMenuButton>
                                 </SidebarMenuItem>
