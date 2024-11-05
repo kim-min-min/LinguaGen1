@@ -281,20 +281,22 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                                         onClick={() => !showFeedback && handleAnswer(index)}
                                         onMouseEnter={() => showFeedback && selectedAnswer === index && setHoveredAnswer(index)}
                                         onMouseLeave={() => setHoveredAnswer(null)}
-                                        className={`relative h-full rounded-lg shadow-md transition-all duration-300 hover:shadow-lg h-32 flex flex-col ${
+                                        className={`relative rounded-lg shadow-md transition-all duration-300 hover:shadow-lg flex flex-col ${
                                             showFeedback && selectedAnswer !== index ? 'cursor-not-allowed opacity-50' : ''
                                         }`}
                                         style={{
                                             backgroundColor: colors[index],
+                                            minHeight: '120px',
+                                            height: 'auto'
                                         }}
                                         whileHover={!showFeedback || selectedAnswer === index ? {scale: 1.02} : {}}
                                         whileTap={!showFeedback || selectedAnswer === index ? {scale: 0.98} : {}}
                                     >
-                                        <div className="w-full h-full flex flex-col items-center justify-center text-center p-6">
-                                            <span className="text-2xl font-bold mb-2 text-white">
+                                        <div className="w-full h-full flex flex-col items-center justify-start p-4">
+                                            <span className="text-2xl font-bold mb-2 text-white shrink-0">
                                                 {['A', 'B', 'C', 'D'][index]}
                                             </span>
-                                            <p className="text-lg text-white w-full px-4">
+                                            <p className="text-lg text-white w-full px-4 overflow-y-auto max-h-[120px] custom-scrollbar">
                                                 {option}
                                             </p>
                                         </div>
