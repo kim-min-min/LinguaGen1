@@ -11,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 import DungeonCanvas from '../Game/DungeonCanvas';
 import RuinsCanvas from '../Game/RuinsCanvas';
 import MountainCanvas from '../Game/MountainCanvas';
-import ChatInterface  from '../ui/ChatInterface.jsx'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,6 +46,7 @@ import {
   SquareTerminal,
   Trash2,
   BotMessageSquare,
+  Plus,
 } from "lucide-react"
 
 import {
@@ -69,6 +69,8 @@ import {
 } from "@/components/ui/collapsible"
 import { Separator } from "@/components/ui/separator"
 import axios from "axios";
+import LearningInsetContent from './LearningInsetContent';
+import ChatInsetContent from './ChatInsetContent';
 
 // 추가된 데이터 객체
 const data = {
@@ -178,20 +180,10 @@ const data = {
   ],
   projects: [
     {
-      name: "Room_1",
+      name: "New Chat",
+      icon: BotMessageSquare,
       url: "#",
-      icon: BotMessageSquare ,
-    },
-    {
-      name: "Room_2",
-      url: "#",
-      icon: BotMessageSquare ,
-    },
-    {
-      name: "Room_3",
-      url: "#",
-      icon: BotMessageSquare ,
-    },
+    }
   ],
 }
 
@@ -206,7 +198,7 @@ const MainContainer = ({ selectedGame }) => {
   const navigate = useNavigate();
   const [position, setPosition] = React.useState("Listening")
   const [activeMenu, setActiveMenu] = useState('Listening');
-  const [selectedMenu, setSelectedMenu] = useState('Listening');
+  const [selectedMenu, setSelectedMenu] = useState('Reading');
   const [visibleCards, setVisibleCards] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
@@ -226,42 +218,102 @@ const MainContainer = ({ selectedGame }) => {
 
   // 대화방 상태와 현재 활성 대화방을 관리하는 상태
   const [chatRooms, setChatRooms] = useState({
-    Room_1: [],
-    Room_2: [],
-    Room_3: []
+    'New Chat': []
   });
-  const [activeRoomId, setActiveRoomId] = useState('Room_1');
+  const [activeRoomId, setActiveRoomId] = useState('New Chat');
 
-  // 메시지 전송 함수
+  // 새 채팅방 추가 함수
+  const addNewChatRoom = () => {
+    const newRoomId = `Chat ${Object.keys(chatRooms).length + 1}`;
+    const timestamp = new Date().toLocaleTimeString('ko-KR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+
+    setChatRooms(prev => ({
+      ...prev,
+      [newRoomId]: [{
+        sender: 'bot',
+        text: "Hello! I'm here to help you with your English! What would you like to talk about today?",
+        timestamp
+      }]
+    }));
+    setActiveRoomId(newRoomId);
+  };
+
+  // 메시지 전송 함수 수정
   const sendMessage = async (message) => {
-    if (!activeRoomId) return;
-
     try {
-      // 백엔드에 메시지 전송 요청
-      const response = await axios.post('/api/chat/message', {
-        roomId: activeRoomId,
-        message,
+      const timestamp = new Date().toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
       });
 
-      const botResponse = response.data.response;
-
-      // 대화방에 사용자와 봇 메시지를 추가
-      setChatRooms((prevRooms) => ({
-        ...prevRooms,
+      // 사용자 메시지 추가
+      setChatRooms(prev => ({
+        ...prev,
         [activeRoomId]: [
-          ...prevRooms[activeRoomId],
-          { sender: 'user', text: message },
-          { sender: 'bot', text: botResponse },
-        ],
+          ...(prev[activeRoomId] || []),
+          { sender: 'user', text: message, timestamp }
+        ]
       }));
+
+      // API 호출
+      const response = await axios.post('/api/chat/message', {
+        roomId: activeRoomId,
+        message: message
+      });
+
+      console.log('Bot response:', response.data); // 응답 구조 확인
+
+      // 봇 응답 추가 (response.data.response에서 메시지 추출)
+      const botTimestamp = new Date().toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+
+      setChatRooms(prev => ({
+        ...prev,
+        [activeRoomId]: [
+          ...(prev[activeRoomId] || []),
+          { 
+            sender: 'bot', 
+            text: response.data.response,  // response 객체에서 메시지 추출
+            timestamp: botTimestamp 
+          }
+        ]
+      }));
+
     } catch (error) {
-      console.error("메시지 전송 오류:", error);
+      console.error('메시지 전송 오류:', error);
+      console.error('Response data:', error.response?.data);
+      
+      // 에러 발생 시 사용자에게 알림
+      setChatRooms(prev => ({
+        ...prev,
+        [activeRoomId]: [
+          ...(prev[activeRoomId] || []),
+          { 
+            sender: 'bot', 
+            text: '죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', 
+            timestamp: new Date().toLocaleTimeString('ko-KR', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false
+            })
+          }
+        ]
+      }));
     }
   };
 
   // 대화방 선택 함수
   const handleRoomSelect = (roomId) => {
     setActiveRoomId(roomId);
+    setSelectedMenu('ChatBot'); // ChatBot 메뉴 선택 태로 변경
   };
 
   // 대화방 삭제 함수
@@ -352,74 +404,25 @@ const MainContainer = ({ selectedGame }) => {
   const renderInsetContent = () => {
     if (selectedMenu === 'Reading') {
       return (
-        <div
-          ref={scrollContainerRef}
-          className="w-full h-[calc(100vh-200px)] pb-20 overflow-y-auto flex justify-center border-t-2 pt-12 relative custom-scrollbar"
-          style={{
-            boxShadow: `inset 0 ${overscrollShadow}px ${overscrollShadow}px -${overscrollShadow / 2}px rgba(0, 0, 0, 0.1), inset 0 ${overscrollShadow / 2}px ${overscrollShadow / 2}px -${overscrollShadow / 4}px rgba(0, 0, 0, 0.05)`,
-          }}
-        >
-          <div className="w-1/2 grid grid-cols-1 gap-8 pb-8">
-            {visibleCards.map((card, index) => (
-              <Card key={index} className="w-full" style={{ userSelect: 'none' }}>
-                <CardHeader>
-                  <CardTitle>{card.date}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-row">
-                  <div className="flex flex-col w-1/2 text-center">
-                    <p className="mb-2">{card.category}</p>
-                    <p className="mb-2">{card.level}</p>
-                    <p className="mb-2">{card.score}</p>
-                    <p className="mb-2">{card.rank}</p>
-                  </div>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <button
-                        className="btnAnimation btnPush btnLightBlue w-full h-26 mt-2 p-4 flex items-center justify-center ml-12 rounded-md text-black font-bold"
-                        style={{ backgroundColor: '#e3eef1', border: 'none', outline: 'none' }}
-                      >
-                        틀린 단어 보기
-                      </button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[600px] h-[600px] overflow-y-auto">
-                      <DialogHeader className="h-20">
-                        <DialogTitle>틀린 단어 노트</DialogTitle>
-                        <DialogDescription>틀린 단어를 확인하세요~</DialogDescription>
-                      </DialogHeader>
-                      <div className="grid grid-cols-2 gap-4 mb-16 text-center">
-                        {wrongWords.map((word, index) => (
-                          <React.Fragment key={index}>
-                            <div className="bg-gray-100 p-2 rounded">{word.english}</div>
-                            <div className="bg-gray-100 p-2 rounded">{word.korean}</div>
-                          </React.Fragment>
-                        ))}
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </CardContent>
-              </Card>
-            ))}
-            {loading && (
-              <div className="flex justify-center items-center p-4">
-                <div className="loader"></div>
-              </div>
-            )}
-          </div>
-        </div>
+        <LearningInsetContent 
+          scrollContainerRef={scrollContainerRef}
+          overscrollShadow={overscrollShadow}
+          visibleCards={visibleCards}
+          wrongWords={wrongWords}
+          loading={loading}
+        />
+      );
+    } else if (selectedMenu === 'ChatBot') {
+      return (
+        <ChatInsetContent 
+          activeRoomId={activeRoomId}
+          chatRooms={chatRooms}
+          addNewChatRoom={addNewChatRoom}
+          sendMessage={sendMessage}
+        />
       );
     }
-
-    // 다른 메뉴들의 컨텐츠
-    return (
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <div className="grid auto-rows-min gap-4 md:grid-cols-3 grid-cols-1">
-          <div className="aspect-video rounded-xl bg-muted/50" />
-          <div className="aspect-video rounded-xl bg-muted/50" />
-          <div className="aspect-video rounded-xl bg-muted/50" />
-        </div>
-        <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-      </div>
-    );
+    return null;
   };
 
   // Lottie 옵션 수정
@@ -553,41 +556,47 @@ const MainContainer = ({ selectedGame }) => {
                     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
                       <SidebarGroupLabel>ChatBot</SidebarGroupLabel>
                       <SidebarMenu>
-                        {data.projects.map((item) => (
-                            <SidebarMenuItem key={item.name}>
-                              <SidebarMenuButton asChild onClick={() => handleRoomSelect(item.name)}>
-                                <a href="#">
-                                  <item.icon />
-                                  <span>{item.name}</span>
-                                </a>
-                              </SidebarMenuButton>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <SidebarMenuAction showOnHover>
-                                    <MoreHorizontalIcon />
-                                    <span className="sr-only">More</span>
-                                  </SidebarMenuAction>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-48" side="bottom" align="end">
-                                  <DropdownMenuItem>
-                                    <Folder className="text-muted-foreground" />
-                                    <span>Save Chatting</span>
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <Share className="text-muted-foreground" />
-                                    <span>Share Chatting</span>
-                                  </DropdownMenuItem>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem onClick={() => handleDeleteChatting(item.name)}>
-                                    <Trash2 className="text-muted-foreground" />
-                                    <span>Delete Chatting</span>
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </SidebarMenuItem>
+                        {Object.keys(chatRooms).map((roomId) => (
+                          <SidebarMenuItem key={roomId}>
+                            <SidebarMenuButton asChild onClick={() => handleRoomSelect(roomId)}>
+                              <a href="#">
+                                <BotMessageSquare className="h-4 w-4 mr-2" />
+                                <span>{roomId}</span>
+                              </a>
+                            </SidebarMenuButton>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <SidebarMenuAction showOnHover>
+                                  <MoreHorizontalIcon />
+                                  <span className="sr-only">More</span>
+                                </SidebarMenuAction>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent className="w-48" side="bottom" align="end">
+                                <DropdownMenuItem>
+                                  <Folder className="text-muted-foreground" />
+                                  <span>Save Chatting</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                  <Share className="text-muted-foreground" />
+                                  <span>Share Chatting</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => handleDeleteChatting(roomId)}>
+                                  <Trash2 className="text-muted-foreground" />
+                                  <span>Delete Chatting</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </SidebarMenuItem>
                         ))}
+                        
+                        <SidebarMenuItem>
+                          <SidebarMenuButton onClick={addNewChatRoom}>
+                            <Plus className="h-4 w-4 mr-2" />
+                            <span>New Chat</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
                       </SidebarMenu>
-
                     </SidebarGroup>
                     <SidebarGroup className="mt-auto">
                       <SidebarGroupContent>
@@ -701,15 +710,17 @@ const MainContainer = ({ selectedGame }) => {
                       <Breadcrumb>
                         <BreadcrumbList>
                           <BreadcrumbItem className="hidden md:block">
-                            <BreadcrumbLink href="#">
-                              Learning
+                            <BreadcrumbLink href="#" onClick={() => handleMenuClick('Reading')}>
+                              {selectedMenu === 'ChatBot' ? 'ChatBot' : 'Learning'}
                             </BreadcrumbLink>
                           </BreadcrumbItem>
                           {selectedMenu && (
                             <>
                               <BreadcrumbSeparator className="hidden md:block" />
                               <BreadcrumbItem>
-                                <BreadcrumbPage>{selectedMenu}</BreadcrumbPage>
+                                <BreadcrumbPage>
+                                  {selectedMenu === 'ChatBot' ? activeRoomId : selectedMenu}
+                                </BreadcrumbPage>
                               </BreadcrumbItem>
                             </>
                           )}
@@ -723,8 +734,6 @@ const MainContainer = ({ selectedGame }) => {
             </div>
           </div>
 
-          {/* ChatInterface 렌더링 */}
-          <ChatInterface messages={chatRooms[activeRoomId]} onSendMessage={sendMessage} />
         </>
       ) : (
         <div className="w-full h-[calc(100vh-200px)] flex flex-col items-center justify-center">
