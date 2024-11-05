@@ -3,7 +3,6 @@ import { Send, Loader2, X, Minimize2, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Alert, AlertDescription } from './Alert'; // 직접 만든 Alert 컴포넌트 사용
 
 const ChatInterface = ({
                            messages = [],
