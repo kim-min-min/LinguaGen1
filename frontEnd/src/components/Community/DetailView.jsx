@@ -141,7 +141,7 @@ const DetailView = ({handleTabClick}) => {
     // 댓글 수정
     const handleSaveComment = async (commentIdx) => {
         try {
-            await axios.put(`http://localhost:8085/api/comments/${commentIdx}`, {content: editedCommentContent});
+            await axios.put(`${import.meta.env.VITE_APP_API_BASE_URL}/comments/${commentIdx}`, {content: editedCommentContent});
             fetchComments();
             setEditingCommentId(null);
         } catch (error) {
