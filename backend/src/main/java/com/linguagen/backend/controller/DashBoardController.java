@@ -16,11 +16,9 @@ import java.util.List;
 public class DashBoardController {
 
     private final DashBoardService dashBoardService;
-    private final StudentAnswerService studentAnswerService;
 
     public DashBoardController(DashBoardService dashBoardService, StudentAnswerService studentAnswerService) {
         this.dashBoardService = dashBoardService;
-        this.studentAnswerService = studentAnswerService;
     }
 
     @GetMapping("/latest/{studentId}")  // 엔드포인트의 변수명 변경
