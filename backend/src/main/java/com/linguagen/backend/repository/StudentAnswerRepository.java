@@ -1,6 +1,7 @@
 package com.linguagen.backend.repository;
 
 import com.linguagen.backend.dto.DailyPlayCountDto;
+import com.linguagen.backend.dto.IncorrectTypePercentageDto;
 import com.linguagen.backend.entity.StudentAnswer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -118,6 +118,7 @@ const DashBoardPanel = () => {
                     // 자주 틀린 유형 데이터 가져오기
                     const mistakeTypeResponse = await axios.get(`http://localhost:8085/api/study-log/incorrect-type-percentage/${userData.id}`, { withCredentials: true });
                     setMistakeTypes(mistakeTypeResponse.data.slice(0, 6)); // 최대 6개만 설정
+
                 } catch (error) {
                     console.error('사용자 정보를 가져오는 중 오류 발생:', error);
                 }
@@ -133,12 +134,12 @@ const DashBoardPanel = () => {
     return (
         <div className='flex flex-col items-center justify-start w-auto ml-24 p-4 border-2 border-gray-300 rounded-lg min-h-[1400px]
             max-lg:ml-0 max-lg:w-full max-lg:min-h-[2650px]'
-            style={{ backdropFilter: 'blur(15px)', background: 'rgba(255, 255, 255, 0.2' }}
+             style={{ backdropFilter: 'blur(15px)', background: 'rgba(255, 255, 255, 0.2' }}
         >
             <div className='w-full'>
                 <h4 className='font-bold h-14 pt-0 pl-4' style={{fontSize : '24px'}}>대쉬보드</h4>
             </div>
-            
+
             <div className='grid grid-cols-1 gap-8 w-full' style={{ width: '945px', maxWidth: '100%' }}>
                 <div className='grid grid-cols-2 gap-4 max-lg:grid-cols-1'>
                     <div className='grid grid-rows-2 gap-4'>
@@ -152,12 +153,12 @@ const DashBoardPanel = () => {
                                     {latestStudyInfo ? (
                                         <>
                                             <span>{latestStudyInfo.questionType} </span>
-                                           
-                                                <img
-                                                    src={tierImages[latestStudyInfo.difficultyGrade]}
-                                                    alt={`${gradeNames[latestStudyInfo.difficultyGrade]} 이미지`}
-                                                    className='inline-block w-5 h-5 ml-2'
-                                                />
+
+                                            <img
+                                                src={tierImages[latestStudyInfo.difficultyGrade]}
+                                                alt={`${gradeNames[latestStudyInfo.difficultyGrade]} 이미지`}
+                                                className='inline-block w-5 h-5 ml-2'
+                                            />
                                             <span>{gradeNames[latestStudyInfo.difficultyGrade] || "Unknown Grade"}</span>
                                             <span> {` ${latestStudyInfo.difficultyTier}`}</span>
                                         </>
@@ -207,24 +208,25 @@ const DashBoardPanel = () => {
                         </CardHeader>
                         <CardContent className='mt-4'>
                             <ul>
-                                {MistakeWord.map((word) => (
-                                    <li key={word.id}
+                                {mistakeTypes.map((type, index) => (
+                                    <li key={index}
                                         className='grid grid-cols-[2fr_1fr_2fr] gap-4 border-b-2 border-gray-300 mb-4 pb-4'>
                                         <p className='font-bold hover:scale-125 transition-all duration-300 cursor-pointer truncate text-left'
                                            style={{userSelect: 'none'}}>
-                                            {word.word}
+                                            {type.questionType}
                                         </p>
                                         <p className='text-sm text-gray-500 text-center'
                                            style={{userSelect: 'none'}}>
-                                            {word.percentage}
+                                            {type.percentage}%
                                         </p>
                                         <p className='truncate text-right'
                                            style={{userSelect: 'none'}}>
-                                            {word.meaning}
+                                            {type.incorrectCount}회
                                         </p>
                                     </li>
                                 ))}
                             </ul>
+
                         </CardContent>
                         <CardFooter className='flex flex-row justify-end'>
                             <CardDescription style={{cursor: 'pointer'}}>
