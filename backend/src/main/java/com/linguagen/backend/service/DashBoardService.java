@@ -66,4 +66,21 @@ public class DashBoardService {
                 .distinct()
                 .collect(Collectors.toList());
     }
+
+    // 자주 틀린 유형 비율 반환
+    public List<IncorrectTypePercentageDto> getIncorrectTypePercentage(String studentId) {
+        List<IncorrectTypePercentageDto> incorrectTypeCounts = studentAnswerRepository.findIncorrectDetailTypeCountsByStudentId(studentId);
+
+        long totalIncorrect = incorrectTypeCounts.stream()
+                .mapToLong(IncorrectTypePercentageDto::getIncorrectCount)
+                .sum();
+
+        // 각 유형별로 비율 계산하고, 소수점 이하 제거
+        return incorrectTypeCounts.stream()
+                .peek(dto -> {
+                    double rawPercentage = (dto.getIncorrectCount() / (double) totalIncorrect) * 100;
+                    dto.setPercentage(Math.round(rawPercentage)); // 반올림하여 정수로 설정
+                })
+                .collect(Collectors.toList());
+    }
 }

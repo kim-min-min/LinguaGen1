@@ -28,12 +28,16 @@ public interface StudentAnswerRepository extends JpaRepository<StudentAnswer, Lo
             + "FROM StudentAnswer s WHERE s.studentId = :studentId")
     Double findAverageCorrectRateByStudentId(@Param("studentId") String studentId);
 
-
-
     // 이번주 학습한 요일 출력
     List<StudentAnswer> findByStudentIdAndCreatedAtBetween(String studentId, LocalDateTime startDate, LocalDateTime endDate);
 
-
+    // 틀린 세부 유형 비율 출력
+    @Query("SELECT new com.linguagen.backend.dto.IncorrectTypePercentageDto(sa.question.detailType, COUNT(sa)) " +
+            "FROM StudentAnswer sa " +
+            "WHERE sa.studentId = :studentId AND sa.isCorrect = false " +
+            "GROUP BY sa.question.detailType " +
+            "ORDER BY COUNT(sa) DESC")
+    List<IncorrectTypePercentageDto> findIncorrectDetailTypeCountsByStudentId(@Param("studentId") String studentId);
 
 
 }
