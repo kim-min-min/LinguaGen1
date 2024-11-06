@@ -62,21 +62,6 @@ public class DashBoardController {
         return ResponseEntity.ok(studyDays);
     }
 
-    public static class StudyLogResponse {
-        private boolean studiedThisWeek;
-
-        public StudyLogResponse(boolean studiedThisWeek) {
-            this.studiedThisWeek = studiedThisWeek;
-        }
-
-        public boolean isStudiedThisWeek() {
-            return studiedThisWeek;
-        }
-
-        public void setStudiedThisWeek(boolean studiedThisWeek) {
-            this.studiedThisWeek = studiedThisWeek;
-        }
-    }
 
     // 자주 틀린 문제 유형과 비율 반환 API
     @GetMapping("/incorrect-type-percentage/{studentId}")
