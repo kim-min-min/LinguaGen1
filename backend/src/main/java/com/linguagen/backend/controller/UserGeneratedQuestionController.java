@@ -1,10 +1,10 @@
 package com.linguagen.backend.controller;
 
-import com.linguagen.backend.dto.QuestionDTO;
 import com.linguagen.backend.dto.QuestionGenerationRequestDTO;
+import com.linguagen.backend.dto.UserGeneratedQuestionDTO;
 import com.linguagen.backend.enums.QuestionType;
 import com.linguagen.backend.exception.UnauthorizedException;
-import com.linguagen.backend.service.QuestionGeneratorService;
+import com.linguagen.backend.service.UserGeneratedQuestionService;
 import com.linguagen.backend.util.SessionUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,25 +14,29 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/questions")
+@RequestMapping("/api/user-questions")
 @Slf4j
 @RequiredArgsConstructor
-public class QuestionGeneratorController {
-    private final QuestionGeneratorService questionGeneratorService;
+public class UserGeneratedQuestionController {
+    private final UserGeneratedQuestionService userGeneratedQuestionService;
     private final SessionUtil sessionUtil;
 
     @PostMapping("/generate")
-    public ResponseEntity<?> generateQuestions(@RequestBody @Valid QuestionGenerationRequestDTO request) {
+    public ResponseEntity<?> generateQuestion(@RequestBody @Valid QuestionGenerationRequestDTO request) {
         try {
-            // 세션에서 사용자 정보 가져오기
             String userId = sessionUtil.getCurrentUserId();
+            userGeneratedQuestionService.generateQuestion(request, userId);
 
-            validateRequest(request);
-            questionGeneratorService.generateQuestions(request, userId);
-            return ResponseEntity.ok("Questions generated successfully");
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Questions generated successfully");
+            response.put("count", String.valueOf(request.getCount()));
+
+            return ResponseEntity.ok(response);
         } catch (UnauthorizedException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (IllegalArgumentException e) {
@@ -44,11 +48,25 @@ public class QuestionGeneratorController {
         }
     }
 
+//    @PostMapping("/{questionIdx}/answer")
+//    public ResponseEntity<?> submitAnswer(
+//        @PathVariable Long questionIdx,
+//        @RequestBody String answer) {
+//        try {
+//            String userId = sessionUtil.getCurrentUserId();
+//            UserGeneratedQuestionAnswer saved =
+//                answerService.saveStudentAnswer(questionIdx, userId, answer);
+//            return ResponseEntity.ok(saved);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
+
     @GetMapping("/my-questions")
-    public ResponseEntity<List<QuestionDTO>> getMyQuestions() {
+    public ResponseEntity<List<UserGeneratedQuestionDTO>> getMyQuestions() {
         try {
             String userId = sessionUtil.getCurrentUserId();
-            List<QuestionDTO> questions = questionGeneratorService.getUserGeneratedQuestions(userId);
+            List<UserGeneratedQuestionDTO> questions = userGeneratedQuestionService.getUserQuestions(userId);
             return ResponseEntity.ok(questions);
         } catch (UnauthorizedException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
