@@ -204,22 +204,32 @@ const DashBoardPanel = () => {
                         <CardContent className='mt-4'>
                             <ul>
                                 {MistakeWord.map((word) => (
-                                    <li key={word.id} className='flex flex-row items-center justify-between border-b-2 border-gray-300 mb-4 pb-4'>
-                                        <p className='font-bold hover:scale-125 transition-all duration-300 cursor-pointer' style={{ userSelect: 'none' }}>{word.word}</p>
-                                        <p className='text-sm text-gray-500' style={{ userSelect: 'none' }}>{word.percentage}</p>
-                                        <p style={{ userSelect: 'none' }}>{word.meaning}</p>
+                                    <li key={word.id}
+                                        className='grid grid-cols-[2fr_1fr_2fr] gap-4 border-b-2 border-gray-300 mb-4 pb-4'>
+                                        <p className='font-bold hover:scale-125 transition-all duration-300 cursor-pointer truncate text-left'
+                                           style={{userSelect: 'none'}}>
+                                            {word.word}
+                                        </p>
+                                        <p className='text-sm text-gray-500 text-center'
+                                           style={{userSelect: 'none'}}>
+                                            {word.percentage}
+                                        </p>
+                                        <p className='truncate text-right'
+                                           style={{userSelect: 'none'}}>
+                                            {word.meaning}
+                                        </p>
                                     </li>
                                 ))}
                             </ul>
                         </CardContent>
                         <CardFooter className='flex flex-row justify-end'>
-                            <CardDescription style={{ cursor: 'pointer' }}>
+                            <CardDescription style={{cursor: 'pointer'}}>
                                 더보기 {'>'}
                             </CardDescription>
                         </CardFooter>
                     </Card>
-                    <CustomLineChart className='w-full h-full' />
-                    <CustomRadicalChart className='w-full h-full' />
+                    <CustomLineChart className='w-full h-full'/>
+                    <CustomRadicalChart className='w-full h-full'/>
                 </div>
             </div>
         </div>
