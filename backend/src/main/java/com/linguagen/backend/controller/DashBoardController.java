@@ -1,6 +1,7 @@
 package com.linguagen.backend.controller;
 
 import com.linguagen.backend.dto.DailyPlayCountDto;
+import com.linguagen.backend.dto.IncorrectTypePercentageDto;
 import com.linguagen.backend.dto.LatestStudyInfoDto;
 import com.linguagen.backend.service.DashBoardService;
 import com.linguagen.backend.service.StudentAnswerService;
