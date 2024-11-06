@@ -1,16 +1,15 @@
 package com.linguagen.backend.service;
 
 import com.linguagen.backend.dto.OpenAIPromptDTO;
-import com.linguagen.backend.dto.QuestionDTO;
 import com.linguagen.backend.dto.QuestionGenerationRequestDTO;
-import com.linguagen.backend.entity.Question;
-import com.linguagen.backend.entity.Choices;
-import com.linguagen.backend.entity.UserGeneratedQuestion;
+import com.linguagen.backend.dto.UserGeneratedQuestionDTO;
+import com.linguagen.backend.entity.*;
 import com.linguagen.backend.enums.QuestionType;
 import com.linguagen.backend.exception.QuestionParsingException;
-import com.linguagen.backend.repository.QuestionRepository;
+import com.linguagen.backend.exception.ResourceNotFoundException;
 import com.linguagen.backend.repository.UserGeneratedQuestionRepository;
-import jakarta.annotation.PostConstruct;
+import com.linguagen.backend.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,26 +24,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import lombok.Getter;
-import lombok.AllArgsConstructor;
-
 import static java.util.Map.entry;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class QuestionGeneratorService {
-    private final OpenAIService openAIService;
-    private final QuestionRepository questionRepository;
+public class UserGeneratedQuestionService {
     private final UserGeneratedQuestionRepository userGeneratedQuestionRepository;
-
-
-    @PostConstruct
-    private void initialize() {
-        // 서비스 시작 시 마지막 인덱스 로깅
-        Long lastIdx = questionRepository.findLastQuestionIdx();
-        log.info("Last question index in database: {}", lastIdx);
-    }
+    private final UserRepository userRepository;
+    private final OpenAIService openAIService;
 
     // CEFR 레벨 매핑 초기화
     private static final Map<String, String> TIER_TO_CEFR = Map.ofEntries(
@@ -72,94 +60,75 @@ public class QuestionGeneratorService {
     );
 
     @Transactional
-    public void generateQuestions(QuestionGenerationRequestDTO request, String userId) {
+    public void generateQuestion(QuestionGenerationRequestDTO request, String userId) {
         log.debug("Starting question generation for request: {} by user: {}", request, userId);
 
-        // 현재 데이터베이스의 마지막 인덱스 확인
-        Long lastIdx = questionRepository.findLastQuestionIdx();
-        if (lastIdx < 5040) {
-            lastIdx = 5040L;
-        }
-        log.info("Starting question generation from index: {}", lastIdx + 1);
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         String tierString = String.format("%s %d티어", request.getGrade(), request.getTier());
-        String questionFormat = QuestionType.isWritingSpeakingType(request.getDetailType()) ?
-            "short-answer" : determineQuestionFormat(request.getQuestionType(), request.getDetailType());
 
-        try {
-            OpenAIPromptDTO prompt = createPrompt(
-                request.getTopic(),
-                tierString,
-                request.getQuestionType(),
-                request.getDetailType(),
-                questionFormat
-            );
+        List<UserGeneratedQuestion> generatedQuestions = new ArrayList<>();
+        List<Exception> errors = new ArrayList<>();
 
-            String response = openAIService.getCompletion(prompt.getPrompt());
-            Question question = parseResponse(response, prompt, tierString);
-            Question savedQuestion = questionRepository.save(question);
+        for (int i = 0; i < request.getCount(); i++) {
+            try {
+                String questionFormat = QuestionType.isWritingSpeakingType(request.getDetailType()) ?
+                    "short-answer" : determineQuestionFormat(request.getQuestionType(), request.getDetailType());
 
-            // 사용자 생성 문제 연결 정보 저장
-            UserGeneratedQuestion userQuestion = new UserGeneratedQuestion();
-            userQuestion.setUserId(userId);
-            userQuestion.setQuestion(savedQuestion);
-            userGeneratedQuestionRepository.save(userQuestion);
+                OpenAIPromptDTO prompt = createPrompt(
+                    request.getTopic(),
+                    tierString,
+                    request.getQuestionType(),
+                    request.getDetailType(),
+                    questionFormat
+                );
 
-            log.info("Generated question with ID: {} for user: {}", savedQuestion.getIdx(), userId);
-        } catch (Exception e) {
-            log.error("Error generating question for user: {}", userId, e);
-            throw new QuestionParsingException("Failed to generate question: " + e.getMessage());
+                String response = openAIService.getCompletion(prompt.getPrompt());
+
+                UserGeneratedQuestion question = new UserGeneratedQuestion();
+                question.setUserId(user);
+                setQuestionProperties(question, prompt, response, tierString);
+
+                UserGeneratedQuestion savedQuestion = userGeneratedQuestionRepository.save(question);
+                generatedQuestions.add(savedQuestion);
+
+                log.info("Generated question {} of {}, ID: {}", (i + 1), request.getCount(), savedQuestion.getIdx());
+
+            } catch (Exception e) {
+                log.error("Error generating question {} of {}", (i + 1), request.getCount(), e);
+                errors.add(e);
+            }
+        }
+
+        // 결과 요약 로깅
+        log.info("Question generation completed. Successful: {}, Failed: {}",
+            generatedQuestions.size(), errors.size());
+
+        // 모든 문제 생성이 실패한 경우
+        if (generatedQuestions.isEmpty() && !errors.isEmpty()) {
+            throw new QuestionParsingException("Failed to generate any questions. First error: " +
+                errors.get(0).getMessage());
         }
     }
 
-    // 새로운 메서드 추가
-    public List<QuestionDTO> getUserGeneratedQuestions(String userId) {
-        List<UserGeneratedQuestion> userQuestions =
-            userGeneratedQuestionRepository.findByUserIdWithQuestions(userId);
+    private void setQuestionProperties(UserGeneratedQuestion question, OpenAIPromptDTO prompt,
+                                       String response, String tierString) {
+        question.setType(prompt.getQuestionType());
+        question.setDetailType(prompt.getDetailType());
+        question.setInterest(prompt.getTopic());
+        question.setQuestionFormat(Question.QuestionFormat.valueOf(
+            prompt.getQuestionFormat().toUpperCase().replace("-", "_")));
 
-        return userQuestions.stream()
-            .map(ugq -> convertToDTO(ugq.getQuestion()))
-            .collect(Collectors.toList());
+        TierInfo tierInfo = parseTier(tierString);
+        question.setDiffGrade(tierInfo.getGrade());
+        question.setDiffTier(tierInfo.getTier());
+
+        extractContent(response, question);
     }
 
-    // convertToDTO 메서드 추가
-    private QuestionDTO convertToDTO(Question question) {
-        if (question == null) {
-            return null;
-        }
-
-        QuestionDTO dto = new QuestionDTO();
-        dto.setIdx(question.getIdx());
-        dto.setType(question.getType());
-        dto.setDetailType(question.getDetailType());
-        dto.setInterest(question.getInterest());
-        dto.setDiffGrade(question.getDiffGrade());
-        dto.setDiffTier(question.getDiffTier());
-        dto.setQuestionFormat(question.getQuestionFormat());
-        dto.setPassage(question.getPassage());
-        dto.setQuestion(question.getQuestion());
-        dto.setCorrectAnswer(question.getCorrectAnswer());
-        dto.setExplanation(question.getExplanation());
-
-        if (question.getChoices() != null && !question.getChoices().isEmpty()) {
-            List<QuestionDTO.ChoicesDTO> choicesDTOs = question.getChoices().stream()
-                .map(choice -> {
-                    QuestionDTO.ChoicesDTO choiceDTO = new QuestionDTO.ChoicesDTO();
-                    choiceDTO.setIdx(choice.getIdx());
-                    choiceDTO.setChoiceLabel(choice.getChoiceLabel());
-                    choiceDTO.setChoiceText(choice.getChoiceText());
-                    return choiceDTO;
-                })
-                .collect(Collectors.toList());
-            dto.setChoices(choicesDTOs);
-        }
-
-        return dto;
-    }
-
-
-    private Question parseResponse(String response, OpenAIPromptDTO prompt, String tier) {
-        Question question = new Question();
+    private UserGeneratedQuestion parseResponse(String response, OpenAIPromptDTO prompt, String tier) {
+        UserGeneratedQuestion question = new UserGeneratedQuestion();
 
         // 기본 정보 설정
         question.setType(prompt.getQuestionType());
@@ -178,7 +147,7 @@ public class QuestionGeneratorService {
         return question;
     }
 
-    private void extractContent(String response, Question question) {
+    private void extractContent(String response, UserGeneratedQuestion question) {
         // 지문 추출
         Matcher passageMatcher = Pattern.compile("지문:(.*?)(?=질문:)", Pattern.DOTALL).matcher(response);
         if (passageMatcher.find()) {
@@ -208,68 +177,62 @@ public class QuestionGeneratorService {
         }
     }
 
-    private void extractMultipleChoiceContent(String response, Question question) {
-        log.debug("Starting to extract multiple choice content");
-        log.debug("Response content: {}", response);
 
-        // "보기:" 섹션을 먼저 찾기
-        String choicesSection = "";
+    private void extractMultipleChoiceContent(String response, UserGeneratedQuestion question) {
+        log.debug("Starting to extract multiple choice content");
+
+        // "보기:" 섹션 찾기
         Pattern choicesSectionPattern = Pattern.compile("보기:.*?(?=정답:|$)", Pattern.DOTALL);
         Matcher sectionMatcher = choicesSectionPattern.matcher(response);
-        if (sectionMatcher.find()) {
-            choicesSection = sectionMatcher.group();
-            log.debug("Found choices section: {}", choicesSection);
-        } else {
-            log.error("Could not find choices section in response");
+        if (!sectionMatcher.find()) {
             throw new QuestionParsingException("No choices section found in response");
         }
 
+        String choicesSection = sectionMatcher.group();
+
         // 개별 선택지 추출
-        List<Choices> choicesList = new ArrayList<>();
         Pattern choicesPattern = Pattern.compile("([A-D])\\s*[.)]\\s*([^A-D]*?)(?=[A-D]\\s*[.)]|$)", Pattern.DOTALL);
         Matcher choicesMatcher = choicesPattern.matcher(choicesSection);
 
+        List<UserGeneratedQuestionChoice> choicesList = new ArrayList<>();
         while (choicesMatcher.find()) {
             String label = choicesMatcher.group(1).trim();
             String text = cleanText(choicesMatcher.group(2));
 
-            log.debug("Extracted choice - Label: {}, Text: {}", label, text);
-
-            Choices choice = new Choices();
+            UserGeneratedQuestionChoice choice = new UserGeneratedQuestionChoice();
             choice.setChoiceLabel(label);
             choice.setChoiceText(text);
-            choice.setQuestion(question);
+            choice.setUserGeneratedQuestion(question);
             choicesList.add(choice);
+
+            log.debug("Extracted choice - Label: {}, Text: {}", label, text);
         }
 
-        // 선택지 검증
+        validateAndAddChoices(question, choicesList);
+        extractAndSetCorrectAnswer(response, question);
+    }
+
+    private void validateAndAddChoices(UserGeneratedQuestion question, List<UserGeneratedQuestionChoice> choicesList) {
         if (choicesList.size() != 4) {
-            log.error("Invalid number of choices: {}. Expected: 4", choicesList.size());
-            log.debug("Current choices: {}", choicesList);
             throw new QuestionParsingException("Invalid number of choices: " + choicesList.size());
         }
 
-        // 선택지 순서 확인 및 설정
         String[] expectedLabels = {"A", "B", "C", "D"};
         for (int i = 0; i < choicesList.size(); i++) {
-            Choices choice = choicesList.get(i);
+            UserGeneratedQuestionChoice choice = choicesList.get(i);
             if (!choice.getChoiceLabel().equals(expectedLabels[i])) {
-                log.error("Choice label mismatch at position {}. Expected: {}, Found: {}",
-                    i, expectedLabels[i], choice.getChoiceLabel());
                 throw new QuestionParsingException("Invalid choice label sequence");
             }
             question.addChoice(choice);
         }
+    }
 
-        // 정답 추출
+    private void extractAndSetCorrectAnswer(String response, UserGeneratedQuestion question) {
         Pattern answerPattern = Pattern.compile("정답:\\s*([A-D])", Pattern.DOTALL);
         Matcher answerMatcher = answerPattern.matcher(response);
         if (answerMatcher.find()) {
-            String answer = answerMatcher.group(1).trim();
-            question.setCorrectAnswer(answer);
-            log.debug("Set correct answer: {}", answer);
+            question.setCorrectAnswer(answerMatcher.group(1).trim());
         } else {
-            log.error("No correct answer found in response");
             throw new QuestionParsingException("No correct answer found");
         }
     }
@@ -303,6 +266,7 @@ public class QuestionGeneratorService {
         return new TierInfo(gradeMap.get(grade), tier);
     }
 
+
     private Question.QuestionFormat getQuestionFormat(String format) {
         return format.equals("multiple-choice") ?
             Question.QuestionFormat.MULTIPLE_CHOICE :
@@ -317,6 +281,43 @@ public class QuestionGeneratorService {
             .replaceAll("\\s+", " ")
             .replaceAll("^\\s*[.)]\\s*", "") // 시작 부분의 점이나 괄호 제거
             .trim();
+    }
+
+    public List<UserGeneratedQuestionDTO> getUserQuestions(String userId) {
+        List<UserGeneratedQuestion> questions = userGeneratedQuestionRepository.findByUserIdWithChoices(userId);
+        return questions.stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+
+    private UserGeneratedQuestionDTO convertToDTO(UserGeneratedQuestion question) {
+        UserGeneratedQuestionDTO dto = new UserGeneratedQuestionDTO();
+        dto.setIdx(question.getIdx());
+        dto.setUserId(question.getUserId().getId());
+        dto.setType(question.getType());
+        dto.setDetailType(question.getDetailType());
+        dto.setInterest(question.getInterest());
+        dto.setDiffGrade(question.getDiffGrade());
+        dto.setDiffTier(question.getDiffTier());
+        dto.setQuestionFormat(question.getQuestionFormat());
+        dto.setPassage(question.getPassage());
+        dto.setQuestion(question.getQuestion());
+        dto.setCorrectAnswer(question.getCorrectAnswer());
+        dto.setExplanation(question.getExplanation());
+        dto.setCreatedAt(question.getCreatedAt());
+
+        if (question.getChoices() != null) {
+            List<UserGeneratedQuestionDTO.ChoiceDTO> choiceDTOs = question.getChoices().stream()
+                .map(choice -> new UserGeneratedQuestionDTO.ChoiceDTO(
+                    choice.getIdx(),
+                    choice.getChoiceLabel(),
+                    choice.getChoiceText()
+                ))
+                .collect(Collectors.toList());
+            dto.setChoices(choiceDTOs);
+        }
+
+        return dto;
     }
 
     private OpenAIPromptDTO createPrompt(String topic, String tier, String questionType,
