@@ -3,6 +3,7 @@ package com.linguagen.backend.controller;
 import com.linguagen.backend.dto.DailyPlayCountDto;
 import com.linguagen.backend.dto.LatestStudyInfoDto;
 import com.linguagen.backend.service.DashBoardService;
+import com.linguagen.backend.service.StudentAnswerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +15,11 @@ import java.util.List;
 public class DashBoardController {
 
     private final DashBoardService dashBoardService;
+    private final StudentAnswerService studentAnswerService;
 
-    public DashBoardController(DashBoardService dashBoardService) {
+    public DashBoardController(DashBoardService dashBoardService, StudentAnswerService studentAnswerService) {
         this.dashBoardService = dashBoardService;
+        this.studentAnswerService = studentAnswerService;
     }
 
     @GetMapping("/latest/{studentId}")  // 엔드포인트의 변수명 변경
@@ -74,8 +77,18 @@ public class DashBoardController {
         public void setStudiedThisWeek(boolean studiedThisWeek) {
             this.studiedThisWeek = studiedThisWeek;
         }
+    }
 
+    // 자주 틀린 문제 유형과 비율 반환 API
+    @GetMapping("/incorrect-type-percentage/{studentId}")
+    public ResponseEntity<List<IncorrectTypePercentageDto>> getIncorrectTypePercentage(@PathVariable("studentId") String studentId) {
+        List<IncorrectTypePercentageDto> incorrectTypePercentage = dashBoardService.getIncorrectTypePercentage(studentId);
 
+        if (incorrectTypePercentage.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        return ResponseEntity.ok(incorrectTypePercentage);
     }
 
 }
