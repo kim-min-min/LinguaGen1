@@ -39,6 +39,8 @@ function ProfileCard() {
   const [userGrade, setUserGrade] = useState(null);
   const [userGradeString, setUserGradeString] = useState(null);
   const [userTier, setUserTier] = useState(null);
+  const [profileImagePath, setProfileImagePath] = useState(null);
+  const BASE_URL = "http://localhost:8085"; //
 
   const gradeNames = {
     1: "Bronze",
@@ -92,6 +94,9 @@ function ProfileCard() {
           setUserGrade(numericGrade);
           setUserGradeString(gradeNames[numericGrade] || "알 수 없음");
           setUserTier(gradeResponse.data.tier);
+
+          const urlResponse = await axios.get(`http://localhost:8085/api/users/picture/${userData.id}`, { withCredentials: true });
+          setProfileImagePath(urlResponse.data.profileImageUrl); // DB에서 불러온 상대 경로 설정
 
           // 피로도 정보 가져오기 (API 엔드포인트는 실제 구현에 맞게 수정 필요)
           const fatigueResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/users/fatigue/${userData.id}`, { withCredentials: true });
@@ -238,7 +243,7 @@ function ProfileCard() {
         justifyContent: "center",
       }}>
         <Avatar className="mr-12 w-20 h-20">
-          <AvatarImage src="https://github.com/shadcn.png" />
+          <AvatarImage src={profileImagePath ? `${BASE_URL}${profileImagePath}` : ""} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <div className="mr-1 flex flex-col gap-4">
@@ -257,9 +262,9 @@ function ProfileCard() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="w-full">
-                    <Progress 
-                      value={fatigue} 
-                      className="h-4 w-full bg-gray-200" 
+                    <Progress
+                      value={fatigue}
+                      className="h-4 w-full bg-gray-200"
                       indicatorClassName="bg-red-500"
                       style={{
                         borderRadius: 0,
