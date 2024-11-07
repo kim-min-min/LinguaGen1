@@ -125,7 +125,11 @@ const useStore = create((set, get) => ({
     }, 1000);
   },
 
-
+  fatigue: 0,
+  setFatigue: (value) => set({ fatigue: value }),
+  increaseFatigue: (amount) => set((state) => ({ 
+    fatigue: Math.min(state.fatigue + amount, 100) // 최대 100%를 넘지 않도록
+  })),
 
 }));
 
