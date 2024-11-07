@@ -2,7 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Header from './Header.jsx';
 import _ from 'lodash';
-import { ChevronUp, ChevronsUpDown } from 'lucide-react';
+import { ChevronUp, ChevronsUpDown, ChevronDown } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // 애니메이션과 스타일 컴포넌트 정의
 const fadeIn = keyframes`
@@ -107,6 +113,32 @@ const RankingPage = () => {
         6: 'Challenger'
     };
 
+    const [selectedGrade, setSelectedGrade] = useState('전체');
+
+    // 등급 필터링 함수 수정
+    const filterByGrade = (grade) => {
+        setSelectedGrade(grade);
+        if (grade === '전체') {
+            switch (activePanel) {
+                case 'weeklyRanking':
+                    setFilteredData(weeklyRankingData);
+                    setDisplayedData(weeklyRankingData.slice(0, itemsPerPage));
+                    break;
+                case 'personalRanking':
+                    setFilteredData(personalRankingData);
+                    setDisplayedData(personalRankingData.slice(0, itemsPerPage));
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            const currentData = activePanel === 'weeklyRanking' ? weeklyRankingData : personalRankingData;
+            const filtered = currentData.filter(item => gradeToTier[item.grade] === grade);
+            setFilteredData(filtered);
+            setDisplayedData(filtered.slice(0, itemsPerPage));
+        }
+    };
+
     // 정렬 처리 함수
     const handleSort = (key) => {
         let direction = 'asc';
@@ -167,7 +199,7 @@ const RankingPage = () => {
                     setDisplayedData(data.slice(0, itemsPerPage));
                 }
             } catch (err) {
-                setError('데이터를 불러오는데 실패했습니다.');
+                setError('데이터를 불러오는데 실패습니다.');
                 console.error('Fetch error:', err);
             }
         };
@@ -416,7 +448,24 @@ const RankingPage = () => {
                                         className={headerStyle}
                                         onClick={() => handleSort('grade')}
                                     >
-                                        등급 {getSortIcon('grade')}
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger className="flex items-center justify-between w-full">
+                                                등급: {selectedGrade} <ChevronDown className="ml-2" size={16} />
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuItem onClick={() => filterByGrade('전체')}>
+                                                    전체
+                                                </DropdownMenuItem>
+                                                {tierOrder.map((tier) => (
+                                                    <DropdownMenuItem 
+                                                        key={tier} 
+                                                        onClick={() => filterByGrade(tier)}
+                                                    >
+                                                        {tier}
+                                                    </DropdownMenuItem>
+                                                ))}
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </th>
                                     <th
                                         className={headerStyle}
@@ -433,17 +482,19 @@ const RankingPage = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {displayedData.map((item, index) => (
-                                    <tr key={item.id || index} className="border-b border-gray-200 hover:bg-gray-50">
-                                        <td className="p-3">{index + 1}</td>
-                                        <td className="p-3">
-                                            {activePanel === 'groupRanking' ? item.groupName : item.userId}
-                                        </td>
-                                        <td className="p-3">{gradeToTier[item.grade] || 'Unknown'}</td>
-                                        <td className="p-3">{`${item.tier} Tier`}</td>
-                                        <td className="p-3">{`${item.exp} XP`}</td>
-                                    </tr>
-                                ))}
+                                {displayedData
+                                    .filter(item => selectedGrade === '전체' || gradeToTier[item.grade] === selectedGrade)
+                                    .map((item, index) => (
+                                        <tr key={item.id || index} className="border-b border-gray-200 hover:bg-gray-50">
+                                            <td className="p-3">{index + 1}</td>
+                                            <td className="p-3">
+                                                {activePanel === 'groupRanking' ? item.groupName : item.userId}
+                                            </td>
+                                            <td className="p-3">{gradeToTier[item.grade] || 'Unknown'}</td>
+                                            <td className="p-3">{`${item.tier} Tier`}</td>
+                                            <td className="p-3">{`${item.exp} XP`}</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                             {loading && (
