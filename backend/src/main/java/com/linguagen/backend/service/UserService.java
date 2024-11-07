@@ -9,9 +9,15 @@ import com.linguagen.backend.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -115,4 +121,42 @@ public class UserService {
         pointLogRepository.save(pointLog);
     }
 
+    //프로필 이미지 url 반환
+    public String getUserPicture(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getPicture();
+    }
+
+    //프로필 이미지 업로드
+    public String uploadProfileImage(String userId, MultipartFile file) throws IOException {
+
+        // 프로젝트의 절대 경로를 가져와서 static/uploads에 저장
+        String projectDir = System.getProperty("user.dir");
+        String uploadDir = projectDir + "/backend/src/main/resources/static/uploads";
+
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path filePath = Paths.get(uploadDir, fileName);
+
+        try {
+            // 디렉토리가 존재하지 않으면 생성
+            Files.createDirectories(filePath.getParent());
+            file.transferTo(filePath.toFile());
+
+            // 업로드된 파일의 상대 경로 생성
+            String fileUrl = "/uploads/" + fileName;
+
+            // userId로 사용자 조회 후 프로필 이미지 URL 업데이트
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+
+            user.setPicture(fileUrl);
+            userRepository.save(user); // URL 업데이트된 사용자 정보 저장
+            return fileUrl; // 저장된 파일의 URL 반환
+
+        } catch (IOException e) {
+            e.printStackTrace(); // 예외 메시지를 서버 로그에 출력
+            throw new IOException("파일 업로드 실패: " + e.getMessage(), e);
+        }
+    }
 }

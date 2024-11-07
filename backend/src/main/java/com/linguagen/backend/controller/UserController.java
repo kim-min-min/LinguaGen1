@@ -13,9 +13,12 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -152,6 +155,32 @@ public class UserController {
             return ResponseEntity.ok("전화번호가 성공적으로 변경되었습니다.");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("전화번호 변경에 실패했습니다.");
+        }
+    }
+
+    // 특정 유저의 picture 값을 반환하는 API 엔드포인트
+    @GetMapping("/picture/{id}")
+    public ResponseEntity<Map<String, String>> getUserPicture(@PathVariable("id") String id) {
+        try {
+            String pictureUrl = userService.getUserPicture(id);
+            Map<String, String> response = Map.of("profileImageUrl", pictureUrl); // JSON 객체로 반환
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+    }
+
+    //이미지 업로드 기능
+    @PostMapping("/upload-profile-image/{id}")
+    public ResponseEntity<String> uploadProfileImage(
+            @PathVariable String id,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            String imageUrl = userService.uploadProfileImage(id,file);
+            return ResponseEntity.ok(imageUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 업로드 실패: " + e.getMessage());
         }
     }
 }
