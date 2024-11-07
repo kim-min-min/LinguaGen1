@@ -17,7 +17,15 @@ import {
 } from "@/components/ui/tooltip"
 import axios from "axios";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import styled from 'styled-components';
 
+// 에러 메시지 스타일 컴포넌트 추가
+const ErrorMessage = styled.p`
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  text-align: center;
+`;
 
 function LoginPage() {
 
@@ -49,7 +57,7 @@ function LoginPage() {
       );
 
       if (response.status === 200) {
-        alert('로그인 성공!');
+        setError(''); // 에러 메시지 초기화
         navigate('/main'); // 메인 페이지로 이동
       } else {
         setError('Google 로그인 처리 중 문제가 발생했습니다.');
@@ -80,6 +88,7 @@ function LoginPage() {
         sessionStorage.setItem('tell', userInfo.tell);
         sessionStorage.setItem('points', userInfo.points);
 
+        setError(''); // 에러 메시지 초기화
         navigate('/main');
       } else {
         setError('아이디 또는 비밀번호가 잘못되었습니다.');
@@ -126,7 +135,7 @@ function LoginPage() {
                   <div className="grid gap-2 text-center">
                     <h1 className="text-3xl font-bold">로그인</h1>
                     <p className="text-sm text-gray-500">
-                      {error && <span className="text-red-500">{error}</span>}
+                      {error && <ErrorMessage>{error}</ErrorMessage>}
                     </p>
                   </div>
                   <form onSubmit={handleLogin} className="grid gap-4">
@@ -352,6 +361,7 @@ function SignupNext({ formData, onPreviousSignup }) {
   const navigate = useNavigate();
   const [sliderValue, setSliderValue] = useState(33); // 초기 값 33
   const [selectedInterests, setSelectedInterests] = useState([]); // 관심사 선택 상태
+  const [error, setError] = useState('');
 
   // 사용자가 볼 등급 라벨을 반환하는 함수
   const getTierLabel = () => {
@@ -452,7 +462,7 @@ function SignupNext({ formData, onPreviousSignup }) {
 
           if (interestResponse.status !== 201) {
             console.warn('관심사 저장 실패:', interestResponse.data);
-            alert('회원가입 중 관심사 저장에 실패했습니다.');
+            setError('회원가입 중 관심사 저장에 실패했습니다.');
             return;
           }
         } else {
@@ -478,22 +488,22 @@ function SignupNext({ formData, onPreviousSignup }) {
           navigate('/main'); // 메인 페이지로 이동
         } else {
           console.warn('티어 저장 실패:', tierResponse.data);
-          alert('회원가입 중 티어 저장에 실패했습니다.');
+          setError('회원가입 중 티어 저장에 실패했습니다.');
         }
       } else {
         console.warn('회원가입 실패:', userResponse.data);
-        alert('회원가입에 실패했습니다.');
+        setError('회원가입에 실패했습니다.');
       }
     } catch (error) {
       if (error.response) {
         console.error('서버 오류 발생:', error.response.data);
-        alert(`회원가입 실패: ${error.response.data.message || '오류가 발생했습니다.'}`);
+        setError(`회원가입 실패: ${error.response.data.message || '오류가 발생했습니다.'}`);
       } else if (error.request) {
         console.error('서버 응답 없음:', error.request);
-        alert('서버와 통신할 수 없습니다. 나중에 다시 시도해주세요.');
+        setError('서버와 통신할 수 없습니다. 나중에 다시 시도해주세요.');
       } else {
         console.error('요청 설정 중 오류 발생:', error.message);
-        alert('회원가입 요청 처리 중 문제가 발생했습니다.');
+        setError('회원가입 요청 처리 중 문제가 발생했습니다.');
       }
     }
   };
@@ -577,6 +587,7 @@ function SignupNext({ formData, onPreviousSignup }) {
           </div>
         </div>
       </div>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
     </div>
   );
 }

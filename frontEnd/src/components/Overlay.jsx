@@ -25,11 +25,11 @@ function Overlay() {
           wrapper="h3"
           cursor={true}
           repeat={Infinity}  // 무한 반복
-          className="hello InterBold"
+          className="press-start-2p-regular"
           style={{
             margin: 0,
             padding: 0,
-            fontSize: '9em',
+            fontSize: '4em',
             fontWeight: 500,
             letterSpacing: '-0.05em',
             background: 'linear-gradient(30deg, #c850c0, #ffcc70)',

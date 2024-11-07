@@ -125,9 +125,9 @@ export const LandingPage = () => {
           wrapper="h2"
           cursor={true}
           repeat={Infinity}
-          className="text-white text-2xl font-bold"
+          className="text-white text-2xl press-start-2p-regular"
           style={{
-            fontSize: '64px',
+            fontSize: '1.7em',
             background: 'linear-gradient(30deg, #c850c0, #ffcc70)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
