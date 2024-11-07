@@ -595,7 +595,7 @@ const MainContainer = ({ selectedGame }) => {
 
               <div ref={containerRef} className="w-full h-[calc(100vh-200px)] relative flex">
                 {/* 메인 컨텐츠 영역 */}
-                <div className="flex-1 p-4 overflow-hidden">
+                <div className="flex-1 p-4 overflow-hidden h-auto">
                   <SidebarProvider>
                     <Sidebar variant="inset">
                       <SidebarHeader>
