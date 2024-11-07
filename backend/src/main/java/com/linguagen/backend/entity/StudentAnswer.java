@@ -30,7 +30,7 @@ public class StudentAnswer {
     private String studentAnswer;
 
     @Column(name = "is_correct")
-    private Boolean isCorrect;
+    private int isCorrect;
 
     @Column(name = "score")
     private Integer score;

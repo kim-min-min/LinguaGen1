@@ -25,7 +25,7 @@ public interface StudentAnswerRepository extends JpaRepository<StudentAnswer, Lo
     Long countByStudentId(String studentId);
 
     // 특정 회원의 평균 정답률을 계산하는 메서드
-    @Query("SELECT (SUM(CASE WHEN s.isCorrect = true THEN 1 ELSE 0 END) * 1.0 / COUNT(s)) "
+    @Query("SELECT (SUM(CASE WHEN s.isCorrect = 1 THEN 1 ELSE 0 END) * 1.0 / COUNT(s)) "
             + "FROM StudentAnswer s WHERE s.studentId = :studentId")
     Double findAverageCorrectRateByStudentId(@Param("studentId") String studentId);
 
@@ -35,10 +35,28 @@ public interface StudentAnswerRepository extends JpaRepository<StudentAnswer, Lo
     // 틀린 세부 유형 비율 출력
     @Query("SELECT new com.linguagen.backend.dto.IncorrectTypePercentageDto(sa.question.detailType, COUNT(sa)) " +
             "FROM StudentAnswer sa " +
-            "WHERE sa.studentId = :studentId AND sa.isCorrect = false " +
+            "WHERE sa.studentId = :studentId AND sa.isCorrect = 0 " +
             "GROUP BY sa.question.detailType " +
             "ORDER BY COUNT(sa) DESC")
     List<IncorrectTypePercentageDto> findIncorrectDetailTypeCountsByStudentId(@Param("studentId") String studentId);
+
+    // 지난 7일간 정답을 가장 많이 맞춘 사용자 목록을 가져오기
+    @Query("SELECT sa.studentId, COUNT(sa) AS correctAnswers " +
+            "FROM StudentAnswer sa " +
+            "WHERE sa.isCorrect = 1 AND sa.createdAt >= :fromDate AND sa.isCorrect <> 2 " +
+            "GROUP BY sa.studentId " +
+            "ORDER BY correctAnswers DESC")
+    List<Object[]> findTopUsersByCorrectAnswers(LocalDateTime fromDate);
+
+    // 지난 7일간 정답을 가장 많이 맞춘 등급별 사용자 목록을 가져오기
+    @Query("SELECT sa.studentId, g.grade, COUNT(sa) AS correctAnswers, sa.createdAt " +
+            "FROM StudentAnswer sa " +
+            "JOIN User u ON sa.studentId = u.id " +
+            "JOIN Grade g ON u.id = g.userId " +
+            "WHERE sa.isCorrect = 1 AND sa.createdAt >= :fromDate AND sa.isCorrect <> 2 " +
+            "GROUP BY g.grade, sa.studentId, sa.createdAt " +
+            "ORDER BY g.grade, correctAnswers DESC")
+    List<Object[]> findTopUsersByGradeAndCorrectAnswers(LocalDateTime fromDate);
 
 
 }

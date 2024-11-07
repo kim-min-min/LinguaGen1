@@ -16,14 +16,8 @@ import java.util.List;
 public class Question {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "question_sequence")
-    @SequenceGenerator(
-        name = "question_sequence",
-        sequenceName = "question_seq",
-        initialValue = 5041,  // 5040 다음 번호부터 시작
-        allocationSize = 1
-    )
-    @Column(name = "idx", nullable = false, columnDefinition = "int unsigned")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idx", nullable = false)
     private Long idx; // 문제 식별자
 
     @Column(name = "type", nullable = false, length = 50)
