@@ -154,7 +154,7 @@ const RankingPage = () => {
     // 테이블 헤더 스타일
     const headerStyle = "p-3 cursor-pointer hover:bg-gray-100 transition-colors duration-200 select-none";
 
-    useEffect(() => {
+/*    useEffect(() => {
         // 개인 랭킹 데이터 fetch
         const fetchPersonalRanking = async () => {
             try {
@@ -228,7 +228,51 @@ const RankingPage = () => {
             default:
                 break;
         }
+    }, [activePanel]);*/
+
+    // API 호출: 각 랭킹 데이터를 `ranking_log` 테이블에서 가져옴
+    useEffect(() => {
+        const fetchRankingData = async (type, setData, grade) => {
+            try {
+                const response = await fetch(`http://localhost:8085/api/ranking/${type}?grade=0`);
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const data = await response.json();
+                setData(data);
+                if (activePanel === type) {
+                    setFilteredData(data);
+                    setDisplayedData(data.slice(0, itemsPerPage));
+                }
+            } catch (err) {
+                setError('데이터를 불러오는데 실패했습니다.');
+                console.error(`${type} ranking fetch error:`, err);
+            }
+        };
+
+        fetchRankingData('weekly', setWeeklyRankingData);
+        fetchRankingData('personal', setPersonalRankingData);
+        /*fetchRankingData('group', setGroupRankingData);*/
     }, [activePanel]);
+
+    // activePanel이 변경될 때 해당 데이터로 업데이트
+    useEffect(() => {
+        setPage(1);
+        switch (activePanel) {
+            case 'weeklyRanking':
+                setFilteredData(weeklyRankingData);
+                setDisplayedData(weeklyRankingData.slice(0, itemsPerPage));
+                break;
+            case 'personalRanking':
+                setFilteredData(personalRankingData);
+                setDisplayedData(personalRankingData.slice(0, itemsPerPage));
+                break;
+/*            case 'groupRanking':
+                setFilteredData(groupRankingData);
+                setDisplayedData(groupRankingData.slice(0, itemsPerPage));
+                break;*/
+            default:
+                break;
+        }
+    }, [activePanel, weeklyRankingData, personalRankingData/*, groupRankingData*/]);
 
     const handleScroll = (e) => {
         const { scrollTop, clientHeight, scrollHeight } = e.target;
@@ -354,45 +398,52 @@ const RankingPage = () => {
                         >
                             <table className="w-full">
                                 <thead className="sticky top-0 bg-white/80 backdrop-blur-md">
-                                    <tr className="text-left border-b-2 border-gray-300">
-                                        <th 
-                                            className={headerStyle}
-                                            onClick={() => handleSort('rank')}
-                                        >
-                                            순위 {getSortIcon('rank')}
-                                        </th>
-                                        <th 
-                                            className={headerStyle}
-                                            onClick={() => handleSort(activePanel === 'groupRanking' ? 'groupName' : 'userId')}
-                                        >
-                                            {activePanel === 'groupRanking' ? '그룹명' : '아이디'} 
-                                            {getSortIcon(activePanel === 'groupRanking' ? 'groupName' : 'userId')}
-                                        </th>
-                                        <th 
-                                            className={headerStyle}
-                                            onClick={() => handleSort('grade')}
-                                        >
-                                            등급 {getSortIcon('grade')}
-                                        </th>
-                                        <th 
-                                            className={headerStyle}
-                                            onClick={() => handleSort('exp')}
-                                        >
-                                            경험치 {getSortIcon('exp')}
-                                        </th>
-                                    </tr>
+                                <tr className="text-left border-b-2 border-gray-300">
+                                    <th
+                                        className={headerStyle}
+                                        onClick={() => handleSort('rank')}
+                                    >
+                                        순위 {getSortIcon('rank')}
+                                    </th>
+                                    <th
+                                        className={headerStyle}
+                                        onClick={() => handleSort(activePanel === 'groupRanking' ? 'groupName' : 'userId')}
+                                    >
+                                        {activePanel === 'groupRanking' ? '그룹명' : '아이디'}
+                                        {getSortIcon(activePanel === 'groupRanking' ? 'groupName' : 'userId')}
+                                    </th>
+                                    <th
+                                        className={headerStyle}
+                                        onClick={() => handleSort('grade')}
+                                    >
+                                        등급 {getSortIcon('grade')}
+                                    </th>
+                                    <th
+                                        className={headerStyle}
+                                        onClick={() => handleSort('tier')}
+                                    >
+                                        티어 {getSortIcon('tier')}
+                                    </th>
+                                    <th
+                                        className={headerStyle}
+                                        onClick={() => handleSort('exp')}
+                                    >
+                                        경험치 {getSortIcon('exp')}
+                                    </th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    {displayedData.map((item, index) => (
-                                        <tr key={item.id || index} className="border-b border-gray-200 hover:bg-gray-50">
-                                            <td className="p-3">{index + 1}</td>
-                                            <td className="p-3">
-                                                {activePanel === 'groupRanking' ? item.groupName : item.userId}
-                                            </td>
-                                            <td className="p-3">{gradeToTier[item.grade] || 'Unknown'}</td>
-                                            <td className="p-3">{`${item.exp} XP`}</td>
-                                        </tr>
-                                    ))}
+                                {displayedData.map((item, index) => (
+                                    <tr key={item.id || index} className="border-b border-gray-200 hover:bg-gray-50">
+                                        <td className="p-3">{index + 1}</td>
+                                        <td className="p-3">
+                                            {activePanel === 'groupRanking' ? item.groupName : item.userId}
+                                        </td>
+                                        <td className="p-3">{gradeToTier[item.grade] || 'Unknown'}</td>
+                                        <td className="p-3">{`${item.tier} Tier`}</td>
+                                        <td className="p-3">{`${item.exp} XP`}</td>
+                                    </tr>
+                                ))}
                                 </tbody>
                             </table>
                             {loading && (
