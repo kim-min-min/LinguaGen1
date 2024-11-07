@@ -77,7 +77,7 @@ const RankingPage = () => {
     const [personalRankingData, setPersonalRankingData] = useState([]);
     const [groupRankingData, setGroupRankingData] = useState([]);
 
-    const tierOrder = ['Challenger', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
+    const tierOrder = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Challenger'];
 
     const [showScrollTop, setShowScrollTop] = useState(false);
     const tableRef = useRef(null);
@@ -96,6 +96,15 @@ const RankingPage = () => {
         'Gold': 3,
         'Silver': 2,
         'Bronze': 1
+    };
+
+    const gradeToTier = {
+        1: 'Bronze',
+        2: 'Silver',
+        3: 'Gold',
+        4: 'Platinum',
+        5: 'Diamond',
+        6: 'Challenger'
     };
 
     // 정렬 처리 함수
@@ -118,11 +127,9 @@ const RankingPage = () => {
                     aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
             }
             if (key === 'grade') {
-                const aGrade = tierOrder[a.grade - 1];
-                const bGrade = tierOrder[b.grade - 1];
+                // grade 값을 직접 비교 (높은 숫자가 상위 등급)
                 return direction === 'asc' ? 
-                    tierValues[aGrade] - tierValues[bGrade] : 
-                    tierValues[bGrade] - tierValues[aGrade];
+                    (a.grade - b.grade) : (b.grade - a.grade);
             }
             if (key === 'exp') {
                 return direction === 'asc' ? 
@@ -382,7 +389,7 @@ const RankingPage = () => {
                                             <td className="p-3">
                                                 {activePanel === 'groupRanking' ? item.groupName : item.userId}
                                             </td>
-                                            <td className="p-3">{tierOrder[item.grade - 1] || 'Unknown'}</td>
+                                            <td className="p-3">{gradeToTier[item.grade] || 'Unknown'}</td>
                                             <td className="p-3">{`${item.exp} XP`}</td>
                                         </tr>
                                     ))}
