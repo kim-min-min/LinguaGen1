@@ -15,19 +15,22 @@ public class SessionUtil {
     private final HttpSession session;
 
     public String getCurrentUserId() {
-        // 테스트를 위해 임시로 고정된 사용자 ID 반환
-        return "qwer@naver.com";
-
-        /* 실제 운영 코드
         String userId = (String) session.getAttribute("id");
+        // 세션 디버깅을 위한 로그 추가
+        log.debug("Current Session ID: {}", session.getId());
+        log.debug("Session attributes: {}", session.getAttributeNames());
+        log.debug("User ID from session: {}", userId);
+
         if (userId == null) {
+            log.debug("No user ID found in session");
             throw new UnauthorizedException("로그인이 필요한 서비스입니다.");
         }
         return userId;
-        */
     }
 
     public boolean isLoggedIn() {
-        return true;  // 테스트를 위해 항상 true 반환
+        String userId = (String) session.getAttribute("id");
+        log.debug("Checking login status - User ID: {}", userId);
+        return userId != null;
     }
 }
