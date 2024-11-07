@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from "@/components/ui/card.jsx";
 import { Button } from "@components/ui/button";
 import styled from 'styled-components';
@@ -96,13 +96,14 @@ const Slider = styled.div`
 
 const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
     const activeTab = activePanel === 'accountSettings' ? 'profile' : 'notification';
-    const [selectedImage, setSelectedImage] = useState('https://via.placeholder.com/60'); // 기본 이미지 URL
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [phone, setPhone] = useState(sessionStorage.getItem('tell') || '010-0000-0000'); // 상태로 관리
     const [isPhoneDialogOpen, setIsPhoneDialogOpen] = useState(false); // 전화번호 Dialog 상태 관리
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false); // 비밀번호 Dialog 상태
+    const [selectedImage, setSelectedImage] = useState('https://via.placeholder.com/60'); // 기본 이미지 URL
+    const BASE_URL = "http://localhost:8085";
 
 
 
@@ -110,6 +111,26 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
     const nickname = sessionStorage.getItem('nickname') || 'Unknown';
     const email = sessionStorage.getItem('id') || 'example@example.com';
 
+    useEffect(() => {
+        const fetchUserImage = async () => {
+            try {
+                // 서버에서 프로필 이미지 URL 가져오기
+                const response = await axios.get(`${BASE_URL}/api/users/picture/${email}`, {
+                    withCredentials: true,
+                });
+
+                // 서버에서 URL을 받았을 경우 상태 업데이트
+                if (response.data && response.data.profileImageUrl) {
+                    setSelectedImage(`${BASE_URL}${response.data.profileImageUrl}`);
+                }
+            } catch (error) {
+                console.error("프로필 이미지를 가져오는 중 오류 발생:", error);
+                // 오류 발생 시 기본 이미지 유지
+            }
+        };
+
+        fetchUserImage(); // 사용자 이미지 가져오기 함수 호출
+    }, [email, BASE_URL]); // email과 BASE_URL을 의존성 배열에 추가
 
 
 
@@ -176,13 +197,42 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
         document.getElementById('imageInput').click(); // 파일 선택 창 열기
     };
 
-
+    // 이미지 파일 선택 처리
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => setSelectedImage(reader.result);
             reader.readAsDataURL(file);
+        }
+    };
+
+// 이미지 파일 업로드 함수
+    const handleImageUpload = async () => {
+        const fileInput = document.getElementById("imageInput");
+        const file = fileInput.files[0];
+
+        if (file) {
+            const formData = new FormData();
+            formData.append("file", file);
+
+
+            try {
+                const response = await axios.post(`${BASE_URL}/api/users/upload-profile-image/${email}`, formData, {
+                    withCredentials: true
+                });
+
+                if (response.status === 200) {
+                    alert('이미지가 성공적으로 업로드되었습니다.');
+                    sessionStorage.setItem('profileImageUrl', `${BASE_URL}${response.data}`); // 프로필 이미지 URL을 세션에 저장
+                    setSelectedImage(`${BASE_URL}${response.data}`); // 서버에서 받은 이미지 URL 설정
+                } else {
+                    alert('이미지 업로드에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error("이미지 업로드 실패:", error);
+                alert("이미지 업로드 중 오류가 발생했습니다.");
+            }
         }
     };
 
@@ -271,10 +321,14 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                         <input
                                             id="imageInput"
                                             type="file"
-                                            style={{ display: 'none' }}
+                                            style={{display: 'none'}}
                                             accept="image/*"
                                             onChange={handleImageChange}
                                         />
+                                    </div>
+                                    <div className='col-span-2'>
+                                        {/* 이미지 업로드 버튼 추가 */}
+                                        <Button onClick={handleImageUpload}>이미지 업로드</Button>
                                     </div>
                                     <div className='col-span-2'></div>
                                 </div>

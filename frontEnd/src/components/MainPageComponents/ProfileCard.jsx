@@ -37,6 +37,8 @@ function ProfileCard() {
   const [userGrade, setUserGrade] = useState(null);
   const [userGradeString, setUserGradeString] = useState(null);
   const [userTier, setUserTier] = useState(null);
+  const [profileImagePath, setProfileImagePath] = useState(null);
+  const BASE_URL = "http://localhost:8085"; //
 
   const gradeNames = {
     1: "Bronze",
@@ -85,6 +87,9 @@ function ProfileCard() {
           setUserGrade(numericGrade);
           setUserGradeString(gradeNames[numericGrade] || "알 수 없음");
           setUserTier(gradeResponse.data.tier);
+
+          const urlResponse = await axios.get(`http://localhost:8085/api/users/picture/${userData.id}`, { withCredentials: true });
+          setProfileImagePath(urlResponse.data.profileImageUrl); // DB에서 불러온 상대 경로 설정
         } catch (error) {
           console.error('사용자 정보를 가져오는 중 오류 발생:', error);
         }
@@ -224,7 +229,7 @@ function ProfileCard() {
         justifyContent: "center",
       }}>
         <Avatar className="mr-12 w-20 h-20">
-          <AvatarImage src="https://github.com/shadcn.png" />
+          <AvatarImage src={profileImagePath ? `${BASE_URL}${profileImagePath}` : ""} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <div className="mr-4 flex flex-col gap-8">
