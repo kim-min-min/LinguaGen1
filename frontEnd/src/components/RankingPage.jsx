@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Header from './Header.jsx';
 import _ from 'lodash';
-import { ChevronUp } from 'lucide-react';
+import { ChevronUp, ChevronsUpDown } from 'lucide-react';
 
 // 애니메이션과 스타일 컴포넌트 정의
 const fadeIn = keyframes`
@@ -81,6 +81,71 @@ const RankingPage = () => {
 
     const [showScrollTop, setShowScrollTop] = useState(false);
     const tableRef = useRef(null);
+
+    // 정렬 관련 상태 추가
+    const [sortConfig, setSortConfig] = useState({
+        key: null,
+        direction: 'asc'
+    });
+
+    // 등급 순서 매핑 객체 추가
+    const tierValues = {
+        'Challenger': 6,
+        'Diamond': 5,
+        'Platinum': 4,
+        'Gold': 3,
+        'Silver': 2,
+        'Bronze': 1
+    };
+
+    // 정렬 처리 함수
+    const handleSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+
+        const sortedData = [...displayedData].sort((a, b) => {
+            if (key === 'rank') {
+                return direction === 'asc' ? 
+                    (a.rank - b.rank) : (b.rank - a.rank);
+            }
+            if (key === 'userId' || key === 'groupName') {
+                const aValue = activePanel === 'groupRanking' ? a.groupName : a.userId;
+                const bValue = activePanel === 'groupRanking' ? b.groupName : b.userId;
+                return direction === 'asc' ? 
+                    aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+            }
+            if (key === 'grade') {
+                const aGrade = tierOrder[a.grade - 1];
+                const bGrade = tierOrder[b.grade - 1];
+                return direction === 'asc' ? 
+                    tierValues[aGrade] - tierValues[bGrade] : 
+                    tierValues[bGrade] - tierValues[aGrade];
+            }
+            if (key === 'exp') {
+                return direction === 'asc' ? 
+                    (a.exp - b.exp) : (b.exp - a.exp);
+            }
+            return 0;
+        });
+
+        setDisplayedData(sortedData);
+    };
+
+    // 정렬 방향 표시 함수
+    const getSortIcon = (key) => {
+        if (sortConfig.key === key) {
+            return sortConfig.direction === 'asc' ? 
+                <ChevronUp className="inline ml-1" size={16} /> : 
+                <ChevronsUpDown className="inline ml-1" size={16} />;
+        }
+        return <ChevronsUpDown className="inline ml-1" size={16} />;
+    };
+
+    // 테이블 헤더 스타일
+    const headerStyle = "p-3 cursor-pointer hover:bg-gray-100 transition-colors duration-200 select-none";
 
     useEffect(() => {
         // 개인 랭킹 데이터 fetch
@@ -283,17 +348,36 @@ const RankingPage = () => {
                             <table className="w-full">
                                 <thead className="sticky top-0 bg-white/80 backdrop-blur-md">
                                     <tr className="text-left border-b-2 border-gray-300">
-                                        <th className="p-3">순위</th>
-                                        <th className="p-3">
-                                            {activePanel === 'groupRanking' ? '그룹명' : '아이디'}
+                                        <th 
+                                            className={headerStyle}
+                                            onClick={() => handleSort('rank')}
+                                        >
+                                            순위 {getSortIcon('rank')}
                                         </th>
-                                        <th className="p-3">등급</th>
-                                        <th className="p-3">경험치</th>
+                                        <th 
+                                            className={headerStyle}
+                                            onClick={() => handleSort(activePanel === 'groupRanking' ? 'groupName' : 'userId')}
+                                        >
+                                            {activePanel === 'groupRanking' ? '그룹명' : '아이디'} 
+                                            {getSortIcon(activePanel === 'groupRanking' ? 'groupName' : 'userId')}
+                                        </th>
+                                        <th 
+                                            className={headerStyle}
+                                            onClick={() => handleSort('grade')}
+                                        >
+                                            등급 {getSortIcon('grade')}
+                                        </th>
+                                        <th 
+                                            className={headerStyle}
+                                            onClick={() => handleSort('exp')}
+                                        >
+                                            경험치 {getSortIcon('exp')}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {displayedData.map((item, index) => (
-                                        <tr key={item.id || index} className="border-b border-gray-200">
+                                        <tr key={item.id || index} className="border-b border-gray-200 hover:bg-gray-50">
                                             <td className="p-3">{index + 1}</td>
                                             <td className="p-3">
                                                 {activePanel === 'groupRanking' ? item.groupName : item.userId}
