@@ -206,7 +206,8 @@ const MainContainer = ({ selectedGame }) => {
   const [showAnimation, setShowAnimation] = useState(false);
   const [animationPosition, setAnimationPosition] = useState({ x: 0, y: 0 });
   const [isExiting, setIsExiting] = useState(false);
-
+  const [editingRoomId, setEditingRoomId] = useState(null);
+  const [newRoomName, setNewRoomName] = useState('');
 
   // 예시 단어 목록 (실제로는 API나 상태에서 가져와야 합니다)
   const wrongWords = [
@@ -293,7 +294,7 @@ const MainContainer = ({ selectedGame }) => {
       console.error('메시지 전송 오류:', error);
       console.error('Response data:', error.response?.data);
 
-      // 에러 발생 시 사용자에��� 알림
+      // 에러 발생 시 사용자에 알림
       setChatRooms(prev => ({
         ...prev,
         [activeRoomId]: [
@@ -324,14 +325,50 @@ const MainContainer = ({ selectedGame }) => {
       // 백엔드에 대화방 삭제 요청
       await axios.delete(`/api/chat/room/${roomId}`);
 
-      // 프론트엔드 상태에서도 대화 내용 초기화
-      setChatRooms((prevRooms) => ({
-        ...prevRooms,
-        [roomId]: [],
-      }));
+      // 프론트엔드 상태에서 채팅방 완전히 삭제
+      setChatRooms(prevRooms => {
+        const newRooms = { ...prevRooms };
+        delete newRooms[roomId];
+        return newRooms;
+      });
+
+      // 삭제된 채팅방이 현재 활성화된 채팅방이었다면
+      if (activeRoomId === roomId) {
+        // 다른 채팅방이 있으면 첫 번째 채팅방으로, 없으면 'New Chat'으로 설정
+        const remainingRooms = Object.keys(chatRooms).filter(id => id !== roomId);
+        if (remainingRooms.length > 0) {
+          setActiveRoomId(remainingRooms[0]);
+        } else {
+          // 모든 채팅방이 삭제되었을 때 'New Chat' 생성
+          setChatRooms(prev => ({
+            'New Chat': []
+          }));
+          setActiveRoomId('New Chat');
+        }
+      }
     } catch (error) {
       console.error("대화 삭제 오류:", error);
     }
+  };
+
+  const handleRenameRoom = (roomId, newName) => {
+    if (!newName.trim()) return;
+    
+    setChatRooms(prev => {
+      const messages = prev[roomId];
+      const newRooms = { ...prev };
+      delete newRooms[roomId];
+      return {
+        ...newRooms,
+        [newName]: messages
+      };
+    });
+    
+    if (activeRoomId === roomId) {
+      setActiveRoomId(newName);
+    }
+    setEditingRoomId(null);
+    setNewRoomName('');
   };
 
   useEffect(() => {
@@ -571,9 +608,26 @@ const MainContainer = ({ selectedGame }) => {
                             {Object.keys(chatRooms).map((roomId) => (
                                 <SidebarMenuItem key={roomId}>
                                   <SidebarMenuButton asChild onClick={() => handleRoomSelect(roomId)}>
-                                    <a href="#">
+                                    <a href="#" className="flex items-center">
                                       <BotMessageSquare className="h-4 w-4 mr-2" />
-                                      <span>{roomId}</span>
+                                      {editingRoomId === roomId ? (
+                                        <input
+                                          type="text"
+                                          value={newRoomName}
+                                          onChange={(e) => setNewRoomName(e.target.value)}
+                                          onBlur={() => handleRenameRoom(roomId, newRoomName)}
+                                          onKeyPress={(e) => {
+                                            if (e.key === 'Enter') {
+                                              handleRenameRoom(roomId, newRoomName);
+                                            }
+                                          }}
+                                          onClick={(e) => e.stopPropagation()}
+                                          autoFocus
+                                          className="bg-background border rounded px-1 py-0.5 text-sm"
+                                        />
+                                      ) : (
+                                        <span>{roomId}</span>
+                                      )}
                                     </a>
                                   </SidebarMenuButton>
                                   <DropdownMenu>
@@ -588,9 +642,12 @@ const MainContainer = ({ selectedGame }) => {
                                         <Folder className="text-muted-foreground" />
                                         <span>Save Chatting</span>
                                       </DropdownMenuItem>
-                                      <DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => {
+                                        setEditingRoomId(roomId);
+                                        setNewRoomName(roomId);
+                                      }}>
                                         <Share className="text-muted-foreground" />
-                                        <span>Share Chatting</span>
+                                        <span>Rename</span>
                                       </DropdownMenuItem>
                                       <DropdownMenuSeparator />
                                       <DropdownMenuItem onClick={() => handleDeleteChatting(roomId)}>
