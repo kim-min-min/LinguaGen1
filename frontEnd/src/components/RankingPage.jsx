@@ -72,7 +72,7 @@ const RankingPage = () => {
     const [filteredData, setFilteredData] = useState([]);
     const [displayedData, setDisplayedData] = useState([]);
     const [page, setPage] = useState(1);
-    const itemsPerPage = 14;
+    const itemsPerPage = 30;
     const [searchTerm, setSearchTerm] = useState('');
     const [activePanel, setActivePanel] = useState('weeklyRanking');
     const [error, setError] = useState(null);
@@ -485,10 +485,15 @@ const RankingPage = () => {
                                 {displayedData
                                     .filter(item => selectedGrade === '전체' || gradeToTier[item.grade] === selectedGrade)
                                     .map((item, index) => (
-                                        <tr key={item.id || index} className="border-b border-gray-200 hover:bg-gray-50">
-                                            <td className="p-3">{index + 1}</td>
+                                        <tr key={item.id || index}
+                                            className="border-b border-gray-200 hover:bg-gray-50">
                                             <td className="p-3">
-                                                {activePanel === 'groupRanking' ? item.groupName : item.userId}
+                                                {selectedGrade === '전체' ? item.overallRank : item.gradeRank}
+                                            </td>
+                                            <td className="p-3">
+                                                {activePanel === 'groupRanking'
+                                                    ? item.groupName
+                                                    : item.nickName || item.userId.split('@')[0]}
                                             </td>
                                             <td className="p-3">{gradeToTier[item.grade] || 'Unknown'}</td>
                                             <td className="p-3">{`${item.tier} Tier`}</td>
