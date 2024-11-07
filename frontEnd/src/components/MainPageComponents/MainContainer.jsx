@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import useStore from '../../store/useStore';
 import '../../App.css';
 import Word3D from '../Word3D';
-import Lottie from 'react-lottie';
+import { Player } from '@lottiefiles/react-lottie-player';
 import ClickAnimation from '../../assets/LottieAnimation/ClickAnimation.json';
 import { useNavigate } from 'react-router-dom';
 import DungeonCanvas from '../Game/DungeonCanvas';
@@ -70,6 +70,8 @@ import LearningInsetContent from './LearningInsetContent';
 import ChatInsetContent from './ChatInsetContent';
 import CreateCustom from './CreateCustom';
 import ListCustom from './ListCustom';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import FatiguePopup from './FatiguePopup';
 
 // 추가된 데이터 객체
 const data = {
@@ -192,7 +194,7 @@ const data = {
 const canvases = [DungeonCanvas, RuinsCanvas, MountainCanvas];
 
 const MainContainer = ({ selectedGame }) => {
-  const { cards, loading, loadMoreCards, isLoggedIn } = useStore();
+  const { cards, loading, loadMoreCards, isLoggedIn, increaseFatigue, fatigue } = useStore();
   const containerRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const [overscrollShadow, setOverscrollShadow] = useState(0);
@@ -208,6 +210,8 @@ const MainContainer = ({ selectedGame }) => {
   const [isExiting, setIsExiting] = useState(false);
   const [editingRoomId, setEditingRoomId] = useState(null);
   const [newRoomName, setNewRoomName] = useState('');
+  const playerRef = useRef(null);
+  const [showFatiguePopup, setShowFatiguePopup] = useState(false);
 
   // 예시 단어 목록 (실제로는 API나 상태에서 가져와야 합니다)
   const wrongWords = [
@@ -415,26 +419,45 @@ const MainContainer = ({ selectedGame }) => {
     setVisibleCards(cards.slice(0, visibleCards.length + 3));
   }, [cards]);
 
-  const handleStartGame = useCallback(() => {
-    console.log('Selected Game:', selectedGame);
-    const randomCanvas = canvases[Math.floor(Math.random() * canvases.length)];
-    console.log('Random Canvas Selected:', randomCanvas.name);
-    setCanvasValue(randomCanvas);
+  // 컴포넌트 마운트/언마운트 시 애니메이션 상태 초기화
+  useEffect(() => {
+    return () => {
+      setShowAnimation(false);
+      setIsExiting(false);
+      setAnimationPosition({ x: 0, y: 0 });
+    };
+  }, []);
 
-    // /loading 경로로 이동
-    navigate('/loading');
+  const handleStartGame = useCallback(async () => {
+    try {
+      // 피로도 5 증가
+      increaseFatigue(5);
 
-    // 5초 후에 준비된 Canvas로 이동
-    setTimeout(() => {
-      if (randomCanvas === DungeonCanvas) {
-        navigate('/dungeon');
-      } else if (randomCanvas === MountainCanvas) {
-        navigate('/mountain');
-      } else if (randomCanvas === RuinsCanvas) {
-        navigate('/ruins');
-      }
-    }, 3000);
-  }, [selectedGame, navigate]);
+      const randomCanvas = canvases[Math.floor(Math.random() * canvases.length)];
+      setCanvasValue(randomCanvas);
+
+      // 상태 초기화
+      setShowAnimation(false);
+      setIsExiting(false);
+      setAnimationPosition({ x: 0, y: 0 });
+
+      navigate('/loading');
+
+      const timer = setTimeout(() => {
+        if (randomCanvas === DungeonCanvas) {
+          navigate('/dungeon');
+        } else if (randomCanvas === MountainCanvas) {
+          navigate('/mountain');
+        } else if (randomCanvas === RuinsCanvas) {
+          navigate('/ruins');
+        }
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    } catch (error) {
+      console.error('Error starting game:', error);
+    }
+  }, [navigate, increaseFatigue]);
 
   const handleMenuClick = (title) => {
     setSelectedMenu(title);
@@ -470,17 +493,15 @@ const MainContainer = ({ selectedGame }) => {
     }
   };
 
-  // Lottie 옵션 수정
-  const defaultOptions = {
-    loop: false,
-    autoplay: true,
-    animationData: ClickAnimation,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice'
-    }
-  };
-
   const handleButtonClick = (e) => {
+    // 피로도가 100%일 때
+    if (fatigue >= 100) {
+      setShowFatiguePopup(true);
+      return;
+    }
+
+    if (showAnimation || isExiting) return;
+
     const buttonRect = e.currentTarget.getBoundingClientRect();
     setAnimationPosition({
       x: buttonRect.left + buttonRect.width / 2,
@@ -488,17 +509,16 @@ const MainContainer = ({ selectedGame }) => {
     });
 
     setShowAnimation(true);
+    setIsExiting(false);
 
-    // 애니메이션 종료 후 페이지 전환 시작
     setTimeout(() => {
       setShowAnimation(false);
-      setIsExiting(true);  // Fade out 시작
-
-      // Fade out 애니메이션이 끝난 후 페이지 전환
+      setIsExiting(true);
+      
       setTimeout(() => {
         handleStartGame();
-      }, 500); // Fade out 지속 시간
-    }, 1000); // Lottie 애니메이션 지속 시간
+      }, 500);
+    }, 1000);
   };
 
   return (
@@ -507,18 +527,17 @@ const MainContainer = ({ selectedGame }) => {
       >
         {isLoggedIn ? (
             <>
-              <div className="w-full flex justify-between mb-4 mt-4">
-                <div className='w-40 h-14 ml-4'></div>
-                <div className="relative w-40 h-14">
+              <div className="w-full grid grid-cols-7 gap-4 py-4 pb-0">
+                <div className='w-40 h-14 col-span-2'></div>
+                <div className="relative w-40 h-14 col-span-1 col-start-4">
                   <Button
                       onClick={handleButtonClick}
                       className="w-full h-full text-white rounded-md font-bold text-xl hover:scale-125 transition-all duration-500 jua-regular"
-                      disabled={showAnimation || isExiting}  // 애니메이션 중 클릭 방지
+                      disabled={showAnimation || isExiting}
                   >
                     게임 시작하기
                   </Button>
 
-                  {/* 애니메이션 컨테이너 */}
                   {showAnimation && (
                       <div
                           className="fixed pointer-events-none"
@@ -530,16 +549,33 @@ const MainContainer = ({ selectedGame }) => {
                             zIndex: 100
                           }}
                       >
-                        <Lottie
-                            options={defaultOptions}
-                            height={200}
-                            width={200}
-                            isClickToPauseDisabled={true}
+                        <Player
+                          ref={playerRef}
+                          autoplay
+                          keepLastFrame={false}
+                          src={ClickAnimation}
+                          style={{ width: '200px', height: '200px' }}
+                          onComplete={() => {
+                            setShowAnimation(false);
+                          }}
                         />
                       </div>
                   )}
                 </div>
-                <div className='w-40 flex items-center justify-center'>
+                <div className='col-start-5 col-span-1 flex items-start justify-start pl-6'>
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <img src="src/assets/imgs/info.png" alt="info" className="w-6 h-6" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>게임을 진행할 때 마다 5의 피로도가 증가합니다.</p>
+                        <p>게임에서 승리할 경우 3의 피로도가 더 증가합니다.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div className='w-40 col-start-6 flex items-center justify-center'>
                   <DropdownMenu className='mr-4 w-40'>
                     <DropdownMenuTrigger asChild className='mr-4'>
                       <Button variant="outline" className='kanit-regular'>{position}</Button>
@@ -834,6 +870,10 @@ const MainContainer = ({ selectedGame }) => {
                   </SidebarProvider>
                 </div>
               </div>
+
+              {showFatiguePopup && (
+                <FatiguePopup onClose={() => setShowFatiguePopup(false)} />
+              )}
 
             </>
         ) : (
