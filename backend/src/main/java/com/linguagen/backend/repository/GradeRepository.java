@@ -23,12 +23,9 @@ public interface GradeRepository extends JpaRepository<Grade, Integer> {
     List<Grade> findAllByOrderByGradeAscExpDesc();
 
     // 등급, 티어, 경험치 순으로 사용자 순위를 가져오는 메서드
-    @Query("SELECT u.id, g.grade, g.tier, g.exp, r.logDate " +
+    @Query("SELECT u.id, g.grade, g.tier, g.exp, g.updatedAt " +
             "FROM Grade g " +
             "JOIN User u ON g.userId = u.id " +
-            "JOIN RankingLog r ON r.user.id = u.id " +
-            "ORDER BY g.grade DESC, g.tier ASC, g.exp DESC, r.logDate ASC")
-    List<Object[]> findUsersOrderedByGradeTierAndExpWithLogDate();
-
-
+            "ORDER BY g.grade DESC, g.tier ASC, g.exp DESC, g.updatedAt ASC")
+    List<Object[]> findUsersOrderedByGradeTierAndExp();
 }

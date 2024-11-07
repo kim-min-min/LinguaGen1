@@ -40,25 +40,23 @@ public interface StudentAnswerRepository extends JpaRepository<StudentAnswer, Lo
             "ORDER BY COUNT(sa) DESC")
     List<IncorrectTypePercentageDto> findIncorrectDetailTypeCountsByStudentId(@Param("studentId") String studentId);
 
-    // 지난 7일간 정답을 가장 많이 맞춘 사용자 목록을 가져오기
-    @Query("SELECT sa.studentId, COUNT(sa) AS correctAnswers " +
+    // 지난 7일간 정답을 가장 많이 맞춘 전체 사용자 목록을 가져오기
+    @Query("SELECT sa.studentId, COUNT(sa) AS correctAnswers, MIN(sa.createdAt) AS firstCorrectDate " +
             "FROM StudentAnswer sa " +
-            "WHERE sa.isCorrect = 1 AND sa.createdAt >= :fromDate AND sa.isCorrect <> 2 " +
+            "WHERE sa.isCorrect = 1 AND sa.createdAt >= :fromDate " +
             "GROUP BY sa.studentId " +
-            "ORDER BY correctAnswers DESC")
+            "ORDER BY correctAnswers DESC, firstCorrectDate ASC")
     List<Object[]> findTopUsersByCorrectAnswers(LocalDateTime fromDate);
 
     // 지난 7일간 정답을 가장 많이 맞춘 등급별 사용자 목록을 가져오기
-    @Query("SELECT sa.studentId, g.grade, COUNT(sa) AS correctAnswers, sa.createdAt " +
+    @Query("SELECT sa.studentId, g.grade, COUNT(sa) AS correctAnswers, MIN(sa.createdAt) AS firstCorrectDate " +
             "FROM StudentAnswer sa " +
             "JOIN User u ON sa.studentId = u.id " +
             "JOIN Grade g ON u.id = g.userId " +
-            "WHERE sa.isCorrect = 1 AND sa.createdAt >= :fromDate AND sa.isCorrect <> 2 " +
-            "GROUP BY g.grade, sa.studentId, sa.createdAt " +
-            "ORDER BY g.grade, correctAnswers DESC")
+            "WHERE sa.isCorrect = 1 AND sa.createdAt >= :fromDate " +
+            "GROUP BY g.grade, sa.studentId " +
+            "ORDER BY g.grade DESC, correctAnswers DESC, firstCorrectDate ASC")
     List<Object[]> findTopUsersByGradeAndCorrectAnswers(LocalDateTime fromDate);
-
-
 }
 
 
