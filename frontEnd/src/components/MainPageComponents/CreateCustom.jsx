@@ -117,6 +117,7 @@ const CreateCustom = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // 이 부분을 추가
         body: JSON.stringify({
           topic: formData.topic,
           grade: formData.grade,
