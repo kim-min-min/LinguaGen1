@@ -4,6 +4,7 @@ import {format} from 'date-fns';
 import axios from 'axios';
 import {useParams, useNavigate} from 'react-router-dom';
 import { FaThumbsUp, FaHeart } from 'react-icons/fa';
+import DeleteConfirmPopup from './DeleteConfirmPopup';
 
 const DetailView = ({handleTabClick}) => {
     const {board, idx} = useParams();
@@ -20,6 +21,8 @@ const DetailView = ({handleTabClick}) => {
     const [editedCommentContent, setEditedCommentContent] = useState('');
     const [likeCount, setLikeCount] = useState(0); // 좋아요 수 상태 추가
     const [userPoints, setUserPoints] = useState(null); // 사용자 포인트 상태 추가
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [commentToDelete, setCommentToDelete] = useState(null);
 
     // 각 게시판에 해당하는 카테고리명과 데이터 연결
     const boardTitles = {
@@ -151,15 +154,26 @@ const DetailView = ({handleTabClick}) => {
 
     // 댓글 삭제
     const handleDeleteComment = async (commentIdx) => {
-        const confirmed = window.confirm("정말 삭제하시겠습니까?");
-        if (!confirmed) return;
+        setCommentToDelete(commentIdx);
+        setShowDeleteConfirm(true);
+    };
 
+    // 실제 삭제 수행
+    const confirmDelete = async () => {
         try {
-            await axios.delete(`${import.meta.env.VITE_APP_API_BASE_URL}/comments/${commentIdx}`);
+            await axios.delete(`${import.meta.env.VITE_APP_API_BASE_URL}/comments/${commentToDelete}`);
             fetchComments();
+            setShowDeleteConfirm(false);
+            setCommentToDelete(null);
         } catch (error) {
             console.error('댓글 삭제 중 에러 발생:', error);
         }
+    };
+
+    // 삭제 취소
+    const cancelDelete = () => {
+        setShowDeleteConfirm(false);
+        setCommentToDelete(null);
     };
 
     // 좋아요 버튼 클릭 핸들러
@@ -272,7 +286,9 @@ const DetailView = ({handleTabClick}) => {
                         alt="유저 아바타"
                         className="w-10 h-10 rounded-full"
                     />
+                    <div className='w-20 text-sm'>
                     <p>{loggedInUserNickname || loggedInUserId}</p>
+                    </div>
                     <input
                         type="text"
                         value={newComment}
@@ -341,6 +357,14 @@ const DetailView = ({handleTabClick}) => {
                     )}
                 </div>
             </div>
+
+            {/* 삭제 확인 팝업 */}
+            {showDeleteConfirm && (
+                <DeleteConfirmPopup
+                    onConfirm={confirmDelete}
+                    onCancel={cancelDelete}
+                />
+            )}
         </div>
     );
 };

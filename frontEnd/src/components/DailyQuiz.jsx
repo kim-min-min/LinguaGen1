@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import axios from "axios";
 import Header from "./Header.jsx";
+import GameResultPopup from "./GameResultPopup.jsx";
 
 // 페이드 인 애니메이션 정의
 const fadeIn = keyframes`
@@ -182,6 +183,21 @@ const BackgroundVideo = styled.video`
   z-index: -1; /* 다른 요소 뒤에 배치 */
 `;
 
+// 스타일 컴포넌트 추가
+const GameMessage = styled.div`
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  animation: ${fadeIn} 0.3s ease-in-out;
+  z-index: 100;
+`;
+
 const DailyQuiz = () => {
     const [currentAttempt, setCurrentAttempt] = useState(1);
     const [currentInputIndex, setCurrentInputIndex] = useState(0);
@@ -192,6 +208,16 @@ const DailyQuiz = () => {
     const [isGameOver, setIsGameOver] = useState(false);
     const [hintVisible, setHintVisible] = useState(false);
     const [hintText, setHintText] = useState("");
+    const [showResult, setShowResult] = useState(false);
+    const [gameStats, setGameStats] = useState({
+        distribution: {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0},
+        totalGames: 0,
+        winRate: 0,
+        currentStreak: 0,
+        maxStreak: 0
+    });
+    const [message, setMessage] = useState('');
+    const [currentResult, setCurrentResult] = useState(null);
 
     const handleInputChange = (char, row, col) => {
         if (isGameOver || col >= 5) return;
@@ -265,7 +291,8 @@ const DailyQuiz = () => {
 
     const submitGuess = async () => {
         if (inputs[currentAttempt - 1].some(input => input === "")) {
-            alert("모든 칸에 글자를 입력해주세요.");
+            setMessage("모든 칸에 글자를 입력해주세요.");
+            setTimeout(() => setMessage(''), 2000);
             return;
         }
 
@@ -280,7 +307,8 @@ const DailyQuiz = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            const result = response.data.result; // 백엔드에서 반환한 결과
+            const result = response.data.result;
+            setCurrentResult(result);
 
             // 결과에 따라 UI 업데이트
             result.forEach((status, index) => {
@@ -293,11 +321,36 @@ const DailyQuiz = () => {
             updateKeyboardStatus(guess, result);
 
             if (result.every(status => status === "correct")) {
-                alert("축하합니다! 정답을 맞추셨습니다!");
+                setMessage("정답입니다!");
+                // 승리 처리
+                const newStats = {
+                    ...gameStats,
+                    distribution: {
+                        ...gameStats.distribution,
+                        [currentAttempt]: gameStats.distribution[currentAttempt] + 1
+                    },
+                    totalGames: gameStats.totalGames + 1,
+                    currentStreak: gameStats.currentStreak + 1
+                };
+                newStats.maxStreak = Math.max(newStats.currentStreak, gameStats.maxStreak);
+                newStats.winRate = Math.round((gameStats.totalGames + 1) * 100 / (gameStats.totalGames + 1));
+                
+                setGameStats(newStats);
                 setIsGameOver(true);
+                setShowResult(true);
             } else if (currentAttempt >= 6) {
-                alert("게임 오버! 모든 시도를 사용하셨습니다.");
+                setMessage("게임 오버! 모든 시도를 사용하셨습니다.");
+                // 패배 처리
+                const newStats = {
+                    ...gameStats,
+                    totalGames: gameStats.totalGames + 1,
+                    currentStreak: 0
+                };
+                newStats.winRate = Math.round(gameStats.totalGames * 100 / (gameStats.totalGames + 1));
+                
+                setGameStats(newStats);
                 setIsGameOver(true);
+                setShowResult(true);
             } else {
                 setCurrentAttempt(currentAttempt + 1);
                 setCurrentInputIndex(0);
@@ -310,9 +363,8 @@ const DailyQuiz = () => {
                 }, 0);
             }
         } catch (error) {
-            console.error('제출 오류:', error);
-            console.log("API Base URL:", process?.env?.REACT_APP_API_BASE_URL);
-            alert('답안을 제출하는 데 실패했습니다.');
+            setMessage('답안을 제출하는 데 실패했습니다.');
+            setTimeout(() => setMessage(''), 2000);
         }
     };
 
@@ -418,6 +470,10 @@ const DailyQuiz = () => {
             <Header />
             <div className="flex flex-col justify-start items-center w-full h-full mb-12">
                 <h1 className="mb-12 font-bold">Daily Quiz</h1>
+                
+                {/* 메시지 표시 */}
+                {message && <GameMessage>{message}</GameMessage>}
+                
                 <GameBoard>
                     {inputs.map((row, rowIndex) => (
                         <GuessRow key={rowIndex}>
@@ -482,6 +538,20 @@ const DailyQuiz = () => {
                     </KeyboardLine>
                 </GameKeyboard>
             </div>
+
+            {/* 결과 팝업 */}
+            {showResult && currentResult && (
+                <GameResultPopup 
+                    isWin={currentResult.every(status => status === "correct")}
+                    attempts={currentAttempt}
+                    distribution={gameStats.distribution}
+                    totalGames={gameStats.totalGames}
+                    winRate={gameStats.winRate}
+                    currentStreak={gameStats.currentStreak}
+                    maxStreak={gameStats.maxStreak}
+                    onClose={() => setShowResult(false)}
+                />
+            )}
         </FadeInContainer>
     );
 };

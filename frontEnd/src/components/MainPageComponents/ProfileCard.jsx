@@ -262,7 +262,7 @@ function ProfileCard() {
                       className="h-4 w-full bg-gray-200" 
                       indicatorClassName="bg-red-500"
                       style={{
-                        borderRadius: 0,
+                        borderRadius: 12,
                       }}
                     />
                   </div>
