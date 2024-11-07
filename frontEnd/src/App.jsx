@@ -15,6 +15,7 @@ import MountainCanvas from './components/Game/MountainCanvas.jsx';
 import RuinsCanvas from './components/Game/RuinsCanvas.jsx';
 import Writing from './components/Community/Writing.jsx';
 import WelcomeMessage from './components/WelcomeMessage.jsx';
+import UpgradeBilling from './components/UpgradeBilling.jsx';
 
 import './styles/global.css';
 
@@ -44,6 +45,7 @@ function App() {
           <Route path="/community/:board/detailview/:idx" element={<Community />} />
           <Route path="/community/:board/detailview" element={<Community />} />
           <Route path='/community/:board/writing' element={<Community />} />
+          <Route path='/upgrade' element={<UpgradeBilling />} />
         </Routes>
     </Router>
   );

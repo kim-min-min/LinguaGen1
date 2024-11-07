@@ -25,10 +25,12 @@ import ChellengerTier from "../../assets/imgs/Tiers/Chellenger Tier.png";
 import { Separator } from "@/components/ui/separator";
 import useStore from '../../store/useStore';
 import "../../App.css";
+import { Progress } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
 function ProfileCard() {
-  const { isLoggedIn, setIsLoggedIn } = useStore();
+  const { isLoggedIn, setIsLoggedIn, fatigue, setFatigue } = useStore();
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -68,6 +70,11 @@ function ProfileCard() {
     }
   };
 
+  // 피로도를 100으로 설정하는 useEffect
+  useEffect(() => {
+    setFatigue(100);
+  }, [setFatigue]);
+
   useEffect(() => {
     const fetchUserData = async () => {
       const user = sessionStorage.getItem('user');
@@ -85,6 +92,13 @@ function ProfileCard() {
           setUserGrade(numericGrade);
           setUserGradeString(gradeNames[numericGrade] || "알 수 없음");
           setUserTier(gradeResponse.data.tier);
+
+          // 피로도 정보 가져오기 (API 엔드포인트는 실제 구현에 맞게 수정 필요)
+          const fatigueResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/users/fatigue/${userData.id}`, { withCredentials: true });
+          setFatigue(fatigueResponse.data.fatigue);
+
+          // 테스트를 위해 피로도 100으로 설정
+          setFatigue(100);
         } catch (error) {
           console.error('사용자 정보를 가져오는 중 오류 발생:', error);
         }
@@ -92,7 +106,7 @@ function ProfileCard() {
     };
 
     fetchUserData();
-  }, [setIsLoggedIn]);
+  }, [setIsLoggedIn, setFatigue]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -227,7 +241,7 @@ function ProfileCard() {
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <div className="mr-4 flex flex-col gap-8">
+        <div className="mr-1 flex flex-col gap-4">
           <ContextMenu>
             <ContextMenuTrigger className={`text-xl hover:text-green-400 transition-colors duration-300 select-none ${/^[a-zA-Z0-9]+$/.test(userInfo?.nickname || userInfo?.id || '') ? 'kanit-semibold' : 'jua-regular'}`}>
               {userInfo ? (userInfo.nickname ? userInfo.nickname : userInfo.id) : 'USERNAME'}
@@ -237,6 +251,29 @@ function ProfileCard() {
               <ContextMenuItem onClick={handleLogout}>로그아웃</ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
+          <div className="flex flex-col items-center justify-center w-full gap-1">
+            <div className="flex-row flex items-center justify-center w-full">
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="w-full">
+                    <Progress 
+                      value={fatigue} 
+                      className="h-4 w-full bg-gray-200" 
+                      indicatorClassName="bg-red-500"
+                      style={{
+                        borderRadius: 0,
+                      }}
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>피로도: {fatigue}%</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            </div>
+          </div>
           <HoverCard>
             <HoverCardTrigger asChild>
               <div

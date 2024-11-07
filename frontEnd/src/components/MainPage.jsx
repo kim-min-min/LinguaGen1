@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
-import PracticeMenubar from './MainPageComponents/PracticeMenubar.jsx'; // PracticeMenubar 컴포넌트 불러오기
 import ProfileCard from './MainPageComponents/ProfileCard.jsx';
 import MainContainer from './MainPageComponents/MainContainer.jsx';
 import WordCarousel from './WordCarousel.jsx';
