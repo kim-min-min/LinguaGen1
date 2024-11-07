@@ -66,7 +66,9 @@ public class UserGeneratedQuestionService {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        String tierString = String.format("%s %d티어", request.getGrade(), request.getTier());
+        String tierString = request.getGrade().equals("챌린저")
+            ? "챌린저"
+            : String.format("%s %d티어", request.getGrade(), request.getTier());
 
         List<UserGeneratedQuestion> generatedQuestions = new ArrayList<>();
         List<Exception> errors = new ArrayList<>();

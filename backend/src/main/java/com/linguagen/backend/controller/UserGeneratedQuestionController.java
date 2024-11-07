@@ -75,14 +75,19 @@ public class UserGeneratedQuestionController {
 
     private void validateRequest(QuestionGenerationRequestDTO request) {
         // 등급 검증
-        List<String> validGrades = List.of("브론즈", "실버", "골드", "플래티넘", "다이아");
+        List<String> validGrades = List.of("브론즈", "실버", "골드", "플래티넘", "다이아", "챌린저");
         if (!validGrades.contains(request.getGrade())) {
             throw new IllegalArgumentException("Invalid grade: " + request.getGrade());
         }
 
-        // 티어 검증
-        if (request.getTier() < 1 || request.getTier() > 4) {
-            throw new IllegalArgumentException("Invalid tier: " + request.getTier());
+        // 챌린저가 아닐 경우에만 티어 검증
+        if (!"챌린저".equals(request.getGrade())) {
+            if (request.getTier() == null) {
+                throw new IllegalArgumentException("Tier is required for non-challenger grade");
+            }
+            if (request.getTier() < 1 || request.getTier() > 4) {
+                throw new IllegalArgumentException("Invalid tier: " + request.getTier());
+            }
         }
 
         // 문제 유형 검증
