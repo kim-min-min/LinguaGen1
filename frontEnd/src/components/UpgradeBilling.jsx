@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import styled, { keyframes } from 'styled-components';
 import Header from './Header';
+import axios from 'axios';
 
 const BackgroundVideo = styled.video`
   position: absolute;
@@ -89,11 +90,18 @@ function UpgradeBilling({ onClose }) {
       buyer_tel: userTell || '010-1234-5678',
       buyer_addr: userAddress || '서울특별시 강남구 삼성동',
       buyer_postcode: '123-456',
-      m_redirect_url: 'https://www.yourdomain.com/payments/complete'
-    }, function (rsp) {
+      m_redirect_url: `${import.meta.env.VITE_APP_BASE_URL}/main`
+    }, async function (rsp) {
       if (rsp.success) {
-        alert(`결제가 완료되었습니다. 결제 금액: ${rsp.paid_amount}`);
-        window.location.href = '/paymentSuccess';
+        // 결제 성공 시, 백엔드에 plan 업데이트 API 호출
+        try {
+          await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/users/payment/success?userId=${userEmail}`);
+          alert(`결제가 완료되었습니다. 결제 금액: ${rsp.paid_amount}`);
+          window.location.href = '/paymentSuccess';
+        } catch (error) {
+          console.error("결제 성공 후 plan 업데이트 중 오류 발생:", error);
+          alert("결제는 성공했지만 회원 플랜 업데이트에 실패했습니다. 고객센터에 문의하세요.");
+        }
       } else {
         alert('결제에 실패하였습니다.');
       }
