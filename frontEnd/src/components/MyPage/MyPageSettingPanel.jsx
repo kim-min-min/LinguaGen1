@@ -102,37 +102,16 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
     const [phone, setPhone] = useState(sessionStorage.getItem('tell') || '010-0000-0000'); // 상태로 관리
     const [isPhoneDialogOpen, setIsPhoneDialogOpen] = useState(false); // 전화번호 Dialog 상태 관리
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false); // 비밀번호 Dialog 상태
-    const [selectedImage, setSelectedImage] = useState('https://via.placeholder.com/60'); // 기본 이미지 URL
+
+// 기본 URL 설정
     const BASE_URL = "http://localhost:8085";
-
-
+    const defaultImageUrl = 'https://via.placeholder.com/60';
 
     // 세션 스토리지에서 값 가져오기
     const nickname = sessionStorage.getItem('nickname') || 'Unknown';
     const email = sessionStorage.getItem('id') || 'example@example.com';
-
-    useEffect(() => {
-        const fetchUserImage = async () => {
-            try {
-                // 서버에서 프로필 이미지 URL 가져오기
-                const response = await axios.get(`${BASE_URL}/api/users/picture/${email}`, {
-                    withCredentials: true,
-                });
-
-                // 서버에서 URL을 받았을 경우 상태 업데이트
-                if (response.data && response.data.profileImageUrl) {
-                    setSelectedImage(`${BASE_URL}${response.data.profileImageUrl}`);
-                }
-            } catch (error) {
-                console.error("프로필 이미지를 가져오는 중 오류 발생:", error);
-                // 오류 발생 시 기본 이미지 유지
-            }
-        };
-
-        fetchUserImage(); // 사용자 이미지 가져오기 함수 호출
-    }, [email, BASE_URL]); // email과 BASE_URL을 의존성 배열에 추가
-
-
+    const sessionImage = sessionStorage.getItem('profileImageUrl');
+    const [selectedImage, setSelectedImage] = useState(sessionImage ? `${BASE_URL}${sessionImage}` : defaultImageUrl);
 
     const handlePasswordChange = async () => {
         if (password !== confirmPassword) {
@@ -223,9 +202,10 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                 });
 
                 if (response.status === 200) {
+                    const newImageUrl = `${BASE_URL}${response.data}`;
+                    sessionStorage.setItem('profileImageUrl', response.data);
+                    setSelectedImage(newImageUrl);
                     alert('이미지가 성공적으로 업로드되었습니다.');
-                    sessionStorage.setItem('profileImageUrl', `${BASE_URL}${response.data}`); // 프로필 이미지 URL을 세션에 저장
-                    setSelectedImage(`${BASE_URL}${response.data}`); // 서버에서 받은 이미지 URL 설정
                 } else {
                     alert('이미지 업로드에 실패했습니다.');
                 }
@@ -315,7 +295,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                         <img
                                             src={selectedImage}
                                             alt="프로필"
-                                            className='h-32 w-36 rounded-md cursor-pointer'
+                                            className="h-32 w-36 rounded-md cursor-pointer"
                                             onClick={triggerFileInput}
                                         />
                                         <input

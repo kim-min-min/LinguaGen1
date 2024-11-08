@@ -26,8 +26,13 @@ const DashBoardPageSide = ({ activePanel, setActivePanel }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 정의
     const [userInfo, setUserInfo] = useState(null); // 사용자 정보 상태 정의
     const [averageCorrectRate, setAverageCorrectRate] = useState(null); // 평균 정답률 상태 정의
-    const [profileImagePath, setProfileImagePath] = useState(null);
-    const BASE_URL = "http://localhost:8085"; //
+
+    // 세션 스토리지에 있는 profileImageUrl을 초기값으로 설정. 없을 경우 기본 이미지 사용
+    const BASE_URL = "http://localhost:8085";
+    const defaultImageUrl = 'https://via.placeholder.com/60';
+    const [profileImagePath, setProfileImagePath] = useState(
+        sessionStorage.getItem('profileImageUrl') ? `${BASE_URL}${sessionStorage.getItem('profileImageUrl')}` : defaultImageUrl
+    );
 
     useEffect(() => {
         const fetchData = async () => {
@@ -50,8 +55,6 @@ const DashBoardPageSide = ({ activePanel, setActivePanel }) => {
                     const correctRateResponse = await axios.get(`http://localhost:8085/api/study-log/average-correct-rate/${userData.id}`, { withCredentials: true });
                     setAverageCorrectRate(correctRateResponse.data); // 평균 정답률 설정
 
-                    const urlResponse = await axios.get(`http://localhost:8085/api/users/picture/${userData.id}`, { withCredentials: true });
-                    setProfileImagePath(urlResponse.data.profileImageUrl); // DB에서 불러온 상대 경로 설정
                 } catch (error) {
                     console.error('Error fetching user or game count data:', error);
                 }
@@ -68,7 +71,7 @@ const DashBoardPageSide = ({ activePanel, setActivePanel }) => {
             <div className='flex flex-col items-start justify-between w-full h-48 pt-4 p-4 max-lg:items-center'>
                 <Avatar className='w-20 h-20 ml-4'>
                     <AvatarImage
-                        src={profileImagePath ? `${BASE_URL}${profileImagePath}` : ""}
+                        src={profileImagePath}
                         alt="프로필 이미지"
                         onClick={() => navigate('/mypage?tab=accountSettings')}
                         style={{ cursor: 'pointer' }}
