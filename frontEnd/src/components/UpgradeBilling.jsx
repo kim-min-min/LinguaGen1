@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
-import styled,{keyframes} from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import Header from './Header';
 
 const BackgroundVideo = styled.video`
@@ -11,9 +11,10 @@ const BackgroundVideo = styled.video`
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* 비디오가 화면에 맞도록 커버되도록 설정 */
-  z-index: -1; /* 다른 요소 뒤에 배치 */
+  object-fit: cover;
+  z-index: -1;
 `;
+
 const fadeInAnimation = keyframes`
   from {
     opacity: 0;
@@ -22,6 +23,7 @@ const fadeInAnimation = keyframes`
     opacity: 1;
   }
 `;
+
 const MainPageContainer = styled.div`
   width: 100vw;
   height: 100vh;
@@ -42,90 +44,139 @@ const BillingContainer = styled.div`
 `;
 
 function UpgradeBilling({ onClose }) {
+  useEffect(() => {
+    // jQuery 로드
+    const jQueryScript = document.createElement('script');
+    jQueryScript.src = "https://code.jquery.com/jquery-3.6.0.min.js";
+    jQueryScript.onload = () => {
+      // jQuery 로드 후 Iamport SDK 로드
+      const iamportScript = document.createElement('script');
+      iamportScript.src = "https://cdn.iamport.kr/js/iamport.payment-1.1.8.js";
+
+      iamportScript.onload = () => {
+        if (window.IMP) {
+          window.IMP.init(process.env.REACT_APP_IMP_KEY); // 아임포트 인증키 설정
+        }
+      };
+      document.body.appendChild(iamportScript);
+    };
+    document.body.appendChild(jQueryScript);
+  }, []);
+
+  const onProUpgrade = () => {
+    if (!window.IMP) {
+      alert("결제 모듈이 아직 로드되지 않았습니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+
+    const totalPrice = 9900;
+
+    window.IMP.request_pay({
+      pg: 'html5_inicis',
+      pay_method: 'card',
+      merchant_uid: `merchant_${new Date().getTime()}`,
+      name: 'Pro Membership Upgrade',
+      amount: totalPrice,
+      buyer_email: 'iamport@siot.do',
+      buyer_name: '구매자이름',
+      buyer_tel: '010-1234-5678',
+      buyer_addr: '서울특별시 강남구 삼성동',
+      buyer_postcode: '123-456',
+      m_redirect_url: 'https://www.yourdomain.com/payments/complete'
+    }, function (rsp) {
+      if (rsp.success) {
+        alert(`결제가 완료되었습니다. 결제 금액: ${rsp.paid_amount}`);
+        window.location.href = '/paymentSuccess';
+      } else {
+        alert('결제에 실패하였습니다.');
+      }
+    });
+  };
+
   return (
-    <MainPageContainer>
+      <MainPageContainer>
         <BackgroundVideo autoPlay muted loop>
-        <source src='/assets/video/MainBackground.mp4' type='video/mp4' />
-      </BackgroundVideo>
-      <Header />
-      <div className='flex justify-center items-center'>
-        <BillingContainer>
-        <div className="mb-10 text-center">
-          <h2 className="text-3xl font-bold mb-4 jua-regular">멤버십 업그레이드</h2>
-          <p className="text-gray-600 jua-regular">당신에게 맞는 플랜을 선택하세요</p>
-        </div>
+          <source src='/assets/video/MainBackground.mp4' type='video/mp4' />
+        </BackgroundVideo>
+        <Header />
+        <div className='flex justify-center items-center'>
+          <BillingContainer>
+            <div className="mb-10 text-center">
+              <h2 className="text-3xl font-bold mb-4 jua-regular">멤버십 업그레이드</h2>
+              <p className="text-gray-600 jua-regular">당신에게 맞는 플랜을 선택하세요</p>
+            </div>
 
-        <div className="grid grid-cols-2 gap-8">
-          {/* Basic Plan */}
-          <Card className="p-8 border-2 relative">
-            <div className="absolute top-4 right-4 bg-gray-200 px-3 py-1 rounded-full text-sm">
-              현재 플랜
-            </div>
-            <h3 className="text-2xl font-bold mb-4 jua-regular">Basic</h3>
-            <div className="mb-6">
-              <span className="text-3xl font-bold">₩0</span>
-              <span className="text-gray-600">/월</span>
-            </div>
-            <ul className="space-y-4 mb-8">
-              <li className="flex items-center">
-                <Check className="mr-2 h-5 w-5 text-green-500" />
-                <span>하루 10회 게임 플레이</span>
-              </li>
-              <li className="flex items-center">
-                <Check className="mr-2 h-5 w-5 text-green-500" />
-                <span>기본 통계 확인</span>
-              </li>
-              <li className="flex items-center">
-                <Check className="mr-2 h-5 w-5 text-green-500" />
-                <span>커뮤니티 이용</span>
-              </li>
-            </ul>
-            <Button className="w-full" variant="outline" disabled>
-              현재 이용중
-            </Button>
-          </Card>
+            <div className="grid grid-cols-2 gap-8">
+              {/* Basic Plan */}
+              <Card className="p-8 border-2 relative">
+                <div className="absolute top-4 right-4 bg-gray-200 px-3 py-1 rounded-full text-sm">
+                  현재 플랜
+                </div>
+                <h3 className="text-2xl font-bold mb-4 jua-regular">Basic</h3>
+                <div className="mb-6">
+                  <span className="text-3xl font-bold">₩0</span>
+                  <span className="text-gray-600">/월</span>
+                </div>
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-center">
+                    <Check className="mr-2 h-5 w-5 text-green-500" />
+                    <span>하루 10회 게임 플레이</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="mr-2 h-5 w-5 text-green-500" />
+                    <span>기본 통계 확인</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="mr-2 h-5 w-5 text-green-500" />
+                    <span>커뮤니티 이용</span>
+                  </li>
+                </ul>
+                <Button className="w-full" variant="outline" disabled>
+                  현재 이용중
+                </Button>
+              </Card>
 
-          {/* Pro Plan */}
-          <Card className="p-8 border-2 border-purple-500 relative bg-purple-50">
-            <div className="absolute top-4 right-4 bg-purple-500 text-white px-3 py-1 rounded-full text-sm">
-              추천
+              {/* Pro Plan */}
+              <Card className="p-8 border-2 border-purple-500 relative bg-purple-50">
+                <div className="absolute top-4 right-4 bg-purple-500 text-white px-3 py-1 rounded-full text-sm">
+                  추천
+                </div>
+                <h3 className="text-2xl font-bold mb-4 text-purple-600 jua-regular">Pro</h3>
+                <div className="mb-6">
+                  <span className="text-3xl font-bold">₩9,900</span>
+                  <span className="text-gray-600">/월</span>
+                </div>
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-center">
+                    <Check className="mr-2 h-5 w-5 text-purple-500" />
+                    <span>무제한 게임 플레이</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="mr-2 h-5 w-5 text-purple-500" />
+                    <span>상세 통계 및 분석</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="mr-2 h-5 w-5 text-purple-500" />
+                    <span>프리미엄 커뮤니티 이용</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="mr-2 h-5 w-5 text-purple-500" />
+                    <span>광고 없음</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="mr-2 h-5 w-5 text-purple-500" />
+                    <span>우선 순위 고객 지원</span>
+                  </li>
+                </ul>
+                <Button className="w-full bg-purple-500 hover:bg-purple-600" onClick={onProUpgrade}>
+                  Pro로 업그레이드
+                </Button>
+              </Card>
             </div>
-            <h3 className="text-2xl font-bold mb-4 text-purple-600 jua-regular">Pro</h3>
-            <div className="mb-6">
-              <span className="text-3xl font-bold">₩9,900</span>
-              <span className="text-gray-600">/월</span>
-            </div>
-            <ul className="space-y-4 mb-8">
-              <li className="flex items-center">
-                <Check className="mr-2 h-5 w-5 text-purple-500" />
-                <span>무제한 게임 플레이</span>
-              </li>
-              <li className="flex items-center">
-                <Check className="mr-2 h-5 w-5 text-purple-500" />
-                <span>상세 통계 및 분석</span>
-              </li>
-              <li className="flex items-center">
-                <Check className="mr-2 h-5 w-5 text-purple-500" />
-                <span>프리미엄 커뮤니티 이용</span>
-              </li>
-              <li className="flex items-center">
-                <Check className="mr-2 h-5 w-5 text-purple-500" />
-                <span>광고 없음</span>
-              </li>
-              <li className="flex items-center">
-                <Check className="mr-2 h-5 w-5 text-purple-500" />
-                <span>우선 순위 고객 지원</span>
-              </li>
-            </ul>
-            <Button className="w-full bg-purple-500 hover:bg-purple-600">
-              Pro로 업그레이드
-            </Button>
-          </Card>
+          </BillingContainer>
         </div>
-      </BillingContainer>
-      </div>
-    </MainPageContainer>
+      </MainPageContainer>
   );
 }
 
-export default UpgradeBilling; 
+export default UpgradeBilling;
