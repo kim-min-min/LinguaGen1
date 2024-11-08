@@ -20,9 +20,7 @@ public class QuestionGenerationRequestDTO {
     @NotBlank(message = "등급을 선택해주세요")
     private String grade;
 
-    @NotNull(message = "티어를 선택해주세요")
-    @Min(value = 1, message = "티어는 1 이상이어야 합니다")
-    @Max(value = 4, message = "티어는 4 이하여야 합니다")
+    // tier를 Optional로 변경
     private Integer tier;
 
     @NotBlank(message = "문제유형을 선택해주세요")

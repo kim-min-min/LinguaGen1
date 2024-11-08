@@ -2,7 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Header from './Header.jsx';
 import _ from 'lodash';
-import { ChevronUp } from 'lucide-react';
+import { ChevronUp, ChevronsUpDown, ChevronDown } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // 애니메이션과 스타일 컴포넌트 정의
 const fadeIn = keyframes`
@@ -66,7 +72,7 @@ const RankingPage = () => {
     const [filteredData, setFilteredData] = useState([]);
     const [displayedData, setDisplayedData] = useState([]);
     const [page, setPage] = useState(1);
-    const itemsPerPage = 14;
+    const itemsPerPage = 30;
     const [searchTerm, setSearchTerm] = useState('');
     const [activePanel, setActivePanel] = useState('weeklyRanking');
     const [error, setError] = useState(null);
@@ -77,12 +83,110 @@ const RankingPage = () => {
     const [personalRankingData, setPersonalRankingData] = useState([]);
     const [groupRankingData, setGroupRankingData] = useState([]);
 
-    const tierOrder = ['Challenger', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
+    const tierOrder = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Challenger'];
 
     const [showScrollTop, setShowScrollTop] = useState(false);
     const tableRef = useRef(null);
 
-    useEffect(() => {
+    // 정렬 관련 상태 추가
+    const [sortConfig, setSortConfig] = useState({
+        key: null,
+        direction: 'asc'
+    });
+
+    // 등급 순서 매핑 객체 추가
+    const tierValues = {
+        'Challenger': 6,
+        'Diamond': 5,
+        'Platinum': 4,
+        'Gold': 3,
+        'Silver': 2,
+        'Bronze': 1
+    };
+
+    const gradeToTier = {
+        1: 'Bronze',
+        2: 'Silver',
+        3: 'Gold',
+        4: 'Platinum',
+        5: 'Diamond',
+        6: 'Challenger'
+    };
+
+    const [selectedGrade, setSelectedGrade] = useState('전체');
+
+    // 등급 필터링 함수 수정
+    const filterByGrade = (grade) => {
+        setSelectedGrade(grade);
+        if (grade === '전체') {
+            switch (activePanel) {
+                case 'weeklyRanking':
+                    setFilteredData(weeklyRankingData);
+                    setDisplayedData(weeklyRankingData.slice(0, itemsPerPage));
+                    break;
+                case 'personalRanking':
+                    setFilteredData(personalRankingData);
+                    setDisplayedData(personalRankingData.slice(0, itemsPerPage));
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            const currentData = activePanel === 'weeklyRanking' ? weeklyRankingData : personalRankingData;
+            const filtered = currentData.filter(item => gradeToTier[item.grade] === grade);
+            setFilteredData(filtered);
+            setDisplayedData(filtered.slice(0, itemsPerPage));
+        }
+    };
+
+    // 정렬 처리 함수
+    const handleSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+
+        const sortedData = [...displayedData].sort((a, b) => {
+            if (key === 'rank') {
+                return direction === 'asc' ? 
+                    (a.rank - b.rank) : (b.rank - a.rank);
+            }
+            if (key === 'userId' || key === 'groupName') {
+                const aValue = activePanel === 'groupRanking' ? a.groupName : a.userId;
+                const bValue = activePanel === 'groupRanking' ? b.groupName : b.userId;
+                return direction === 'asc' ? 
+                    aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+            }
+            if (key === 'grade') {
+                // grade 값을 직접 비교 (높은 숫자가 상위 등급)
+                return direction === 'asc' ? 
+                    (a.grade - b.grade) : (b.grade - a.grade);
+            }
+            if (key === 'exp') {
+                return direction === 'asc' ? 
+                    (a.exp - b.exp) : (b.exp - a.exp);
+            }
+            return 0;
+        });
+
+        setDisplayedData(sortedData);
+    };
+
+    // 정렬 방향 표시 함수
+    const getSortIcon = (key) => {
+        if (sortConfig.key === key) {
+            return sortConfig.direction === 'asc' ? 
+                <ChevronUp className="inline ml-1" size={16} /> : 
+                <ChevronsUpDown className="inline ml-1" size={16} />;
+        }
+        return <ChevronsUpDown className="inline ml-1" size={16} />;
+    };
+
+    // 테이블 헤더 스타일
+    const headerStyle = "p-3 cursor-pointer hover:bg-gray-100 transition-colors duration-200 select-none";
+
+/*    useEffect(() => {
         // 개인 랭킹 데이터 fetch
         const fetchPersonalRanking = async () => {
             try {
@@ -95,7 +199,7 @@ const RankingPage = () => {
                     setDisplayedData(data.slice(0, itemsPerPage));
                 }
             } catch (err) {
-                setError('데이터를 불러오는데 실패했습니다.');
+                setError('데이터를 불러오는데 실패습니다.');
                 console.error('Fetch error:', err);
             }
         };
@@ -156,7 +260,51 @@ const RankingPage = () => {
             default:
                 break;
         }
+    }, [activePanel]);*/
+
+    // API 호출: 각 랭킹 데이터를 `ranking_log` 테이블에서 가져옴
+    useEffect(() => {
+        const fetchRankingData = async (type, setData, grade) => {
+            try {
+                const response = await fetch(`http://localhost:8085/api/ranking/${type}?grade=0`);
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const data = await response.json();
+                setData(data);
+                if (activePanel === type) {
+                    setFilteredData(data);
+                    setDisplayedData(data.slice(0, itemsPerPage));
+                }
+            } catch (err) {
+                setError('데이터를 불러오는데 실패했습니다.');
+                console.error(`${type} ranking fetch error:`, err);
+            }
+        };
+
+        fetchRankingData('weekly', setWeeklyRankingData);
+        fetchRankingData('personal', setPersonalRankingData);
+        /*fetchRankingData('group', setGroupRankingData);*/
     }, [activePanel]);
+
+    // activePanel이 변경될 때 해당 데이터로 업데이트
+    useEffect(() => {
+        setPage(1);
+        switch (activePanel) {
+            case 'weeklyRanking':
+                setFilteredData(weeklyRankingData);
+                setDisplayedData(weeklyRankingData.slice(0, itemsPerPage));
+                break;
+            case 'personalRanking':
+                setFilteredData(personalRankingData);
+                setDisplayedData(personalRankingData.slice(0, itemsPerPage));
+                break;
+/*            case 'groupRanking':
+                setFilteredData(groupRankingData);
+                setDisplayedData(groupRankingData.slice(0, itemsPerPage));
+                break;*/
+            default:
+                break;
+        }
+    }, [activePanel, weeklyRankingData, personalRankingData/*, groupRankingData*/]);
 
     const handleScroll = (e) => {
         const { scrollTop, clientHeight, scrollHeight } = e.target;
@@ -282,23 +430,73 @@ const RankingPage = () => {
                         >
                             <table className="w-full">
                                 <thead className="sticky top-0 bg-white/80 backdrop-blur-md">
-                                    <tr className="text-left border-b-2 border-gray-300">
-                                        <th className="p-3">순위</th>
-                                        <th className="p-3">
-                                            {activePanel === 'groupRanking' ? '그룹명' : '아이디'}
-                                        </th>
-                                        <th className="p-3">등급</th>
-                                        <th className="p-3">경험치</th>
-                                    </tr>
+                                <tr className="text-left border-b-2 border-gray-300">
+                                    <th
+                                        className={headerStyle}
+                                        onClick={() => handleSort('rank')}
+                                    >
+                                        순위 {getSortIcon('rank')}
+                                    </th>
+                                    <th
+                                        className={headerStyle}
+                                        onClick={() => handleSort(activePanel === 'groupRanking' ? 'groupName' : 'userId')}
+                                    >
+                                        {activePanel === 'groupRanking' ? '그룹명' : '아이디'}
+                                        {getSortIcon(activePanel === 'groupRanking' ? 'groupName' : 'userId')}
+                                    </th>
+                                    <th
+                                        className={headerStyle}
+                                        onClick={() => handleSort('grade')}
+                                    >
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger className="flex items-center justify-between w-full">
+                                                등급: {selectedGrade} <ChevronDown className="ml-2" size={16} />
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuItem onClick={() => filterByGrade('전체')}>
+                                                    전체
+                                                </DropdownMenuItem>
+                                                {tierOrder.map((tier) => (
+                                                    <DropdownMenuItem 
+                                                        key={tier} 
+                                                        onClick={() => filterByGrade(tier)}
+                                                    >
+                                                        {tier}
+                                                    </DropdownMenuItem>
+                                                ))}
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </th>
+                                    <th
+                                        className={headerStyle}
+                                        onClick={() => handleSort('tier')}
+                                    >
+                                        티어 {getSortIcon('tier')}
+                                    </th>
+                                    <th
+                                        className={headerStyle}
+                                        onClick={() => handleSort('exp')}
+                                    >
+                                        경험치 {getSortIcon('exp')}
+                                    </th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    {displayedData.map((item, index) => (
-                                        <tr key={item.id || index} className="border-b border-gray-200">
-                                            <td className="p-3">{index + 1}</td>
+                                {displayedData
+                                    .filter(item => selectedGrade === '전체' || gradeToTier[item.grade] === selectedGrade)
+                                    .map((item, index) => (
+                                        <tr key={item.id || index}
+                                            className="border-b border-gray-200 hover:bg-gray-50">
                                             <td className="p-3">
-                                                {activePanel === 'groupRanking' ? item.groupName : item.userId}
+                                                {selectedGrade === '전체' ? item.overallRank : item.gradeRank}
                                             </td>
-                                            <td className="p-3">{tierOrder[item.grade - 1] || 'Unknown'}</td>
+                                            <td className="p-3">
+                                                {activePanel === 'groupRanking'
+                                                    ? item.groupName
+                                                    : item.nickName || item.userId.split('@')[0]}
+                                            </td>
+                                            <td className="p-3">{gradeToTier[item.grade] || 'Unknown'}</td>
+                                            <td className="p-3">{`${item.tier} Tier`}</td>
                                             <td className="p-3">{`${item.exp} XP`}</td>
                                         </tr>
                                     ))}

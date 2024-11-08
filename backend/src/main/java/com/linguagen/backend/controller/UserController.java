@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @RestController
@@ -110,12 +111,18 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public String login(@RequestBody User user, HttpSession session) {
-        boolean isAuthenticated = userService.login(user, session);
-        if (isAuthenticated) {
-            return "로그인 성공";
-        } else {
-            return "로그인 실패: 잘못된 자격 증명";
+    public ResponseEntity<?> login(@RequestBody User user, HttpSession session) {
+        try {
+            Optional<User> authenticatedUser = userService.login(user, session);
+            if (authenticatedUser.isPresent()) {
+                return ResponseEntity.ok("로그인 성공");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("로그인 실패: 잘못된 자격 증명");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("로그인 처리 중 오류가 발생했습니다.");
         }
     }
 

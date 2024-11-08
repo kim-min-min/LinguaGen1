@@ -64,14 +64,21 @@ public class UserService {
     }
 
     // User 객체를 사용하여 로그인 처리
-    public boolean login(User user, HttpSession session) {
+    public Optional<User> login(User user, HttpSession session) {
         // DB에서 사용자를 조회
         Optional<User> optionalUser = userRepository.findByIdAndPassword(user.getId(), user.getPassword());
 
+        // 로그인 성공 시 세션에 사용자 정보 저장
         if (optionalUser.isPresent()) {
-            return true;
+            User loggedInUser = optionalUser.get();
+            session.setAttribute("id", loggedInUser.getId());
+            session.setAttribute("nickname", loggedInUser.getNickname());
+            session.setAttribute("tell", loggedInUser.getTell());
+            session.setAttribute("address", loggedInUser.getAddress());
+            session.setAttribute("points", loggedInUser.getPoints());
         }
-        return false;
+
+        return optionalUser;
     }
 
     // 비번 변경

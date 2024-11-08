@@ -6,6 +6,7 @@ import com.linguagen.backend.enums.QuestionType;
 import com.linguagen.backend.exception.UnauthorizedException;
 import com.linguagen.backend.service.UserGeneratedQuestionService;
 import com.linguagen.backend.util.SessionUtil;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +28,21 @@ public class UserGeneratedQuestionController {
     private final SessionUtil sessionUtil;
 
     @PostMapping("/generate")
-    public ResponseEntity<?> generateQuestion(@RequestBody @Valid QuestionGenerationRequestDTO request) {
+    public ResponseEntity<?> generateQuestion(@RequestBody @Valid QuestionGenerationRequestDTO request, HttpSession session) {
         try {
+            // 세션 디버깅 로그
+            System.out.println("===== Session Debug =====");
+            System.out.println("Session ID: " + session.getId());
+            System.out.println("Session Creation Time: " + session.getCreationTime());
+            System.out.println("Session attributes:");
+            java.util.Collections.list(session.getAttributeNames()).forEach(name ->
+                System.out.println("  " + name + ": " + session.getAttribute(name))
+            );
+            System.out.println("=======================");
+
             String userId = sessionUtil.getCurrentUserId();
+            System.out.println("User ID from SessionUtil: " + userId);
+
             userGeneratedQuestionService.generateQuestion(request, userId);
 
             Map<String, String> response = new HashMap<>();
@@ -38,6 +51,7 @@ public class UserGeneratedQuestionController {
 
             return ResponseEntity.ok(response);
         } catch (UnauthorizedException e) {
+            System.out.println("UnauthorizedException caught: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -75,14 +89,19 @@ public class UserGeneratedQuestionController {
 
     private void validateRequest(QuestionGenerationRequestDTO request) {
         // 등급 검증
-        List<String> validGrades = List.of("브론즈", "실버", "골드", "플래티넘", "다이아");
+        List<String> validGrades = List.of("브론즈", "실버", "골드", "플래티넘", "다이아", "챌린저");
         if (!validGrades.contains(request.getGrade())) {
             throw new IllegalArgumentException("Invalid grade: " + request.getGrade());
         }
 
-        // 티어 검증
-        if (request.getTier() < 1 || request.getTier() > 4) {
-            throw new IllegalArgumentException("Invalid tier: " + request.getTier());
+        // 챌린저가 아닐 경우에만 티어 검증
+        if (!"챌린저".equals(request.getGrade())) {
+            if (request.getTier() == null) {
+                throw new IllegalArgumentException("Tier is required for non-challenger grade");
+            }
+            if (request.getTier() < 1 || request.getTier() > 4) {
+                throw new IllegalArgumentException("Invalid tier: " + request.getTier());
+            }
         }
 
         // 문제 유형 검증
