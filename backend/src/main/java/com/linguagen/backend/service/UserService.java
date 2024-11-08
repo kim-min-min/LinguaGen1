@@ -166,4 +166,8 @@ public class UserService {
             throw new IOException("파일 업로드 실패: " + e.getMessage(), e);
         }
     }
+
+    public void updateUserPlanToPro(String userId) {
+        userRepository.updatePlan(userId, "pro");
+    }
 }
