@@ -1,36 +1,122 @@
 package com.linguagen.backend.service;
 
-import com.linguagen.backend.entity.StudentAnswer;
+import com.linguagen.backend.dto.AnswerStatus;
+import com.linguagen.backend.dto.SessionStatus;
 import com.linguagen.backend.entity.Question;
-import com.linguagen.backend.repository.StudentAnswerRepository;
+import com.linguagen.backend.entity.StudentAnswer;
+import com.linguagen.backend.exception.SessionExpiredException;
 import com.linguagen.backend.repository.QuestionRepository;
+import com.linguagen.backend.repository.StudentAnswerRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-public class StudentAnswerService {
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Service
+@Transactional
+@RequiredArgsConstructor
+@Slf4j
+public class StudentAnswerService {
     private final StudentAnswerRepository studentAnswerRepository;
     private final QuestionRepository questionRepository;
+    private final GameSessionManager gameSessionManager;
+    private final AnswerProcessor answerProcessor;
 
-    public StudentAnswerService(StudentAnswerRepository studentAnswerRepository, QuestionRepository questionRepository) {
-        this.studentAnswerRepository = studentAnswerRepository;
-        this.questionRepository = questionRepository;
+    public String startNewSession(String userId) {
+        return gameSessionManager.createSession(userId);
     }
 
     @Transactional
-    public StudentAnswer saveStudentAnswer(Long idx, String studentId, String studentAnswer) {
-        // Question 객체를 idx를 통해 조회
-        Question question = questionRepository.findById(idx)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid question ID: " + idx));
+    public StudentAnswer saveStudentAnswer(String sessionIdentifier, Long idx,
+                                           String studentId, String studentAnswer,
+                                           Integer questionOrder) {
+        // 세션 활성 상태 확인
+        if (!gameSessionManager.isSessionActive(sessionIdentifier)) {
+            throw new SessionExpiredException("Session has expired");
+        }
 
-        StudentAnswer answer = new StudentAnswer();
-        answer.setQuestion(question);  // Question 객체 설정
-        answer.setStudentId(studentId);
-        answer.setStudentAnswer(studentAnswer);
+        // 기존 답안 확인
+        Optional<StudentAnswer> existingAnswer = studentAnswerRepository
+            .findBySessionIdentifierAndQuestionOrder(sessionIdentifier, questionOrder);
 
-        return studentAnswerRepository.save(answer); // 데이터가 삽입되면 트리거가 작동
+        StudentAnswer answer;
+        if (existingAnswer.isPresent()) {
+            answer = existingAnswer.get();
+            answer.setStudentAnswer(studentAnswer);
+        } else {
+            Question question = questionRepository.findById(idx)
+                .orElseThrow(() -> new IllegalArgumentException("Question not found: " + idx));
+
+            answer = new StudentAnswer();
+            answer.setSessionIdentifier(sessionIdentifier);
+            answer.setQuestion(question);
+            answer.setStudentId(studentId);
+            answer.setStudentAnswer(studentAnswer);
+            answer.setQuestionOrder(questionOrder);
+        }
+
+        // 답안 처리
+        answerProcessor.processAnswer(answer);
+        return studentAnswerRepository.save(answer);
     }
 
+    public SessionStatus getSessionStatus(String sessionIdentifier) {
+        List<StudentAnswer> answers = studentAnswerRepository
+            .findBySessionIdentifierOrderByQuestionOrder(sessionIdentifier);
 
+        long correctCount = answers.stream()
+            .filter(a -> a.getIsCorrect() == 1)
+            .count();
+
+        return new SessionStatus(
+            sessionIdentifier,
+            (int) correctCount,
+            15,
+            answers.size() >= 15,
+            answers.stream()
+                .map(a -> new AnswerStatus(a.getQuestionOrder(), a.getIsCorrect()))
+                .collect(Collectors.toList())
+        );
+    }
+
+    public Optional<String> getActiveSession(String userId) {
+        Optional<String> sessionId = studentAnswerRepository
+            .findFirstSessionIdentifierByStudentIdOrderByCreatedAtDesc(userId);
+
+        if (sessionId.isPresent() && gameSessionManager.isSessionActive(sessionId.get())) {
+            long answerCount = studentAnswerRepository.countBySessionIdentifier(sessionId.get());
+            if (answerCount < 15) {
+                return sessionId;
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Transactional
+    public void completeSession(String sessionIdentifier) {
+        List<StudentAnswer> answers = studentAnswerRepository
+            .findBySessionIdentifierOrderByQuestionOrder(sessionIdentifier);
+
+        if (answers.size() < 15) {
+            String studentId = answers.get(0).getStudentId();
+            for (int order = 1; order <= 15; order++) {
+                int finalOrder = order; // 람다에서 사용할 final 변수로 선언
+                if (answers.stream().noneMatch(a -> a.getQuestionOrder() == finalOrder)) {
+                    StudentAnswer unsolvedAnswer = new StudentAnswer();
+                    unsolvedAnswer.setSessionIdentifier(sessionIdentifier);
+                    unsolvedAnswer.setStudentId(studentId);
+                    unsolvedAnswer.setQuestionOrder(finalOrder);
+                    unsolvedAnswer.setStudentAnswer("NO_ANSWER");
+                    unsolvedAnswer.setIsCorrect(2);
+                    unsolvedAnswer.setFeedback("미응답");
+                    studentAnswerRepository.save(unsolvedAnswer);
+                }
+            }
+
+        }
+    }
 }

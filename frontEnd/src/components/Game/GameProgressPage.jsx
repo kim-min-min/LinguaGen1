@@ -12,7 +12,17 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: currentQuestionNumber, totalQuestions, isGameOver, isGameClear, onRestart, onMainMenu }) => {
+const GameProgressPage = ({
+                              onCorrectAnswer,
+                              onWrongAnswer,
+                              currentQuestion: currentQuestionNumber,
+                              totalQuestions,
+                              isGameOver,
+                              setIsGameOver,  // 추가
+                              isGameClear,
+                              setIsGameClear,  // 추가
+                              onRestart,
+                              onMainMenu }) => {
     const navigate = useNavigate();
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -27,8 +37,54 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
     const [showExplanation, setShowExplanation] = useState(false);
     const [showAnimation, setShowAnimation] = useState(false);
     const [hoveredAnswer, setHoveredAnswer] = useState(null);
+    const [sessionIdentifier, setSessionIdentifier] = useState(null);
+    // 추가할 state
+    const [isTimeExpired, setIsTimeExpired] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(30 * 60); // 30분
 
     const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'];
+
+    // 추가할 useEffect
+    useEffect(() => {
+        let timer;
+        if (sessionIdentifier) {
+            timer = setInterval(() => {
+                setTimeLeft(prevTime => {
+                    if (prevTime <= 1) {
+                        handleTimeExpired();
+                        return 0;
+                    }
+                    return prevTime - 1;
+                });
+            }, 1000);
+        }
+        return () => clearInterval(timer);
+    }, [sessionIdentifier]);
+
+    // 추가할 함수
+    const handleTimeExpired = async () => {
+        try {
+            await api.post(`/api/answers/session/${sessionIdentifier}/complete`);
+            setIsTimeExpired(true);
+            setIsGameOver(true);
+        } catch (error) {
+            console.error('Failed to complete session:', error);
+        }
+    };
+
+    // 세션 시작 함수
+    const startSession = async () => {
+        try {
+            const response = await api.post('/api/answers/start-session', {
+                userId: userId
+            });
+            setSessionIdentifier(response.data.sessionIdentifier);
+            return response.data.sessionIdentifier;
+        } catch (error) {
+            console.error('Failed to start session:', error);
+            throw error;
+        }
+    };
 
     // Lottie 옵션 설정
     const correctOptions = {
@@ -61,17 +117,35 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
     const userId = sessionStorage.getItem('id');
 
     // 문제 데이터 가져오기
+    // 세션 시작 및 문제 가져오기
     useEffect(() => {
-        const fetchQuestions = async () => {
+        const initializeGame = async () => {
             try {
                 setLoading(true);
-
                 if (!userId) throw new Error("User ID not found in sessionStorage.");
 
+                // 1. 활성 세션 확인
+                const sessionResponse = await api.get(`/api/answers/active-session/${userId}`);
+                let currentSessionId;
+
+                if (sessionResponse.data?.sessionIdentifier) {
+                    // 기존 진행 중인 세션이 있는 경우
+                    currentSessionId = sessionResponse.data.sessionIdentifier;
+                    // 세션 상태 확인
+                    const statusResponse = await api.get(`/api/answers/session/${currentSessionId}/status`);
+                    // 필요한 경우 상태 복원 로직 추가
+                } else {
+                    // 새 세션 시작
+                    const newSessionResponse = await api.post('/api/answers/start-session', { userId });
+                    currentSessionId = newSessionResponse.data.sessionIdentifier;
+                }
+
+                setSessionIdentifier(currentSessionId);
+
+                // 2. 문제 가져오기
                 const { data } = await api.get(`/api/questions/user/${userId}`);
                 console.log('Raw data:', data);
 
-                // 데이터 변환 부분에 idx 추가
                 const formattedQuestions = data.map(q => {
                     if (q.questionFormat === 'MULTIPLE_CHOICE') {
                         const correctIndex = q.choices.findIndex(
@@ -102,15 +176,29 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
                 console.log('Formatted questions:', formattedQuestions);
                 setQuestions(formattedQuestions);
             } catch (err) {
-                console.error('Fetch error:', err);
+                console.error('Initialization error:', err);
                 setError(err.response?.data?.message || err.message);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchQuestions();
+        initializeGame();
     }, []);
+
+    useEffect(() => {
+        const completeGame = async () => {
+            if (sessionIdentifier && (isGameOver || isGameClear)) {
+                try {
+                    await api.post(`/api/answers/session/${sessionIdentifier}/complete`);
+                } catch (error) {
+                    console.error('Failed to complete session:', error);
+                }
+            }
+        };
+
+        completeGame();
+    }, [isGameOver, isGameClear, sessionIdentifier]);
 
     const currentQuestion = questions[currentQuestionIndex];
 
@@ -119,10 +207,8 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
         let answer;
 
         if (currentQuestion.type === 'multipleChoice' && currentQuestion.options && currentQuestion.options.length > answerIndex) {
-            // 인덱스를 a, b, c, d와 매핑
             const optionsMap = ['a', 'b', 'c', 'd'];
-            answer = optionsMap[answerIndex];  // 선택한 답안의 레이블 가져오기
-
+            answer = optionsMap[answerIndex];
             isCorrect = answerIndex === currentQuestion.correctAnswer;
         } else if (currentQuestion.type === 'shortAnswer') {
             answer = answerIndex.trim();
@@ -132,54 +218,87 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
             return;
         }
 
-        setSelectedAnswer(answerIndex); // 여기서는 인덱스를 저장 (UI 표시용)
-        setFeedback(isCorrect);
-        setShowFeedback(true);
-        setShowAnimation(true);
+        setSelectedAnswer(answerIndex);
 
-        // 서버에 답안 제출 시 questionId를 올바르게 전달
-        const questionId = currentQuestion.idx; // 문제의 고유 ID
-
-        // 서버로 전송할 데이터 구조 단순화
-        const submitData = {
-            idx: questionId,
+        // 서버에만 정답 여부 판단을 위임
+        submitAnswerToServer({
+            idx: currentQuestion.idx,
             studentId: userId,
-            studentAnswer: answer // 'a', 'b', 'c', 'd' 중 하나
-        };
+            studentAnswer: answer
+        });
 
-        // 서버에 답안 제출
-        submitAnswerToServer(submitData);
+    }, [currentQuestion, userId, sessionIdentifier, currentQuestionNumber]);
 
-        if (isCorrect) {
-            onCorrectAnswer();
-        } else {
-            onWrongAnswer();
-        }
-    }, [currentQuestion, onCorrectAnswer, onWrongAnswer, userId]);
-
-    // submitAnswerToServer 함수 수정
+    // 답안 제출 함수 수정
     const submitAnswerToServer = async (submitData) => {
         try {
-            const response = await fetch("http://localhost:5173/api/answers/submit", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(submitData),
-                credentials: 'include'
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            if (!sessionIdentifier) {
+                console.error("No session identifier found");
+                return;
             }
 
-            const result = await response.json();
+            const response = await api.post("/api/answers/submit", {
+                sessionIdentifier: sessionIdentifier,
+                idx: submitData.idx,
+                studentId: submitData.studentId,
+                studentAnswer: submitData.studentAnswer,
+                questionOrder: currentQuestionNumber
+            });
+
+            const result = response.data;
             console.log("Answer submission result:", result);
 
+            // 여기서만 정답 처리를 수행
+            if (result.isCorrect) {
+                onCorrectAnswer();
+            } else {
+                onWrongAnswer();
+            }
+
+            // UI 업데이트
+            setFeedback(result.isCorrect);
+            setShowFeedback(true);
+            setShowAnimation(true);
+
+            // 게임 종료 조건 체크
+            if (result.completed) {
+                if (result.correctCount > result.totalQuestions / 2) {
+                    setIsGameClear(true);
+                } else {
+                    setIsGameOver(true);
+                }
+            }
+
         } catch (error) {
-            console.error("Error submitting answer:", error);
+            if (error.response?.status === 408) {
+                setIsTimeExpired(true);
+                setIsGameOver(true);
+                try {
+                    await api.post(`/api/answers/session/${sessionIdentifier}/complete`);
+                } catch (completeError) {
+                    console.error("Error completing expired session:", completeError);
+                }
+            } else {
+                console.error("Error submitting answer:", error);
+                setError("Failed to submit answer");
+            }
         }
     };
+
+    // 게임 종료 시 세션 정리
+    useEffect(() => {
+        const completeSession = async () => {
+            if (sessionIdentifier && (isGameOver || isGameClear)) {
+                try {
+                    await api.post(`/api/answers/session/${sessionIdentifier}/complete`);
+                } catch (error) {
+                    console.error('Failed to complete session:', error);
+                }
+            }
+        };
+
+        completeSession();
+    }, [isGameOver, isGameClear, sessionIdentifier]);
 
     // 다음 문제로 이동하는 함수
     const handleNextQuestion = () => {
@@ -187,7 +306,13 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
         setSlideDirection('left');
 
         setTimeout(() => {
-            setCurrentQuestionIndex((prevIndex) => (prevIndex + 1) % questions.length);
+            // 마지막 문제인지 확인
+            if (currentQuestionIndex + 1 >= questions.length) {
+                api.post(`/api/answers/session/${sessionIdentifier}/complete`)
+                    .catch(error => console.error('Failed to complete session:', error));
+            }
+
+            setCurrentQuestionIndex(prevIndex => prevIndex + 1);
             setUserAnswer('');
             setSlideDirection('right');
             setSelectedAnswer(null);

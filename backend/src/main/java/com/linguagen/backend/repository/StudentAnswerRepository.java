@@ -14,13 +14,36 @@ import java.util.Optional;
 
 @Repository
 public interface StudentAnswerRepository extends JpaRepository<StudentAnswer, Long> {
-    Optional<StudentAnswer> findTopByStudentIdOrderByCreatedAtDesc(String studentId);  // studentId를 사용
+    List<StudentAnswer> findBySessionIdentifierOrderByQuestionOrder(String sessionIdentifier);
+
+    @Query("SELECT COUNT(sa) FROM StudentAnswer sa " +
+        "WHERE sa.sessionIdentifier = :sessionId AND sa.isCorrect = 1")
+    long countCorrectAnswersBySession(@Param("sessionId") String sessionId);
+
+    long countBySessionIdentifier(String sessionIdentifier);
+
+    boolean existsBySessionIdentifierAndQuestionOrder(String sessionIdentifier, Integer questionOrder);
+    // 이 메서드만 수정
+    @Query("SELECT sa.sessionIdentifier FROM StudentAnswer sa " +
+        "WHERE sa.studentId = :studentId " +
+        "ORDER BY sa.createdAt DESC LIMIT 1")
+    Optional<String> findFirstSessionIdentifierByStudentIdOrderByCreatedAtDesc(@Param("studentId") String studentId);
+
+    Optional<StudentAnswer> findBySessionIdentifierAndQuestionOrder(
+        String sessionIdentifier,
+        Integer questionOrder
+    );
+
+    // 기존의 통계 관련 메서드들 유지
+    Optional<StudentAnswer> findTopByStudentIdOrderByCreatedAtDesc(String studentId);
 
     @Query("SELECT new com.linguagen.backend.dto.DailyPlayCountDto(DATE(s.createdAt), COUNT(s)) " +
             "FROM StudentAnswer s " +
             "WHERE s.studentId = :studentId " +
             "GROUP BY DATE(s.createdAt)")
     List<DailyPlayCountDto> findDailyPlayCountsByStudentId(@Param("studentId") String studentId);
+
+    // 기존의 통계 관련 메서드들 유지
 
     Long countByStudentId(String studentId);
 
