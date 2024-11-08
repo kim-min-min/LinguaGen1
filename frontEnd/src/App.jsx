@@ -19,7 +19,6 @@ import UpgradeBilling from './components/UpgradeBilling.jsx';
 
 import './styles/global.css';
 
-// Lazy loading components
 
 function App() {
   return (

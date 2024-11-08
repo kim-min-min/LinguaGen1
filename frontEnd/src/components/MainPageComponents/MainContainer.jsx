@@ -522,7 +522,7 @@ const MainContainer = ({ selectedGame }) => {
   };
 
   return (
-      <div className={`w-full h-full flex flex-col items-center justify-start bg-white rounded-lg
+      <div className={`w-full h-auto flex flex-col items-center justify-start bg-white rounded-lg
       transition-opacity duration-500 ${isExiting ? 'opacity-0' : 'opacity-100'}`}
       >
         {isLoggedIn ? (
@@ -593,9 +593,9 @@ const MainContainer = ({ selectedGame }) => {
                 </div>
               </div>
 
-              <div ref={containerRef} className="w-full h-[calc(100vh-200px)] relative flex">
+              <div ref={containerRef} className="w-full h-[calc(100vh-150px)] relative flex">
                 {/* 메인 컨텐츠 영역 */}
-                <div className="flex-1 p-4 overflow-hidden h-auto">
+                <div className="flex-1 p-4 overflow-hidden h-full">
                   <SidebarProvider>
                     <Sidebar variant="inset">
                       <SidebarHeader>
