@@ -74,6 +74,7 @@ public class UserService {
             session.setAttribute("id", loggedInUser.getId());
             session.setAttribute("nickname", loggedInUser.getNickname());
             session.setAttribute("tell", loggedInUser.getTell());
+            session.setAttribute("address", loggedInUser.getAddress());
             session.setAttribute("points", loggedInUser.getPoints());
         }
 
