@@ -39,8 +39,12 @@ function ProfileCard() {
   const [userGrade, setUserGrade] = useState(null);
   const [userGradeString, setUserGradeString] = useState(null);
   const [userTier, setUserTier] = useState(null);
-  const [profileImagePath, setProfileImagePath] = useState(null);
   const BASE_URL = "http://localhost:8085"; //
+  const defaultImageUrl = 'https://via.placeholder.com/60';
+
+  const [profileImagePath, setProfileImagePath] = useState(
+      sessionStorage.getItem('profileImageUrl') ? `${BASE_URL}${sessionStorage.getItem('profileImageUrl')}` : defaultImageUrl
+  );
 
   const gradeNames = {
     1: "Bronze",
@@ -95,9 +99,6 @@ function ProfileCard() {
           setUserGradeString(gradeNames[numericGrade] || "알 수 없음");
           setUserTier(gradeResponse.data.tier);
 
-          const urlResponse = await axios.get(`http://localhost:8085/api/users/picture/${userData.id}`, { withCredentials: true });
-          setProfileImagePath(urlResponse.data.profileImageUrl); // DB에서 불러온 상대 경로 설정
-
           // 피로도 정보 가져오기 (API 엔드포인트는 실제 구현에 맞게 수정 필요)
           const fatigueResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/users/fatigue/${userData.id}`, { withCredentials: true });
           setFatigue(fatigueResponse.data.fatigue);
@@ -137,7 +138,10 @@ function ProfileCard() {
           sessionStorage.setItem('id', userInfo.id);
           sessionStorage.setItem('nickname', userInfo.nickname);
           sessionStorage.setItem('tell', userInfo.tell);
+          sessionStorage.setItem('profileImageUrl',userInfo.picture);
 
+          // 프로필 이미지 상태 업데이트
+          setProfileImagePath(`${BASE_URL}${userInfo.picture}`);
           setUserInfo(userInfo);
 
           const gradeResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/grade/${id}`, { withCredentials: true });
@@ -243,7 +247,7 @@ function ProfileCard() {
         justifyContent: "center",
       }}>
         <Avatar className="mr-12 w-20 h-20">
-          <AvatarImage src={profileImagePath ? `${BASE_URL}${profileImagePath}` : ""} />
+          <AvatarImage src={profileImagePath} alt="프로필 이미지" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <div className="mr-1 flex flex-col gap-4">
