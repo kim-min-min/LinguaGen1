@@ -43,6 +43,8 @@ const BillingContainer = styled.div`
   border-radius: 1rem;
 `;
 
+const impKey = import.meta.env.VITE_IMP_KEY;
+
 function UpgradeBilling({ onClose }) {
   useEffect(() => {
     // jQuery 로드
@@ -55,7 +57,7 @@ function UpgradeBilling({ onClose }) {
 
       iamportScript.onload = () => {
         if (window.IMP) {
-          window.IMP.init(process.env.REACT_APP_IMP_KEY); // 아임포트 인증키 설정
+          window.IMP.init(impKey); // 아임포트 인증키 설정
         }
       };
       document.body.appendChild(iamportScript);
@@ -71,16 +73,21 @@ function UpgradeBilling({ onClose }) {
 
     const totalPrice = 9900;
 
+    const userEmail = sessionStorage.getItem('id'); // 사용자 이메일 ID
+    const userNickname = sessionStorage.getItem('nickname'); // 사용자 닉네임
+    const userTell = sessionStorage.getItem('tell'); // 사용자 전화번호
+    const userAddress = sessionStorage.getItem('address'); // 사용자 주소
+
     window.IMP.request_pay({
       pg: 'html5_inicis',
       pay_method: 'card',
       merchant_uid: `merchant_${new Date().getTime()}`,
-      name: 'Pro Membership Upgrade',
+      name: 'LinguaGen Pro Membership',
       amount: totalPrice,
-      buyer_email: 'iamport@siot.do',
-      buyer_name: '구매자이름',
-      buyer_tel: '010-1234-5678',
-      buyer_addr: '서울특별시 강남구 삼성동',
+      buyer_email: userEmail || 'iamport@siot.do',
+      buyer_name: userNickname || '구매자이름',
+      buyer_tel: userTell || '010-1234-5678',
+      buyer_addr: userAddress || '서울특별시 강남구 삼성동',
       buyer_postcode: '123-456',
       m_redirect_url: 'https://www.yourdomain.com/payments/complete'
     }, function (rsp) {
