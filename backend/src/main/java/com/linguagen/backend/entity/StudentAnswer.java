@@ -5,46 +5,42 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Setter
-@Getter
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "student_answers")
+@Data
 public class StudentAnswer {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "answer_id", nullable = false, columnDefinition = "int unsigned")
+    @Column(name = "answer_id", nullable = false)
     private Long answerId;
 
     @ManyToOne
-    @JoinColumn(name = "idx", referencedColumnName = "idx", nullable = false)
-    private Question question;  // Question 엔티티와의 관계 설정
+    @JoinColumn(name = "idx", nullable = false)
+    private Question question;
 
     @Column(name = "student_id", nullable = false)
     private String studentId;
 
-    @Column(name = "student_answer", nullable = false, columnDefinition = "text")
+    @Column(name = "session_identifier", nullable = false)
+    private String sessionIdentifier;
+
+    @Column(name = "student_answer", nullable = false)
     private String studentAnswer;
 
     @Column(name = "is_correct")
-    private int isCorrect;
+    private Integer isCorrect = 2;  // 2: 미응답, 1: 정답, 0: 오답
 
-    @Column(name = "score")
-    private Integer score;
-
-    @Column(name = "feedback", columnDefinition = "text")
+    @Column(name = "feedback")
     private String feedback;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "question_order", nullable = false)
+    private Integer questionOrder;
+
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
-
-
 }
