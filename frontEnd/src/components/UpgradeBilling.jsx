@@ -92,10 +92,22 @@ function UpgradeBilling({ onClose }) {
       buyer_postcode: '123-456',
       m_redirect_url: `${import.meta.env.VITE_APP_BASE_URL}/main`
     }, async function (rsp) {
+      console.log("API Base URL:", import.meta.env.VITE_APP_API_BASE_URL);
+      console.log("Request URL:", `${import.meta.env.VITE_APP_API_BASE_URL}/payment/log?userId=${userEmail}&amount=${totalPrice}&status=FAIL&transactionId=${rsp.imp_uid}&paymentMethod=${rsp.pay_method}`);
       if (rsp.success) {
         // 결제 성공 시, 백엔드에 plan 업데이트 API 호출
         try {
+          // 1. 회원 플랜 업데이트 API 요청 (기존 URL 형식 유지)
           await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/users/payment/success?userId=${userEmail}`);
+
+          // 2. 결제 로그 기록 API 요청
+          await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/payment/log/success`, {
+            userId: userEmail,
+            amount: rsp.paid_amount,
+            status: 'SUCCESS',
+            transactionId: rsp.imp_uid,
+            paymentMethod: rsp.pay_method,
+          });
           alert(`결제가 완료되었습니다. 결제 금액: ${rsp.paid_amount}`);
           window.location.href = '/paymentSuccess';
         } catch (error) {
@@ -103,7 +115,20 @@ function UpgradeBilling({ onClose }) {
           alert("결제는 성공했지만 회원 플랜 업데이트에 실패했습니다. 고객센터에 문의하세요.");
         }
       } else {
-        alert('결제에 실패하였습니다.');
+        try {
+          await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/payment/log/fail`, {
+            userId: userEmail,
+            amount: totalPrice,
+            status: 'FAIL',
+            transactionId: rsp.imp_uid,
+            paymentMethod: rsp.pay_method
+          });
+
+          alert(`결제에 실패하였습니다: ${rsp.error_msg}`);
+        } catch (error) {
+          console.error("결제 실패 로그 기록 중 오류 발생:", error);
+          alert("결제가 실패했으며 로그 기록에 문제가 발생했습니다. 고객센터에 문의하세요.");
+        }
       }
     });
   };
