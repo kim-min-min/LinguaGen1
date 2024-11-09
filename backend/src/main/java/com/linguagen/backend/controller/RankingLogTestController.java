@@ -15,13 +15,6 @@ public class RankingLogTestController {
         this.rankingLogService = rankingLogService;
     }
 
-    // 주간 랭킹 생성 테스트 엔드포인트
-    @GetMapping("/generateWeeklyRanking")
-    public String generateWeeklyRanking() {
-        rankingLogService.generateWeeklyRanking();
-        return "Weekly ranking generated successfully.";
-    }
-
     // 개인 랭킹 생성 테스트 엔드포인트
     @GetMapping("/generatePersonalRanking")
     public String generatePersonalRanking() {

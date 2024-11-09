@@ -74,12 +74,13 @@ const RankingPage = () => {
     const [page, setPage] = useState(1);
     const itemsPerPage = 30;
     const [searchTerm, setSearchTerm] = useState('');
-    const [activePanel, setActivePanel] = useState('weeklyRanking');
+    const [activePanel, setActivePanel] = useState('weeklyOverall');
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
     // 각 랭킹 데이터를 저장할 상태 추가
-    const [weeklyRankingData, setWeeklyRankingData] = useState([]);
+    const [weeklyOverallData, setWeeklyOverallData] = useState([]);
+    const [weeklyGradeData, setWeeklyGradeData] = useState([]);
     const [personalRankingData, setPersonalRankingData] = useState([]);
     const [groupRankingData, setGroupRankingData] = useState([]);
 
@@ -114,6 +115,62 @@ const RankingPage = () => {
     };
 
     const [selectedGrade, setSelectedGrade] = useState('전체');
+
+    // API 호출: 주간 전체 랭킹 데이터 가져오기
+    const fetchWeeklyOverallRanking = async () => {
+        try {
+            const response = await fetch('http://localhost:8085/api/ranking/weekly-overall');
+            const data = await response.json();
+            setWeeklyOverallData(data);
+            setFilteredData(Array.isArray(data) ? data : []);
+            if (activePanel === 'weeklyOverall') setFilteredData(data);
+        } catch (err) {
+            console.error('Weekly Overall ranking fetch error:', err);
+        }
+    };
+
+    // API 호출: 주간 등급별 랭킹 데이터 가져오기
+    const fetchWeeklyGradeRanking = async () => {
+        try {
+            const response = await fetch('http://localhost:8085/api/ranking/weekly-grade');
+            const data = await response.json();
+            setWeeklyGradeData(data);
+            setFilteredData(Array.isArray(data) ? data : []);
+            if (activePanel === 'weeklyGrade') setFilteredData(data);
+        } catch (err) {
+            console.error('Weekly Grade ranking fetch error:', err);
+        }
+    };
+
+    // API 호출: 개인 랭킹 데이터 가져오기
+    const fetchPersonalRankingData = async (grade = 0) => {
+        try {
+            const response = await fetch(`http://localhost:8085/api/ranking/personal?grade=${grade}`);
+            const data = await response.json();
+            setPersonalRankingData(data);
+            setFilteredData(Array.isArray(data) ? data : []);
+            if (activePanel === 'personalRanking') setFilteredData(data);
+        } catch (err) {
+            console.error('Personal ranking fetch error:', err);
+        }
+    };
+
+    // activePanel에 따라 API 호출 결정
+    useEffect(() => {
+        if (activePanel === 'weeklyOverall') {
+            fetchWeeklyOverallRanking();
+        } else if (activePanel === 'weeklyGrade') {
+            fetchWeeklyGradeRanking();
+        } else if (activePanel === 'personalRanking') {
+            fetchPersonalRankingData();
+        }
+    }, [activePanel]);
+
+    // activePanel이 변경될 때 필터링된 데이터 초기화
+    useEffect(() => {
+        setDisplayedData(Array.isArray(filteredData) ? filteredData.slice(0, itemsPerPage) : []);
+    }, [filteredData]);
+
 
     // 등급 필터링 함수 수정
     const filterByGrade = (grade) => {
@@ -185,126 +242,6 @@ const RankingPage = () => {
 
     // 테이블 헤더 스타일
     const headerStyle = "p-3 cursor-pointer hover:bg-gray-100 transition-colors duration-200 select-none";
-
-/*    useEffect(() => {
-        // 개인 랭킹 데이터 fetch
-        const fetchPersonalRanking = async () => {
-            try {
-                const response = await fetch('http://localhost:8085/api/grade/all');
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const data = await response.json();
-                setPersonalRankingData(data);
-                if (activePanel === 'personalRanking') {
-                    setFilteredData(data);
-                    setDisplayedData(data.slice(0, itemsPerPage));
-                }
-            } catch (err) {
-                setError('데이터를 불러오는데 실패습니다.');
-                console.error('Fetch error:', err);
-            }
-        };
-
-        // 주간 랭킹 데이터 fetch (예시 - 실제 API에 맞게 수정 필요)
-        const fetchWeeklyRanking = async () => {
-            try {
-                const response = await fetch('http://localhost:8085/api/grade/weekly');
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const data = await response.json();
-                setWeeklyRankingData(data);
-                if (activePanel === 'weeklyRanking') {
-                    setFilteredData(data);
-                    setDisplayedData(data.slice(0, itemsPerPage));
-                }
-            } catch (err) {
-                console.error('Weekly ranking fetch error:', err);
-            }
-        };
-
-        // 단체 랭킹 데이터 fetch (예시 - 실제 API에 맞게 수정 필요)
-        const fetchGroupRanking = async () => {
-            try {
-                const response = await fetch('http://localhost:8085/api/grade/group');
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const data = await response.json();
-                setGroupRankingData(data);
-                if (activePanel === 'groupRanking') {
-                    setFilteredData(data);
-                    setDisplayedData(data.slice(0, itemsPerPage));
-                }
-            } catch (err) {
-                console.error('Group ranking fetch error:', err);
-            }
-        };
-
-        fetchPersonalRanking();
-        fetchWeeklyRanking();
-        fetchGroupRanking();
-    }, []);
-
-    // activePanel이 변경될 때 해당하는 데이터로 업데이트
-    useEffect(() => {
-        setPage(1);
-        switch (activePanel) {
-            case 'weeklyRanking':
-                setFilteredData(weeklyRankingData);
-                setDisplayedData(weeklyRankingData.slice(0, itemsPerPage));
-                break;
-            case 'personalRanking':
-                setFilteredData(personalRankingData);
-                setDisplayedData(personalRankingData.slice(0, itemsPerPage));
-                break;
-            case 'groupRanking':
-                setFilteredData(groupRankingData);
-                setDisplayedData(groupRankingData.slice(0, itemsPerPage));
-                break;
-            default:
-                break;
-        }
-    }, [activePanel]);*/
-
-    // API 호출: 각 랭킹 데이터를 `ranking_log` 테이블에서 가져옴
-    useEffect(() => {
-        const fetchRankingData = async (type, setData, grade) => {
-            try {
-                const response = await fetch(`http://localhost:8085/api/ranking/${type}?grade=0`);
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const data = await response.json();
-                setData(data);
-                if (activePanel === type) {
-                    setFilteredData(data);
-                    setDisplayedData(data.slice(0, itemsPerPage));
-                }
-            } catch (err) {
-                setError('데이터를 불러오는데 실패했습니다.');
-                console.error(`${type} ranking fetch error:`, err);
-            }
-        };
-
-        fetchRankingData('weekly', setWeeklyRankingData);
-        fetchRankingData('personal', setPersonalRankingData);
-        /*fetchRankingData('group', setGroupRankingData);*/
-    }, [activePanel]);
-
-    // activePanel이 변경될 때 해당 데이터로 업데이트
-    useEffect(() => {
-        setPage(1);
-        switch (activePanel) {
-            case 'weeklyRanking':
-                setFilteredData(weeklyRankingData);
-                setDisplayedData(weeklyRankingData.slice(0, itemsPerPage));
-                break;
-            case 'personalRanking':
-                setFilteredData(personalRankingData);
-                setDisplayedData(personalRankingData.slice(0, itemsPerPage));
-                break;
-/*            case 'groupRanking':
-                setFilteredData(groupRankingData);
-                setDisplayedData(groupRankingData.slice(0, itemsPerPage));
-                break;*/
-            default:
-                break;
-        }
-    }, [activePanel, weeklyRankingData, personalRankingData/*, groupRankingData*/]);
 
     const handleScroll = (e) => {
         const { scrollTop, clientHeight, scrollHeight } = e.target;
@@ -467,18 +404,32 @@ const RankingPage = () => {
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </th>
-                                    <th
-                                        className={headerStyle}
-                                        onClick={() => handleSort('tier')}
-                                    >
-                                        티어 {getSortIcon('tier')}
-                                    </th>
-                                    <th
-                                        className={headerStyle}
-                                        onClick={() => handleSort('exp')}
-                                    >
-                                        경험치 {getSortIcon('exp')}
-                                    </th>
+                                    {/* 조건부로 '티어'와 '경험치' 출력 */}
+                                    {activePanel === 'personalRanking' && (
+                                        <>
+                                            <th
+                                                className={headerStyle}
+                                                onClick={() => handleSort('tier')}
+                                            >
+                                                티어 {getSortIcon('tier')}
+                                            </th>
+                                            <th
+                                                className={headerStyle}
+                                                onClick={() => handleSort('exp')}
+                                            >
+                                                경험치 {getSortIcon('exp')}
+                                            </th>
+                                        </>
+                                    )}
+                                    {activePanel === 'weeklyRanking' && (
+                                        <th
+                                            className={headerStyle}
+                                            colSpan={2}
+                                            onClick={() => handleSort('correctAnswers')}
+                                        >
+                                            학습한 문제 {getSortIcon('correctAnswers')}
+                                        </th>
+                                    )}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -488,7 +439,9 @@ const RankingPage = () => {
                                         <tr key={item.id || index}
                                             className="border-b border-gray-200 hover:bg-gray-50">
                                             <td className="p-3">
-                                                {selectedGrade === '전체' ? item.overallRank : item.gradeRank}
+                                                {activePanel === 'weeklyRanking'
+                                                    ? item.idx
+                                                    : (selectedGrade === '전체' ? item.overallRank : item.gradeRank)}
                                             </td>
                                             <td className="p-3">
                                                 {activePanel === 'groupRanking'
@@ -496,8 +449,16 @@ const RankingPage = () => {
                                                     : item.nickName || item.userId.split('@')[0]}
                                             </td>
                                             <td className="p-3">{gradeToTier[item.grade] || 'Unknown'}</td>
-                                            <td className="p-3">{`${item.tier} Tier`}</td>
-                                            <td className="p-3">{`${item.exp} XP`}</td>
+                                            {activePanel === 'personalRanking' && (
+                                                <>
+                                                    <td className="p-3">{`${item.tier} Tier`}</td>
+                                                    <td className="p-3">{`${item.exp} XP`}</td>
+                                                </>
+                                            )}
+
+                                            {activePanel === 'weeklyRanking' && (
+                                                <td className="p-3" colSpan={2}>{`${item.correctAnswers}`}</td>
+                                            )}
                                         </tr>
                                     ))}
                                 </tbody>
