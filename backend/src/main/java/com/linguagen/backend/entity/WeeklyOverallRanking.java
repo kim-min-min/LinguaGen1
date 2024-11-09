@@ -23,6 +23,9 @@ public class WeeklyOverallRanking {
     @Column(name = "first_correct_date")
     private LocalDateTime firstCorrectDate;
 
+    @Column(name = "last_correct_date")  // 마지막 문제 푼 날짜 필드 추가
+    private LocalDateTime lastCorrectDate;
+
     @Column(name = "grade")
     private int grade; // 등급을 나타내는 필드
 }

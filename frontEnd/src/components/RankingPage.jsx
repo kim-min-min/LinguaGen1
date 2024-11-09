@@ -177,9 +177,13 @@ const RankingPage = () => {
         setSelectedGrade(grade);
         if (grade === '전체') {
             switch (activePanel) {
-                case 'weeklyRanking':
-                    setFilteredData(weeklyRankingData);
-                    setDisplayedData(weeklyRankingData.slice(0, itemsPerPage));
+                case 'weeklyOverall':
+                    setFilteredData(weeklyOverallData);
+                    setDisplayedData(weeklyOverallData.slice(0, itemsPerPage));
+                    break;
+                case 'weeklyGrade':
+                    setFilteredData(weeklyGradeData);
+                    setDisplayedData(weeklyGradeData.slice(0, itemsPerPage));
                     break;
                 case 'personalRanking':
                     setFilteredData(personalRankingData);
@@ -189,7 +193,7 @@ const RankingPage = () => {
                     break;
             }
         } else {
-            const currentData = activePanel === 'weeklyRanking' ? weeklyRankingData : personalRankingData;
+            const currentData = activePanel === 'weeklyOverall' ? weeklyOverallData : activePanel === 'weeklyGrade' ? weeklyGradeData : personalRankingData;
             const filtered = currentData.filter(item => gradeToTier[item.grade] === grade);
             setFilteredData(filtered);
             setDisplayedData(filtered.slice(0, itemsPerPage));
@@ -422,13 +426,20 @@ const RankingPage = () => {
                                         </>
                                     )}
                                     {activePanel === 'weeklyRanking' && (
-                                        <th
-                                            className={headerStyle}
-                                            colSpan={2}
-                                            onClick={() => handleSort('correctAnswers')}
-                                        >
-                                            학습한 문제 {getSortIcon('correctAnswers')}
-                                        </th>
+                                        <>
+                                            <th
+                                                className={headerStyle}
+                                                onClick={() => handleSort('correctAnswers')}
+                                            >
+                                                학습한 문제 {getSortIcon('correctAnswers')}
+                                            </th>
+                                            <th
+                                                className={headerStyle}
+                                                onClick={() => handleSort('lastCorrectDate')}
+                                            >
+                                                마지막 학습 날짜 {getSortIcon('lastCorrectDate')}
+                                            </th>
+                                        </>
                                     )}
                                 </tr>
                                 </thead>
@@ -457,7 +468,10 @@ const RankingPage = () => {
                                             )}
 
                                             {activePanel === 'weeklyRanking' && (
-                                                <td className="p-3" colSpan={2}>{`${item.correctAnswers}`}</td>
+                                                <>
+                                                    <td className="p-3">{`${item.correctAnswers}`}</td>
+                                                    <td className="p-3">{new Date(item.lastCorrectDate).toISOString().split('T')[0]}</td>
+                                                </>
                                             )}
                                         </tr>
                                     ))}
