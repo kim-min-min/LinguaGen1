@@ -1,22 +1,10 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import useStore from '../store/useStore.js'
 import TutorialCanvas from './Game/TutorialCanvas.jsx'
 import PageLoader from './PageLoader.jsx'
 
 const WelcomeMessage = () => {
-  const {
-    welcomeMessage1,
-    welcomeMessage2,
-    showWelcomeMessage1,
-    showWelcomeMessage2,
-    setWelcomeMessage1,
-    setWelcomeMessage2,
-    setShowWelcomeMessage1,
-    setShowWelcomeMessage2,
-  } = useStore()
-
   const [isLoaderReady, setIsLoaderReady] = useState(false)
-  const [showLoader, setShowLoader] = useState(false)
+  const [showLoader, setShowLoader] = useState(true)
   const [showCanvas, setShowCanvas] = useState(false)
   const pageLoaderRef = useRef(null)
 
@@ -50,31 +38,6 @@ const WelcomeMessage = () => {
     preloadResources()
   }, [preloadResources])
 
-  const showWelcomeMessages = useCallback(() => {
-    setWelcomeMessage1('링구아젠에 오신걸 환영합니다.')
-    setTimeout(() => setShowWelcomeMessage1(true), 100)
-
-    setTimeout(() => {
-      setShowWelcomeMessage1(false)
-      
-      setTimeout(() => {
-        setWelcomeMessage2('게임을 한번 해볼게요.')
-        setTimeout(() => setShowWelcomeMessage2(true), 100)
-        
-        setTimeout(() => {
-          setShowWelcomeMessage2(false)
-          setTimeout(() => {
-            setShowLoader(true)
-          }, 1000)
-        }, 3000)
-      }, 1000)
-    }, 3000)
-  }, [setWelcomeMessage1, setShowWelcomeMessage1, setWelcomeMessage2, setShowWelcomeMessage2, setShowLoader])
-
-  useEffect(() => {
-    showWelcomeMessages()
-  }, [showWelcomeMessages])
-
   const handleLoadComplete = useCallback(() => {
     setShowLoader(false)
     setShowCanvas(true)
@@ -90,20 +53,7 @@ const WelcomeMessage = () => {
     return <TutorialCanvas />
   }
 
-  return (
-    <>
-      {welcomeMessage1 && (
-        <div style={{ userSelect: 'none' }} className={`welcome-message-1 ${showWelcomeMessage1 ? 'fade-in' : 'fade-out'} jua-regular`}>
-          {welcomeMessage1}
-        </div>
-      )}
-      {welcomeMessage2 && (
-        <div style={{ userSelect: 'none' }} className={`welcome-message-2 ${showWelcomeMessage2 ? 'fade-in' : 'fade-out'} jua-regular`}>
-          {welcomeMessage2}
-        </div>
-      )}
-    </>
-  )
+  return null
 }
 
 export default WelcomeMessage

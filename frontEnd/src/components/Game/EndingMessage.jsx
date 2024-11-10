@@ -1,22 +1,29 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
-import defaultImage from '@/assets/CanvasImage/default.png';
+
+// 비디오 import
+import Clear1 from '@/assets/TutorialLipSync/Clear_1.webm';
+import Clear2 from '@/assets/TutorialLipSync/Clear_2.webm';
+import Clear3 from '@/assets/TutorialLipSync/Clear_3.webm';
+import GameOver1 from '@/assets/TutorialLipSync/GameOver_1.webm';
+import GameOver2 from '@/assets/TutorialLipSync/GameOver_2.webm';
+import GameOver3 from '@/assets/TutorialLipSync/GameOver_3.webm';
 
 const EndingMessage = ({ isGameClear, onFinish }) => {
     const [messageStep, setMessageStep] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
 
     const clearMessages = [
-        "축하해! 보스를 물리쳤어!",
-        "네 덕분에 마을이 평화로워졌어!",
-        "더욱 강해져서 이세계의 최강자가 될 수있을거야!",
+        { text: "축하해! 보스를 물리쳤어!", video: Clear1 },
+        { text: "네 덕분에 마을이 평화로워졌어!", video: Clear2 },
+        { text: "더욱 강해져서 이세계의 최강자가 될 수있을거야!", video: Clear3 },
     ];
 
     const gameOverMessages = [
-        "아쉽게도 보스를 물리치지 못했어...",
-        "하지만 괜찮아! 다음에 다시 도전하면 되니까!",
-        "더 강해져서 돌아오자!",
+        { text: "아쉽게도 보스를 물리치지 못했어...", video: GameOver1 },
+        { text: "하지만 괜찮아! 다음에 다시 도전하면 되니까!", video: GameOver2 },
+        { text: "더 강해져서 돌아오자!", video: GameOver3 },
     ];
 
     const messages = isGameClear ? clearMessages : gameOverMessages;
@@ -42,11 +49,14 @@ const EndingMessage = ({ isGameClear, onFinish }) => {
         >
             <div className="relative flex items-center w-[800px]">
                 <div className="w-56 h-56 flex-shrink-0">
-                    <img 
-                        src={defaultImage} 
-                        alt="Ending" 
+                    <video 
+                        key={messageStep} // 메시지가 바뀔 때마다 비디오를 새로 로드
+                        autoPlay 
                         className="w-full h-full object-contain"
-                    />
+                    >
+                        <source src={messages[messageStep].video} type="video/webm" />
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
                 
                 <div className="flex-grow min-w-0">
@@ -66,7 +76,7 @@ const EndingMessage = ({ isGameClear, onFinish }) => {
                                 
                                 <div className="break-keep">
                                     <TypeAnimation
-                                        sequence={[messages[messageStep]]}
+                                        sequence={[messages[messageStep].text]}
                                         wrapper="p"
                                         speed={50}
                                         className="text-xl font-antiquityPrint"
