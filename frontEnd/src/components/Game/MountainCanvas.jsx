@@ -36,7 +36,7 @@ const MountainCanvas = () => {
   const [knightFrameIndex, setKnightFrameIndex] = useState(0);
   const animationRef = useRef(null);
   const lastFrameTimeRef = useRef(0);
-  const [bossHP, setBossHP] = useState(5);
+  const [bossHP, setBossHP] = useState(10);
   const [knightHP, setKnightHP] = useState(5);
   const fontLoadedRef = useRef(false);
   const [currentQuestion, setCurrentQuestion] = useState(1);
@@ -82,16 +82,17 @@ const MountainCanvas = () => {
   const backgroundRef = useRef(new Image());
   backgroundRef.current.src = MountainImage;
 
-  const drawHealthBar = useCallback((ctx, x, y, health) => {
-    const barWidth = 150;
-    const barHeight = 20;
-    const fullWidth = barWidth / 5;
-
-    for (let i = 0; i < 5; i++) {
-      const image = i < health ? hpFullImage.current : hpEmptyImage.current;
-      ctx.drawImage(image, x + i * fullWidth, y, fullWidth, barHeight);
+  const drawHealthBar = useCallback((ctx, x, y, hp, isPlayer = true) => {
+    const maxHP = isPlayer ? 5 : 10;
+    const spacing = 32;
+    
+    for (let i = 0; i < maxHP; i++) {
+        const image = i < hp ? hpFullImage.current : hpEmptyImage.current;
+        if (image && image.complete) {
+            ctx.drawImage(image, x + (i * spacing), y, 30, 30);
+        }
     }
-  }, []);
+}, []);
 
   const animate = useCallback((time) => {
     const frameSpeed = 100; // 프레임 속도 (ms)
@@ -197,8 +198,8 @@ const MountainCanvas = () => {
     }
 
     // 체력 바 그리기
-    drawHealthBar(ctx, 10, 10, knightHP); // 기사 체력 바 (왼쪽)
-    drawHealthBar(ctx, canvas.width - 160, 10, bossHP); // 보스 체력 바 (오른쪽)
+    drawHealthBar(ctx, 10, 10, knightHP, true); // 기사 체력 바 (왼쪽)
+    drawHealthBar(ctx, canvas.width - 320, 10, bossHP, false); // 보스 체력 바 (오른쪽) - 위치 조정
 
     // 텍스트 그리기
     if (fontLoadedRef.current) {
@@ -457,7 +458,7 @@ const MountainCanvas = () => {
     setIsGameOver(false);
     setIsGameClear(false);
     setKnightHP(5);
-    setBossHP(5);
+    setBossHP(10);
     setKnightState('idle');
     setBossState('idle');
     setCurrentQuestion(1);
