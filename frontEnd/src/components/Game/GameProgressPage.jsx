@@ -162,11 +162,21 @@ const GameProgressPage = ({
                             explanation: q.explanation
                         };
                     } else if (q.questionFormat === 'SHORT_ANSWER') {
+                        const words = q.correctAnswer.split(' ');
+                        const keywordIndex = words.findIndex(word => 
+                            word.length > 3 && 
+                            !['what', 'when', 'where', 'why', 'how', 'the', 'and', 'that'].includes(word.toLowerCase())
+                        );
+                        
+                        const targetWord = words[keywordIndex];
+                        const beforeWord = words.slice(0, keywordIndex).join(' ');
+                        const afterWord = words.slice(keywordIndex + 1).join(' ');
+                        
                         return {
                             idx: q.idx,
                             type: 'shortAnswer',
                             question: q.question,
-                            correctAnswer: q.correctAnswer,
+                            correctAnswer: `${beforeWord} BLANK:${targetWord} ${afterWord}`,
                             passage: q.passage || null,
                             explanation: q.explanation
                         };
@@ -202,6 +212,28 @@ const GameProgressPage = ({
 
     const currentQuestion = questions[currentQuestionIndex];
 
+    // generateHint 함수 수정
+    const generateHint = (answer) => {
+        if (!answer) return '';
+        
+        // 정답에 'BLANK:' 접두어가 있는지 확인
+        if (answer.includes('BLANK:')) {
+            // BLANK: 뒤의 단어를 추출하고 앞뒤 문장 분리
+            const [beforeBlank, rest] = answer.split('BLANK:');
+            const [blankWord, afterBlank] = rest.split(' ', 2);
+            
+            // 전체 문장 조합 (빈칸은 언더스코어로 대체)
+            return `${beforeBlank}${'_'.repeat(blankWord.length)}${afterBlank ? ' ' + afterBlank : ''}`;
+        }
+        
+        // 기존의 한 단어 힌트 로직
+        const first = answer.slice(0, 1);
+        const last = answer.slice(-1);
+        const middle = '_'.repeat(answer.length - 2);
+        return `${first}${middle}${last}`;
+    };
+
+    // 답안 제출 시 정답 확인 로직 수정 (handleAnswer 함수 내부)
     const handleAnswer = useCallback((answerIndex) => {
         let isCorrect = false;
         let answer;
@@ -212,7 +244,15 @@ const GameProgressPage = ({
             isCorrect = answerIndex === currentQuestion.correctAnswer;
         } else if (currentQuestion.type === 'shortAnswer') {
             answer = answerIndex.trim();
-            isCorrect = answer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase();
+            
+            // BLANK: 형식의 정답인 경우
+            if (currentQuestion.correctAnswer.includes('BLANK:')) {
+                const correctBlankWord = currentQuestion.correctAnswer.split('BLANK:')[1].trim();
+                isCorrect = answer.toLowerCase() === correctBlankWord.toLowerCase();
+            } else {
+                // 기존의 전체 문장 비교 로직
+                isCorrect = answer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase();
+            }
         } else {
             console.error("Invalid question or choice index:", currentQuestion, answerIndex);
             return;
@@ -323,15 +363,6 @@ const GameProgressPage = ({
         setTimeout(() => {
             setIsSliding(false);
         }, 1000);
-    };
-
-    // 또는 첫 글자와 마지막 글자를 보여주고 싶을 때
-    const generateHint = (answer) => {
-        if (!answer) return '';
-        const first = answer.slice(0, 1);
-        const last = answer.slice(-1);
-        const middle = '_'.repeat(answer.length - 2);
-        return `${first}${middle}${last}`;
     };
 
     const renderQuestion = () => {
@@ -467,7 +498,7 @@ const GameProgressPage = ({
                                                                 }}
                                                                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                                                             >
-                                                                해설 보기
+                                                                해설 기
                                                             </button>
                                                             <button
                                                                 onClick={(e) => {

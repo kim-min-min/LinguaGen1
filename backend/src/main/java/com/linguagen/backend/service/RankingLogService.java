@@ -1,13 +1,8 @@
 package com.linguagen.backend.service;
 
 import com.linguagen.backend.dto.RankingLogDTO;
-import com.linguagen.backend.entity.Grade;
-import com.linguagen.backend.entity.RankingLog;
-import com.linguagen.backend.entity.User;
-import com.linguagen.backend.repository.GradeRepository;
-import com.linguagen.backend.repository.RankingLogRepository;
-import com.linguagen.backend.repository.StudentAnswerRepository;
-import com.linguagen.backend.repository.UserRepository;
+import com.linguagen.backend.entity.*;
+import com.linguagen.backend.repository.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,21 +25,17 @@ public class RankingLogService {
     @Autowired
     private GradeRepository gradeRepository;
     @Autowired
-    private StudentAnswerRepository studentAnswerRepository;
+    private WeeklyOverallRankingRepository overallRankingRepository;
+    @Autowired
+    private WeeklyGradeRankingRepository gradeRankingRepository;
 
-    // 서버 시작 시 주간 랭킹을 한 번 생성
+    // 테스트용 데이터 생성
     @PostConstruct
-    public void initWeeklyRanking() {
-        generateWeeklyRanking();
+    public void initializeData() {
+        generatePersonalRanking();
     }
-
-    // 1. 주간 랭킹 생성 메서드 - 매주 월요일 자정에 실행
-    @Scheduled(cron = "0 0 0 * * MON")
-    public void generateWeeklyRanking() {
-
-    }
-
-    // 2. 개인 랭킹 생성 메서드 - 매일 자정에 실행
+    
+    // 개인 랭킹 생성 메서드 - 매일 자정에 실행
     @Scheduled(cron = "0 0 0 * * *")
     public void generatePersonalRanking() {
         List<Object[]> personalRankingData = gradeRepository.findUsersOrderedByGradeTierAndExp();
@@ -82,38 +74,10 @@ public class RankingLogService {
         }
     }
 
-    // 3. 주간 랭킹 조회 메서드 (전체 및 특정 등급 사용자)
-    public List<RankingLogDTO> getWeeklyRanking(int grade) {
-        List<RankingLog> rankingLogs = repository.findWeeklyRankingByGradeOrAll(grade);
-
-        return rankingLogs.stream()
-                .map(log -> {
-                    Optional<Grade> gradeEntity = gradeRepository.findByUserId(log.getUser().getId());
-
-                    // Grade 정보가 있을 경우에만 설정
-                    Integer gradeValue = gradeEntity.map(Grade::getGrade).orElse(null);
-                    Integer tier = gradeEntity.map(Grade::getTier).orElse(null);
-                    Integer exp = gradeEntity.map(Grade::getExp).orElse(null);
-
-                    return new RankingLogDTO(
-                            log.getIdx(),
-                            log.getUser().getId(),
-                            log.getUser().getNickname(),
-                            log.getType(),
-                            log.getGradeRank(),
-                            log.getOverallRank(),
-                            log.getLogDate(),
-                            gradeValue,  // grade 정보 추가 (null일 수 있음)
-                            tier,        // tier 정보 추가 (null일 수 있음)
-                            exp          // exp 정보 추가 (null일 수 있음)
-                    );
-                })
-                .collect(Collectors.toList());
-    }
-
-    // 4. 개인 랭킹 조회 메서드 (전체 및 특정 등급 사용자)
+    // 개인 랭킹 조회 메서드 (전체 및 특정 등급 사용자)
     public List<RankingLogDTO> getPersonalRanking(int grade) {
-        return repository.findPersonalRankingByGradeOrAll(grade).stream()
+        String todayDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return repository.findPersonalRankingByGradeOrAll(grade, todayDate).stream()
                 .map(log -> {
                     Optional<Grade> gradeEntity = gradeRepository.findByUserId(log.getUser().getId());
 
@@ -130,9 +94,9 @@ public class RankingLogService {
                             log.getGradeRank(),
                             log.getOverallRank(),
                             log.getLogDate(),
-                            gradeValue,  // grade 정보 추가 (null일 수 있음)
-                            tier,        // tier 정보 추가 (null일 수 있음)
-                            exp          // exp 정보 추가 (null일 수 있음)
+                            gradeValue,
+                            tier,
+                            exp
                     );
                 })
                 .collect(Collectors.toList());
@@ -160,5 +124,13 @@ public class RankingLogService {
 
             repository.save(rankingLog);
         }
+    }
+
+    public List<WeeklyOverallRanking> getWeeklyOverallRanking() {
+        return overallRankingRepository.findAll();
+    }
+
+    public List<WeeklyGradeRanking> getWeeklyGradeRanking() {
+        return gradeRankingRepository.findAll();
     }
 }

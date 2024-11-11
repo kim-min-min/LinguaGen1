@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { CustomAlertDialog } from "@/components/popup";
+import Spinner from "@/components/spinner";
 
 const CreateCustom = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +22,11 @@ const CreateCustom = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [availableDetailTypes, setAvailableDetailTypes] = useState([]);
+  const [alertDialog, setAlertDialog] = useState({
+    isOpen: false,
+    title: "",
+    description: ""
+  });
 
   const grades = [
     { value: "브론즈", label: "브론즈" },
@@ -97,15 +104,26 @@ const CreateCustom = () => {
     });
   }, []);
 
+  const showAlert = (title, description) => {
+    setAlertDialog({
+      isOpen: true,
+      title,
+      description
+    });
+  };
+
   const handleSubmit = async () => {
     const requiredFields = formData.grade === '챌린저'
-        ? ['topic', 'grade', 'questionType', 'detailType', 'count']
-        : ['topic', 'grade', 'tier', 'questionType', 'detailType', 'count'];
+      ? ['topic', 'grade', 'questionType', 'detailType', 'count']
+      : ['topic', 'grade', 'tier', 'questionType', 'detailType', 'count'];
 
     const missingFields = requiredFields.filter(field => !formData[field]);
 
     if (missingFields.length > 0) {
-      alert('모든 필드를 입력해주세요.');
+      showAlert(
+        "입력 오류",
+        "모든 필드를 입력해주세요."
+      );
       return;
     }
 
@@ -117,7 +135,7 @@ const CreateCustom = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // 이 부분을 추가
+        credentials: 'include',
         body: JSON.stringify({
           topic: formData.topic,
           grade: formData.grade,
@@ -135,10 +153,16 @@ const CreateCustom = () => {
 
       const data = await response.json();
       console.log('생성된 질문:', data);
-      alert('질문이 성공적으로 생성되었습니다!');
+      showAlert(
+        "성공",
+        "질문이 성공적으로 생성되었습니다!"
+      );
     } catch (error) {
       console.error('에러:', error);
-      alert(`질문 생성 중 오류가 발생했습니다: ${error.message}`);
+      showAlert(
+        "오류 발생",
+        `질문 생성 중 오류가 발생했습니다: ${error.message}`
+      );
     } finally {
       setIsLoading(false);
     }
@@ -268,9 +292,23 @@ const CreateCustom = () => {
               onClick={handleSubmit}
               disabled={isLoading}
           >
-            {isLoading ? '생성 중...' : '문제 생성하기'}
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <Spinner />
+                <span>생성 중...</span>
+              </div>
+            ) : (
+              "문제 생성하기"
+            )}
           </Button>
         </div>
+
+        <CustomAlertDialog
+          isOpen={alertDialog.isOpen}
+          onClose={() => setAlertDialog(prev => ({ ...prev, isOpen: false }))}
+          title={alertDialog.title}
+          description={alertDialog.description}
+        />
       </div>
   );
 };
