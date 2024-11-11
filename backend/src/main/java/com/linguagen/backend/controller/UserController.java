@@ -190,4 +190,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 업로드 실패: " + e.getMessage());
         }
     }
+
+    // 결제 성공
+    @PostMapping("/payment/success")
+    public ResponseEntity<String> handlePaymentSuccess(@RequestParam String userId) {
+        userService.updateUserPlanToPro(userId);
+        return ResponseEntity.ok("결제가 성공적으로 처리되었습니다.");
+    }
 }

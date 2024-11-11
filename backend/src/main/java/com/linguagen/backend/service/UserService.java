@@ -74,6 +74,7 @@ public class UserService {
             session.setAttribute("id", loggedInUser.getId());
             session.setAttribute("nickname", loggedInUser.getNickname());
             session.setAttribute("tell", loggedInUser.getTell());
+            session.setAttribute("address", loggedInUser.getAddress());
             session.setAttribute("points", loggedInUser.getPoints());
         }
 
@@ -164,5 +165,9 @@ public class UserService {
             e.printStackTrace(); // 예외 메시지를 서버 로그에 출력
             throw new IOException("파일 업로드 실패: " + e.getMessage(), e);
         }
+    }
+
+    public void updateUserPlanToPro(String userId) {
+        userRepository.updatePlan(userId, "pro");
     }
 }
