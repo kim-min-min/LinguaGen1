@@ -43,14 +43,14 @@ public class DashBoardService {
         }
         return null; // 로그나 문제가 없는 경우
     }
-
+    // heatmap
     public List<DailyPlayCountDto> getDailyPlayCounts(String studentId) {
         return studentAnswerRepository.findDailyPlayCountsByStudentId(studentId);
     }
 
     // 특정 studentId에 대한 게임 진행 수 반환
     public Long getGameCountByStudentId(String studentId) {
-        return studentAnswerRepository.countByStudentId(studentId);
+        return studentAnswerRepository.getGameCountByStudentId(studentId);
     }
 
     // 정답률 반환

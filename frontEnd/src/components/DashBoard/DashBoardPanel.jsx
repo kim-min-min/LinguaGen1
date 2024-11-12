@@ -228,11 +228,6 @@ const DashBoardPanel = () => {
                             </ul>
 
                         </CardContent>
-                        <CardFooter className='flex flex-row justify-end'>
-                            <CardDescription style={{cursor: 'pointer'}}>
-                                더보기 {'>'}
-                            </CardDescription>
-                        </CardFooter>
                     </Card>
                     <CustomLineChart className='w-full h-full'/>
                     <CustomRadicalChart className='w-full h-full'/>

@@ -37,15 +37,18 @@ public interface StudentAnswerRepository extends JpaRepository<StudentAnswer, Lo
     // 기존의 통계 관련 메서드들 유지
     Optional<StudentAnswer> findTopByStudentIdOrderByCreatedAtDesc(String studentId);
 
-    @Query("SELECT new com.linguagen.backend.dto.DailyPlayCountDto(DATE(s.createdAt), COUNT(s)) " +
+    @Query("SELECT new com.linguagen.backend.dto.DailyPlayCountDto(DATE(s.createdAt), COUNT(DISTINCT s.sessionIdentifier)) " +
             "FROM StudentAnswer s " +
             "WHERE s.studentId = :studentId " +
             "GROUP BY DATE(s.createdAt)")
     List<DailyPlayCountDto> findDailyPlayCountsByStudentId(@Param("studentId") String studentId);
 
+
+
     // 기존의 통계 관련 메서드들 유지
 
-    Long countByStudentId(String studentId);
+    @Query("SELECT COUNT(DISTINCT sa.sessionIdentifier) FROM StudentAnswer sa WHERE sa.studentId = :studentId")
+    Long getGameCountByStudentId(@Param("studentId") String studentId);
 
     // 특정 회원의 평균 정답률을 계산하는 메서드
     @Query("SELECT (SUM(CASE WHEN s.isCorrect = 1 THEN 1 ELSE 0 END) * 1.0 / COUNT(s)) "

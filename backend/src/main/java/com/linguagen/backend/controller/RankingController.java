@@ -5,10 +5,7 @@ import com.linguagen.backend.entity.WeeklyGradeRanking;
 import com.linguagen.backend.entity.WeeklyOverallRanking;
 import com.linguagen.backend.service.RankingLogService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,6 +32,12 @@ public class RankingController {
     @GetMapping("/weekly-grade")
     public List<WeeklyGradeRanking> getWeeklyGradeRanking() {
         return service.getWeeklyGradeRanking();
+    }
+
+
+    @GetMapping("/{studentId}")
+    public List<RankingLogDTO> getMonthlyOverallRanksByStudentId(@PathVariable("studentId") String studentId) {
+        return service.getMonthlyOverallRanksByStudentId(studentId);
     }
 
 }

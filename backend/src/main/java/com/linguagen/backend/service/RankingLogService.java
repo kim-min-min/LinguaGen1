@@ -133,4 +133,9 @@ public class RankingLogService {
     public List<WeeklyGradeRanking> getWeeklyGradeRanking() {
         return gradeRankingRepository.findAll();
     }
+
+    //매월 1일 랭킹 조회
+    public List<RankingLogDTO> getMonthlyOverallRanksByStudentId(String studentId) {
+        return repository.findMonthlyOverallRanksByStudentId(studentId);
+    }
 }

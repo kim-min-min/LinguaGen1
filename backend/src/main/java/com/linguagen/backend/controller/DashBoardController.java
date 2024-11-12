@@ -31,6 +31,7 @@ public class DashBoardController {
         }
     }
 
+    //하루 플레이 횟수 출력
     @GetMapping("/daily-plays/{studentId}")
     public ResponseEntity<List<DailyPlayCountDto>> getDailyPlayCounts(@PathVariable("studentId") String studentId) {
         List<DailyPlayCountDto> dailyPlayCounts = dashBoardService.getDailyPlayCounts(studentId);
