@@ -45,6 +45,9 @@ public class User {
     @Column(name ="plan")
     private String plan;
 
+    @Column(name = "fatigue")
+    private int fatigue;
+
     // 엔티티 저장 전 현재 시간 설정
     @PrePersist
     protected void onCreate() {

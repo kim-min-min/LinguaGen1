@@ -89,6 +89,8 @@ function LoginPage() {
         sessionStorage.setItem('points', userInfo.points);
         sessionStorage.setItem('profileImageUrl',userInfo.picture);
         sessionStorage.setItem('address', userInfo.address);
+        sessionStorage.setItem('plan', userInfo.plan);
+        sessionStorage.setItem('fatigue', userInfo.fatigue);
 
         setError(''); // 에러 메시지 초기화
         navigate('/main');
