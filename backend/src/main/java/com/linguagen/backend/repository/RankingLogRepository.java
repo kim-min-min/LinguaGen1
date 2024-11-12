@@ -1,5 +1,6 @@
 package com.linguagen.backend.repository;
 
+import com.linguagen.backend.dto.RankingLogDTO;
 import com.linguagen.backend.entity.RankingLog;
 import com.linguagen.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,4 +30,11 @@ public interface RankingLogRepository extends JpaRepository<RankingLog, Long> {
             "WHERE rl.user = :user AND rl.type = :type " +
             "AND FUNCTION('DATE', rl.logDate) = :today")
     Optional<RankingLog> findByUserAndTypeAndLogDate(User user, String type, LocalDate today);
+
+
+    @Query("SELECT new com.linguagen.backend.dto.RankingLogDTO(r.logDate, r.overallRank) " +
+            "FROM RankingLog r " +
+            "WHERE FUNCTION('DAY', r.logDate) = 1 AND r.user.id = :studentId " +
+            "ORDER BY r.logDate")
+    List<RankingLogDTO> findMonthlyOverallRanksByStudentId(@Param("studentId") String studentId);
 }

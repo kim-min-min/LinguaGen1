@@ -35,4 +35,9 @@ public class RankingLogDTO {
         this.tier = tier;
         this.exp = exp;
     }
+
+    public RankingLogDTO(LocalDateTime logDate, int overallRank) {
+        this.logDate = logDate;
+        this.overallRank = overallRank;
+    }
 }
