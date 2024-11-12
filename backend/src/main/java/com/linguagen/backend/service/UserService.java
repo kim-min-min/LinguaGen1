@@ -172,4 +172,18 @@ public class UserService {
     public void updateUserPlanToPro(String userId) {
         userRepository.updatePlan(userId, "pro");
     }
+
+    // 사용자의 피로도 반환
+    public int getUserFatigue(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getFatigue();
+    }
+
+    // 사용자의 포인트 반환
+    public int getUserPoints(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getPoints(); // User 엔티티의 points 필드 반환
+    }
 }

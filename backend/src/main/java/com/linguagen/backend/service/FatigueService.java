@@ -1,6 +1,8 @@
 package com.linguagen.backend.service;
 
+import com.linguagen.backend.entity.PointLog;
 import com.linguagen.backend.entity.User;
+import com.linguagen.backend.repository.PointLogRepository;
 import com.linguagen.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,6 +15,9 @@ public class FatigueService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PointLogRepository pointLogRepository;
 
     // 피로도 증가 메서드
     public boolean increaseFatigue(String userId, int increaseAmount) {
@@ -60,5 +65,33 @@ public class FatigueService {
             user.setFatigue(0);
         }
         userRepository.saveAll(users);
+    }
+
+    // 포인트 소모로 피로도 회복
+    public int recoverFatigue(String userId, int recoveryAmount) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        int pointsNeeded = (recoveryAmount / 10) * 100;
+
+        if (user.getPoints() < pointsNeeded) {
+            throw new RuntimeException("Insufficient points");
+        }
+
+        // 포인트 차감 및 피로도 회복
+        int newBalance = user.getPoints() - pointsNeeded;
+        user.setPoints(newBalance);
+        user.setFatigue(Math.max(user.getFatigue() - recoveryAmount, 0));
+        userRepository.save(user);
+
+        // 포인트 로그 기록
+        PointLog pointLog = new PointLog();
+        pointLog.setUser(user);
+        pointLog.setChangeType("피로도 회복");
+        pointLog.setChangeAmount(-pointsNeeded); // 음수로 기록하여 포인트가 차감된 것을 표시
+        pointLog.setNewBalance(newBalance);
+        pointLogRepository.save(pointLog);
+
+        return user.getPoints(); // 업데이트된 포인트 반환
     }
 }

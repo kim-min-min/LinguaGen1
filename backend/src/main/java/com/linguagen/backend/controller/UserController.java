@@ -197,4 +197,18 @@ public class UserController {
         userService.updateUserPlanToPro(userId);
         return ResponseEntity.ok("결제가 성공적으로 처리되었습니다.");
     }
+
+    // 사용자 피로도 정보 반환
+    @GetMapping("/fatigue/{userId}")
+    public ResponseEntity<Integer> getFatigue(@PathVariable String userId) {
+        int fatigue = userService.getUserFatigue(userId);
+        return ResponseEntity.ok(fatigue);
+    }
+
+    // 사용자의 포인트 조회
+    @GetMapping("/getPoints")
+    public ResponseEntity<Integer> getUserPoints(@RequestParam String userId) {
+        int points = userService.getUserPoints(userId);
+        return ResponseEntity.ok(points);
+    }
 }
