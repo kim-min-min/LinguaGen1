@@ -194,7 +194,7 @@ const data = {
 const canvases = [DungeonCanvas, RuinsCanvas, MountainCanvas];
 
 const MainContainer = ({ selectedGame }) => {
-  const { cards, loading, loadMoreCards, isLoggedIn, increaseFatigue, fatigue } = useStore();
+  const { cards, loading, loadMoreCards, isLoggedIn, fatigue } = useStore();
   const containerRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const [overscrollShadow, setOverscrollShadow] = useState(0);
@@ -430,34 +430,44 @@ const MainContainer = ({ selectedGame }) => {
 
   const handleStartGame = useCallback(async () => {
     try {
-      // 피로도 5 증가
-      increaseFatigue(5);
+      const userId = sessionStorage.getItem("id");
 
-      const randomCanvas = canvases[Math.floor(Math.random() * canvases.length)];
-      setCanvasValue(randomCanvas);
+      // 피로도 5 증가 API 호출
+      const response = await axios.post(
+          `${import.meta.env.VITE_APP_API_BASE_URL}/game/start`,
+          { userId, amount: 5 },
+          { withCredentials: true }
+      );
 
-      // 상태 초기화
-      setShowAnimation(false);
-      setIsExiting(false);
-      setAnimationPosition({ x: 0, y: 0 });
+      if (response.status === 200) {
+        const randomCanvas = canvases[Math.floor(Math.random() * canvases.length)];
+        setCanvasValue(randomCanvas);
 
-      navigate('/loading');
+        // 상태 초기화
+        setShowAnimation(false);
+        setIsExiting(false);
+        setAnimationPosition({ x: 0, y: 0 });
 
-      const timer = setTimeout(() => {
-        if (randomCanvas === DungeonCanvas) {
-          navigate('/dungeon');
-        } else if (randomCanvas === MountainCanvas) {
-          navigate('/mountain');
-        } else if (randomCanvas === RuinsCanvas) {
-          navigate('/ruins');
-        }
-      }, 3000);
+        navigate('/loading');
 
-      return () => clearTimeout(timer);
+        const timer = setTimeout(() => {
+          if (randomCanvas === DungeonCanvas) {
+            navigate('/dungeon');
+          } else if (randomCanvas === MountainCanvas) {
+            navigate('/mountain');
+          } else if (randomCanvas === RuinsCanvas) {
+            navigate('/ruins');
+          }
+        }, 3000);
+
+        return () => clearTimeout(timer);
+      } else {
+        console.error('Failed to increase fatigue:', response.statusText);
+      }
     } catch (error) {
       console.error('Error starting game:', error);
     }
-  }, [navigate, increaseFatigue]);
+  }, [navigate]);
 
   const handleMenuClick = (title) => {
     setSelectedMenu(title);
