@@ -504,8 +504,10 @@ const MainContainer = ({ selectedGame }) => {
   };
 
   const handleButtonClick = (e) => {
+    const userPlan = sessionStorage.getItem("plan");
+
     // 피로도가 100%일 때
-    if (fatigue >= 100) {
+    if (fatigue >= 100 && userPlan !== "pro") {
       setShowFatiguePopup(true);
       return;
     }
@@ -580,7 +582,7 @@ const MainContainer = ({ selectedGame }) => {
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>게임을 진행할 때 마다 5의 피로도가 증가합니다.</p>
-                        <p>게임에서 승리할 경우 3의 피로도가 더 증가합니다.</p>
+                        <p>게임에서 승리할 경우 5의 피로도가 더 증가합니다.</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
