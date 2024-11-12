@@ -76,11 +76,6 @@ function ProfileCard() {
     }
   };
 
-  // 피로도를 100으로 설정하는 useEffect
-  useEffect(() => {
-    setFatigue(100);
-  }, [setFatigue]);
-
   useEffect(() => {
     const fetchUserData = async () => {
       const user = sessionStorage.getItem('user');
@@ -101,10 +96,8 @@ function ProfileCard() {
 
           // 피로도 정보 가져오기 (API 엔드포인트는 실제 구현에 맞게 수정 필요)
           const fatigueResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/users/fatigue/${userData.id}`, { withCredentials: true });
-          setFatigue(fatigueResponse.data.fatigue);
-
-          // 테스트를 위해 피로도 100으로 설정
-          setFatigue(100);
+          console.log(fatigueResponse); // 응답 확인
+          setFatigue(fatigueResponse.data);
         } catch (error) {
           console.error('사용자 정보를 가져오는 중 오류 발생:', error);
         }
@@ -139,6 +132,9 @@ function ProfileCard() {
           sessionStorage.setItem('nickname', userInfo.nickname);
           sessionStorage.setItem('tell', userInfo.tell);
           sessionStorage.setItem('profileImageUrl',userInfo.picture);
+          sessionStorage.setItem('point', userInfo.point);
+          sessionStorage.setItem('plan', userInfo.plan);
+          sessionStorage.setItem('fatigue', userInfo.fatigue);
 
           // 프로필 이미지 상태 업데이트
           setProfileImagePath(`${BASE_URL}${userInfo.picture}`);

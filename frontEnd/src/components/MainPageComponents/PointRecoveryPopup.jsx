@@ -1,12 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X, Plus, Minus } from "lucide-react";
 
 function PointRecoveryPopup({ onClose }) {
   const [recoveryAmount, setRecoveryAmount] = useState(10); // 기본값 10%
-  const currentPoints = 1000; // 임시 포인트 값
+  const [currentPoints, setCurrentPoints] = useState(0);
   const pointsNeeded = (recoveryAmount / 10) * 100; // 10% 당 100포인트
+
+// 사용자의 포인트 데이터를 가져오는 useEffect
+  useEffect(() => {
+    async function fetchUserPoints() {
+      try {
+        const userId = sessionStorage.getItem("id");
+        if (userId) {
+          const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/users/getPoints?userId=${userId}`);
+
+          if (response.ok) {
+            const data = await response.json();
+            setCurrentPoints(data);
+          } else {
+            console.error("Failed to fetch user points:", response.statusText);
+          }
+        } else {
+          console.error("User ID not found in session storage");
+        }
+      } catch (error) {
+        console.error("Failed to fetch user points:", error);
+      }
+    }
+    fetchUserPoints();
+  }, []);
 
   const handleIncrease = () => {
     if (recoveryAmount < 100) {
@@ -17,6 +41,34 @@ function PointRecoveryPopup({ onClose }) {
   const handleDecrease = () => {
     if (recoveryAmount > 10) {
       setRecoveryAmount(prev => prev - 10);
+    }
+  };
+
+  // 포인트로 회복하기 버튼 클릭 시 실행되는 함수
+  const handleRecovery = async () => {
+    try {
+      const userId = sessionStorage.getItem("id");
+      const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/game/recoverFatigue`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: userId,
+          recoveryAmount: recoveryAmount
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentPoints(data.updatedPoints); // 서버에서 반환된 최신 포인트로 업데이트
+        alert("피로도가 회복되었습니다!");
+        onClose(); // 팝업 닫기
+      } else {
+        console.error("Recovery failed:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Failed to recover points:", error);
     }
   };
 
@@ -77,6 +129,7 @@ function PointRecoveryPopup({ onClose }) {
           <Button 
             className="w-full bg-green-500 hover:bg-green-600"
             disabled={pointsNeeded > currentPoints}
+            onClick={handleRecovery}
           >
             포인트로 회복하기
           </Button>
