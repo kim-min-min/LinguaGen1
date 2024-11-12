@@ -35,8 +35,8 @@ public class FatigueService {
         user.setFatigue(newFatigue);
         userRepository.save(user);
 
-        // 프로 플랜이거나 피로도가 100 미만일 때 true 반환
-        if (plan.equals(user.getPlan()) || newFatigue < 100) {
+        // 프로 플랜이거나 피로도가 100 이하일 때 true 반환
+        if (plan.equals(user.getPlan()) || newFatigue <= 100) {
             return true; // 게임 실행 가능
         } else {
             return false; // 피로도 100 이상일 때 "프로"가 아닌 경우 게임 실행 불가

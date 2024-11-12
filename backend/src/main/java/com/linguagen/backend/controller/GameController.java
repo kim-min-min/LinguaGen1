@@ -17,8 +17,11 @@ public class GameController {
 
     // 게임 시작 시 피로도 5증가
     @PostMapping("/start")
-    public ResponseEntity<?> startGame(@RequestParam String userId) {
-        boolean canIncreaseFatigue = fatigueService.increaseFatigue(userId, 5);
+    public ResponseEntity<?> startGame(@RequestBody Map<String, Object> payload) {
+        String userId = (String) payload.get("userId");
+        int amount = (int) payload.get("amount");
+
+        boolean canIncreaseFatigue = fatigueService.increaseFatigue(userId, amount);
         if (canIncreaseFatigue) {
             return ResponseEntity.ok("Game started");
         } else {
