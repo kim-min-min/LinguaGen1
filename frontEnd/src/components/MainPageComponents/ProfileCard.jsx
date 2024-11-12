@@ -96,7 +96,6 @@ function ProfileCard() {
 
           // 피로도 정보 가져오기 (API 엔드포인트는 실제 구현에 맞게 수정 필요)
           const fatigueResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/users/fatigue/${userData.id}`, { withCredentials: true });
-          console.log(fatigueResponse); // 응답 확인
           setFatigue(fatigueResponse.data);
         } catch (error) {
           console.error('사용자 정보를 가져오는 중 오류 발생:', error);
