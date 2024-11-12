@@ -40,6 +40,21 @@ public class GameController {
         }
     }
 
+    // 광고 시청으로 피로도 회복
+    @PostMapping("/recoverFatigueForAd")
+    public ResponseEntity<Map<String, Integer>> recoverFatigueForAd(@RequestBody Map<String, Object> payload) {
+        String userId = (String) payload.get("userId");
+        int recoveryAmount = (int) payload.get("recoveryAmount");
+
+        // 광고 시청으로 인한 포인트 차감 및 피로도 회복 로직
+        int updatedFatigue = fatigueService.recoverFatigueFromAd(userId, recoveryAmount);
+
+        // 클라이언트에 최신 피로도 반환
+        Map<String, Integer> response = new HashMap<>();
+        response.put("updatedFatigue", updatedFatigue);
+        return ResponseEntity.ok(response);
+    }
+
     // 포인트로 피로도 회복
     @PostMapping("/recoverFatigue")
     public ResponseEntity<Map<String, Integer>> recoverFatigue(@RequestBody Map<String, Object> payload) {

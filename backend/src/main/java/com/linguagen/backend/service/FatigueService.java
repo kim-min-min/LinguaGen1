@@ -67,6 +67,26 @@ public class FatigueService {
         userRepository.saveAll(users);
     }
 
+    // 광고 시청으로 피로도 회복
+    public int recoverFatigueFromAd(String userId, int recoveryAmount) {
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 포인트 차감 조건 확인 (예: 20 포인트 차감)
+        int pointsCost = 20;
+        if (user.getPoints() < pointsCost) {
+            throw new RuntimeException("Not enough points to recover fatigue");
+        }
+
+        // 포인트 차감 및 피로도 회복
+        user.setPoints(user.getPoints() - pointsCost);
+        user.setFatigue(Math.max(user.getFatigue() - recoveryAmount, 0)); // 피로도가 0 이하로 내려가지 않도록 설정
+        userRepository.save(user);
+
+        return user.getFatigue(); // 회복된 피로도 반환
+    }
+
     // 포인트 소모로 피로도 회복
     public int recoverFatigue(String userId, int recoveryAmount) {
         User user = userRepository.findById(userId)

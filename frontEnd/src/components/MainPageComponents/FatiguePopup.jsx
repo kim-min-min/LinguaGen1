@@ -6,17 +6,43 @@ import { X } from "lucide-react";
 import PointRecoveryPopup from './PointRecoveryPopup';
 import MockAdComponent from '../MockAdComponent';
 import useStore from '../../store/useStore';
+import axios from 'axios';
 
 function FatiguePopup({ onClose }) {
   const [showPointRecovery, setShowPointRecovery] = useState(false);
   const [showAd, setShowAd] = useState(false);
   const { fatigue, setFatigue } = useStore();
 
-  const handleAdComplete = () => {
+/*  const handleAdComplete = () => {
     // 피로도 20% 감소
     setFatigue(Math.max(0, fatigue - 20));
     setShowAd(false);
     // 추가로 성공 메시지나 애니메이션을 표시할 수 있습니다
+  };*/
+
+  const handleAdComplete = async () => {
+    try {
+      const userId = sessionStorage.getItem("id"); // 세션 스토리지에서 사용자 ID 가져오기
+
+      // 피로도 감소 API 호출
+      const response = await axios.post(
+          `${import.meta.env.VITE_APP_API_BASE_URL}/game/recoverFatigueForAd`,
+          { userId, recoveryAmount: 20 },
+          { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        const updatedFatigue = response.data.updatedFatigue;
+        // 서버 응답에서 새로운 피로도 값을 가져와 업데이트
+        setFatigue(updatedFatigue);
+        setShowAd(false);
+        alert("광고 시청으로 피로도가 감소되었습니다!");
+      } else {
+        console.error("Failed to reduce fatigue:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error reducing fatigue after ad:", error);
+    }
   };
 
   return (
