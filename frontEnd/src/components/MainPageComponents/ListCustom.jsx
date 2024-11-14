@@ -49,19 +49,19 @@ const ListCustom = () => {
   const getTierColor = (grade) => {
     switch (grade) {
       case '브론즈':
-        return 'bg-[#B87333]/10 text-[#B87333] hover:bg-[#B87333]/20 border-[#B87333]'; // 청동색
+        return 'bg-gradient-to-r from-amber-700 to-amber-600 text-white hover:from-amber-800 hover:to-amber-700 ring-1 ring-amber-500';
       case '실버':
-        return 'bg-[#C0C0C0]/10 text-[#808080] hover:bg-[#C0C0C0]/20 border-[#C0C0C0]'; // 은색
+        return 'bg-gradient-to-r from-gray-400 to-slate-300 text-gray-700 hover:from-gray-500 hover:to-slate-400 ring-1 ring-gray-300';
       case '골드':
-        return 'bg-[#FFD700]/10 text-[#DAA520] hover:bg-[#FFD700]/20 border-[#FFD700]'; // 금색
+        return 'bg-gradient-to-r from-yellow-500 to-yellow-400 text-yellow-900 hover:from-yellow-600 hover:to-yellow-500 ring-1 ring-yellow-400';
       case '플래티넘':
-        return 'bg-[#E5E4E2]/10 text-[#7B9095] hover:bg-[#E5E4E2]/20 border-[#E5E4E2]'; // 백금색
+        return 'bg-gradient-to-r from-teal-500 via-cyan-400 to-blue-500 text-white hover:from-teal-600 hover:via-cyan-500 hover:to-blue-600 ring-1 ring-cyan-400'; // 더 강한 색상으로 변경
       case '다이아몬드':
-        return 'bg-[#B9F2FF]/10 text-[#00A2E8] hover:bg-[#B9F2FF]/20 border-[#B9F2FF]'; // 다이아몬드 블루
+        return 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white hover:from-blue-600 hover:to-indigo-600 ring-1 ring-blue-400';
       case '챌린저':
-        return 'bg-gradient-to-r from-purple-500/10 to-red-500/10 text-red-500 hover:from-purple-500/20 hover:to-red-500/20 border-red-500'; // 그라데이션
+        return 'bg-gradient-to-r from-purple-600 via-pink-500 to-rose-500 text-white hover:from-purple-700 hover:via-pink-600 hover:to-rose-600 ring-1 ring-purple-400';
       default:
-        return 'bg-gray-100';
+        return 'bg-gray-100 text-gray-800';
     }
   };
 

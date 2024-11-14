@@ -116,6 +116,9 @@ public class UserController {
         try {
             Optional<User> authenticatedUser = userService.login(user);
             if (authenticatedUser.isPresent()) {
+                User loggedInUser = authenticatedUser.get();
+                // 세션에 사용자 ID 저장
+                SessionUtil.setCurrentUserId(loggedInUser.getId());
                 return ResponseEntity.ok("로그인 성공");
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -203,7 +206,7 @@ public class UserController {
 
     // 사용자 피로도 정보 반환
     @GetMapping("/fatigue/{userId}")
-    public ResponseEntity<Integer> getFatigue(@PathVariable String userId) {
+    public ResponseEntity<Integer> getFatigue(@PathVariable("userId") String userId) {
         int fatigue = userService.getUserFatigue(userId);
         return ResponseEntity.ok(fatigue);
     }
