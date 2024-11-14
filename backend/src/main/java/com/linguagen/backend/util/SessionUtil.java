@@ -53,7 +53,6 @@ public class SessionUtil {
         return attr.getRequest().getSession(true); // 세션이 없을 경우 생성
     }
 
-
     // 현재 선택된 문제 세트 ID 관리
     public static void setCurrentQuestionSetId(String setId) {
         HttpSession session = getSession();

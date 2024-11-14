@@ -17,8 +17,9 @@ public class UserGeneratedQuestionAnswer {
     @Column(name = "user_id", nullable = false)
     private String userId;
 
-    @Column(name = "question_idx", nullable = false)
-    private Long questionIdx;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_idx", nullable = false)
+    private UserGeneratedQuestion userGeneratedQuestion;
 
     @Column(name = "answer", nullable = false)
     private String answer;
@@ -34,6 +35,11 @@ public class UserGeneratedQuestionAnswer {
         createdAt = LocalDateTime.now();
     }
 
+    @Column(name = "session_identifier")
     private String sessionIdentifier;
+
+    public Long getQuestionIdx() {
+        return userGeneratedQuestion != null ? userGeneratedQuestion.getIdx() : null;
+    }
 
 }

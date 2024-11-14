@@ -42,7 +42,7 @@ public class UserGeneratedQuestionService {
         UserGeneratedQuestion question = userGeneratedQuestionRepository.findById(questionIdx)
             .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
 
-        Question.QuestionFormat questionType = question.getQuestionFormat(); // 반환 타입에 맞게 변수 선언
+        Question.QuestionFormat questionType = question.getQuestionFormat();
 
         boolean isCorrect = false;
 
@@ -54,11 +54,10 @@ public class UserGeneratedQuestionService {
 
         UserGeneratedQuestionAnswer userAnswer = new UserGeneratedQuestionAnswer();
         userAnswer.setUserId(userId);
-        userAnswer.setQuestionIdx(questionIdx);
+        userAnswer.setUserGeneratedQuestion(question);
         userAnswer.setAnswer(answer);
         userAnswer.setIsCorrect(isCorrect);
-        userAnswer.setSessionIdentifier(sessionIdentifier); // 세션 식별자 설정
-
+        userAnswer.setSessionIdentifier(sessionIdentifier);
 
         answerRepository.save(userAnswer);
 
@@ -67,10 +66,7 @@ public class UserGeneratedQuestionService {
             isCorrect ? "정답입니다!" :
                 String.format("오답입니다. 정답은 '%s' 입니다.", question.getCorrectAnswer())
         );
-
-
     }
-
 
     // 특수 문자 변환 함수
     private String replaceSpecialCharacters(String input) {
@@ -258,6 +254,9 @@ public class UserGeneratedQuestionService {
 
     @Transactional
     public String generateQuestion(QuestionGenerationRequestDTO request, String userId) {
+
+        logGenerationStart(request, userId);
+
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -268,26 +267,48 @@ public class UserGeneratedQuestionService {
 
         List<UserGeneratedQuestion> generatedQuestions = new ArrayList<>();
 
-        // 항상 15문제 생성
         for (int i = 0; i < 15; i++) {
             try {
+                log.info("====== 문제 생성 시작: {} / 15 ======", i + 1);
                 UserGeneratedQuestion question = generateSingleQuestion(
                     request, user, setId, i + 1, tierString
                 );
                 generatedQuestions.add(question);
+                logGeneratedQuestionDetails(question, i + 1);
             } catch (Exception e) {
-                log.error("Error generating question {} of 15", i + 1, e);
+                log.error("문제 생성 실패 ({}/15): {}", i + 1, e.getMessage());
                 if (i == 0) {
-                    throw new QuestionParsingException("Failed to generate first question");
+                    throw new QuestionParsingException("첫 번째 문제 생성 실패");
                 }
             }
         }
 
         if (generatedQuestions.isEmpty()) {
-            throw new QuestionParsingException("Failed to generate any questions");
+            throw new QuestionParsingException("문제 생성 실패");
         }
 
+        log.info("====== 문제 세트 생성 완료 ======");
+        log.info("세트 ID: {}", setId);
+        log.info("생성된 문제 수: {}", generatedQuestions.size());
         return setId;
+    }
+
+    private void logGenerationStart(QuestionGenerationRequestDTO request, String userId) {
+        log.info("""
+            ====== 문제 생성 요청 시작 ======
+            사용자 ID: {}
+            주제: {}
+            난이도: {} {}티어
+            문제 유형: {}
+            세부 유형: {}
+            """,
+            userId,
+            request.getTopic(),
+            request.getGrade(),
+            request.getTier(),
+            request.getQuestionType(),
+            request.getDetailType()
+        );
     }
 
     // generateSingleQuestion 메서드 추가
@@ -298,11 +319,11 @@ public class UserGeneratedQuestionService {
         int order,
         String tierString
     ) {
-        String questionFormat = QuestionType.isWritingSpeakingType(request.getDetailType())
-            ? "short-answer"
-            : determineQuestionFormat(request.getQuestionType(), request.getDetailType());
+        // questionType과 detailType을 모두 전달
+        String questionFormat = determineQuestionFormat(request.getQuestionType(), request.getDetailType());
 
-        OpenAIPromptDTO prompt = createPrompt(
+        // 프롬프트 생성 및 로깅
+        OpenAIPromptDTO promptDTO = createPrompt(
             request.getTopic(),
             tierString,
             request.getQuestionType(),
@@ -310,16 +331,99 @@ public class UserGeneratedQuestionService {
             questionFormat
         );
 
-        String response = openAIService.getCompletion(prompt.getPrompt());
+        logPrompt(promptDTO);
+
+        // API 응답 받기 및 로깅
+        String response = openAIService.getCompletion(promptDTO.getPrompt());
+        logOpenAIResponse(response);
 
         UserGeneratedQuestion question = new UserGeneratedQuestion();
         question.setUserId(user);
         question.setSetId(setId);
         question.setQuestionOrder(order);
 
-        setQuestionProperties(question, prompt, response, tierString);
+        setQuestionProperties(question, promptDTO, response, tierString);
 
         return userGeneratedQuestionRepository.save(question);
+    }
+
+    private void logPrompt(OpenAIPromptDTO promptDTO) {
+        log.info("""
+            
+            ====== 생성 프롬프트 ======
+            {}
+            ========================
+            """,
+            promptDTO.getPrompt()
+        );
+    }
+
+    private void logOpenAIResponse(String response) {
+        log.info("""
+            
+            ====== OpenAI 응답 ======
+            {}
+            ========================
+            """,
+            response
+        );
+    }
+
+    private void logGeneratedQuestionDetails(UserGeneratedQuestion question, int orderNumber) {
+        log.info("""
+            
+            ====== 생성된 문제 #{} 상세 정보 ======
+            문제 ID: {}
+            문제 유형: {} ({})
+            난이도: {} {}티어
+            형식: {}
+            
+            [지문]
+            {}
+            
+            [질문]
+            {}
+            """,
+            orderNumber,
+            question.getIdx(),
+            question.getType(),
+            question.getDetailType(),
+            convertGradeToString(question.getDiffGrade()),
+            question.getDiffTier(),
+            question.getQuestionFormat(),
+            question.getPassage(),
+            question.getQuestion()
+        );
+
+        if (question.getQuestionFormat() == Question.QuestionFormat.MULTIPLE_CHOICE) {
+            logMultipleChoiceDetails(question);
+        } else {
+            logShortAnswerDetails(question);
+        }
+
+        log.info("""
+            
+            [해설]
+            {}
+            ================================
+            """,
+            question.getExplanation()
+        );
+    }
+
+    private void logMultipleChoiceDetails(UserGeneratedQuestion question) {
+        StringBuilder choicesLog = new StringBuilder("\n[보기]\n");
+        question.getChoices().forEach(choice ->
+            choicesLog.append(String.format("%s. %s\n",
+                choice.getChoiceLabel(), choice.getChoiceText()))
+        );
+        choicesLog.append("\n[정답] ").append(question.getCorrectAnswer());
+
+        log.info(choicesLog.toString());
+    }
+
+    private void logShortAnswerDetails(UserGeneratedQuestion question) {
+        log.info("\n[정답]\n{}", question.getCorrectAnswer());
     }
 
     // createQuestionSetDTO 메서드 추가
@@ -813,7 +917,7 @@ public class UserGeneratedQuestionService {
             entry("요지 파악", "지문의 요지를 묻는 질문을 **한글로** 작성하세요."),
             entry("세부 정보 찾기", "지문의 세부 정보를 묻는 질문을 **한글로** 작성하세요."),
             entry("지칭 추론", "지문에서 특정 대명사나 표현이 지칭하는 것을 묻는 질문을 **한글로** 작성하세요."),
-            entry("어휘 추론", "지문에서 특정 단어나 구의 의미를 묻는 질문을 **한글로** 작성하세요."),
+            entry("어휘 추론", "지문에서 특정 단어나 구의 의미를 묻는 질문을 **한글로** ���성하세요."),
             entry("주제/목적 파악", "대화나 강의의 주제나 목적을 묻는 질문을 **한글로** 작성하세요."),
             entry("세부 정보 듣기", "대화나 강의에서 언급된 세부 정보를 묻는 질문을 **한글로** 작성하세요."),
             entry("화자의 태도/의견 추론", "화자의 태도나 의견을 추론하는 질문을 **한글로** 작성하세요."),

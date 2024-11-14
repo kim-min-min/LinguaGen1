@@ -17,7 +17,7 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idx", nullable = false)
+    @Column(name = "idx", nullable = false, columnDefinition = "int unsigned")
     private Long idx; // 문제 식별자
 
     @Column(name = "type", nullable = false, length = 50)

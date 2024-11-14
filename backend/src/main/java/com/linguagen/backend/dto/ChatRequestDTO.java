@@ -6,5 +6,7 @@ import lombok.Data;
 public class ChatRequestDTO {
     private String roomId;
     private String message;
+    private String studentId;
+    private boolean includeAnalysis;
 
 }

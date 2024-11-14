@@ -65,7 +65,7 @@ public class UserGeneratedQuestionController {
     }
 
     @GetMapping("/sets/{setId}")
-    public ResponseEntity<List<QuestionDTO>> getQuestionsBySet(@PathVariable String setId) {
+    public ResponseEntity<List<QuestionDTO>> getQuestionsBySet(@PathVariable("setId") String setId) {
         log.info("Fetching user generated questions for set: {}", setId);
         List<QuestionDTO> questions = userGeneratedQuestionService.getQuestionsBySetIdAsQuestionDTO(setId);
         return ResponseEntity.ok(questions);

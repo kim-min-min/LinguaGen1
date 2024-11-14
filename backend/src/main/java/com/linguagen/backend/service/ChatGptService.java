@@ -1,9 +1,12 @@
 package com.linguagen.backend.service;
 
+import com.linguagen.backend.dto.LearningAnalysisDTO;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.service.OpenAiService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -12,28 +15,45 @@ import java.util.ArrayList;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class ChatGptService {
 
     private final OpenAiService openAiService;
     private final Map<String, List<ChatMessage>> chatHistories = new HashMap<>();
-    private static final String SYSTEM_PROMPT = "당신은 영어 학습을 도와주는 AI 튜터입니다. " +
-        "학습자의 영어 실력 향상을 위해 친절하고 이해하기 쉽게 설명해주세요. " +
-        "필요한 경우 한국어로 설명할 수 있지만, 가능한 영어 사용을 권장해주세요. " +
-        "문법 오류를 교정해주고, 더 자연스러운 표현을 제안해주세요.";
 
-    public ChatGptService() {
-        String apiKey = System.getenv("OPENAI_API_KEY");
-        if (apiKey == null || apiKey.isEmpty()) {
-            throw new IllegalStateException("OPENAI_API_KEY environment variable is not set");
-        }
-        this.openAiService = new OpenAiService(apiKey);
+    @Lazy
+    private final LearningAnalysisService learningAnalysisService;
+
+    private static final String SYSTEM_PROMPT = "당신은 영어 학습을 도와주는 AI 튜터입니다.";
+
+    private String createSystemPromptWithAnalysis(String studentId) {
+        LearningAnalysisDTO analysis = learningAnalysisService.analyzeLearning(studentId);
+
+        return String.format("""
+            %s
+            현재 학습자의 프로필:
+            - 평균 정답률: %.1f%%
+            - 추천 레벨: %s
+            - 학습 패턴: %s
+            - 주간 학습 일수: %d일
+            - 취약 분야: %s
+            
+            이 정보를 바탕으로 학습자의 수준과 취약점을 고려하여 맞춤형 답변을 제공해주세요.
+            """,
+            SYSTEM_PROMPT,
+            analysis.getAverageCorrectRate(),
+            analysis.getRecommendedLevel(),
+            analysis.getStudyPattern(),
+            analysis.getWeeklyStudyCount(),
+            String.join(", ", analysis.getWeakPoints())
+        );
     }
 
-    public String getChatbotResponse(String roomId, String userMessage) {
+    public String getChatbotResponse(String roomId, String userMessage, String studentId) {
         List<ChatMessage> messages = chatHistories.computeIfAbsent(roomId, k -> {
             List<ChatMessage> newMessages = new ArrayList<>();
-            // 시스템 프롬프트 추가
-            newMessages.add(new ChatMessage("system", SYSTEM_PROMPT));
+            String systemPrompt = createSystemPromptWithAnalysis(studentId);
+            newMessages.add(new ChatMessage("system", systemPrompt));
             return newMessages;
         });
 
@@ -52,16 +72,40 @@ public class ChatGptService {
             ChatCompletionResult result = openAiService.createChatCompletion(request);
             String botResponse = result.getChoices().get(0).getMessage().getContent();
 
+            // 응답 형식 개선
+            String formattedResponse = formatResponse(botResponse);
+
             // 봇 응답 저장
-            ChatMessage botChatMessage = new ChatMessage("assistant", botResponse);
+            ChatMessage botChatMessage = new ChatMessage("assistant", formattedResponse);
             messages.add(botChatMessage);
 
-            return botResponse;
+            return formattedResponse;
 
         } catch (Exception e) {
             // API 호출 실패 시 에러 처리
             throw new RuntimeException("ChatGPT API 호출 중 오류 발생: " + e.getMessage(), e);
         }
+    }
+
+    private String formatResponse(String response) {
+
+        // 포맷팅 전 응답 출력
+        System.out.println("Before formatting: " + response);
+
+        // 응답을 보기 좋게 포맷팅하는 로직
+        String formattedResponse = response
+            .replaceAll("\\*\\*(.*?)\\*\\*", "$1") // **단어**에서 기호 제거
+            .replaceAll("<EOL>", "\n") // <EOL>을 줄바꿈으로 변환
+            .replaceAll("(?<=\\d)(?=\\s*-)", "\n") // 숫자와 하이픈 사이에 줄바꿈 추가
+            .replaceAll("(?<=\\w)(?=\\s*\\.)", "\n") // 단어와 마침표 사이에 줄바꿈 추가
+            .replaceAll("(?<=\\w)(?=\\s*:)", "\n") // 단어와 콜론 사이에 줄바꿈 추가
+            .replaceAll("(?<=\\w)(?=\\s*\\()", "\n") // 단어와 여는 괄호 사이에 줄바꿈 추가
+            .replaceAll("(?<=\\w)(?=\\s*\\))", "\n"); // 단어와 닫는 괄호 사이에 줄바꿈 추가
+
+        // 포맷팅 후 응답 출력
+        System.out.println("After formatting: " + formattedResponse);
+
+        return formattedResponse;
     }
 
     // 채팅방의 대화 기록을 초기화하되, 시스템 프롬프트는 유지
