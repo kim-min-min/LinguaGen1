@@ -42,7 +42,7 @@ public class QuestionGenerationSchedulerService {
     private final Random random = new Random(); // 전역 Random 객체 추가
 
     // 테스트용 1분 주기 실행
-//    @Scheduled(fixedDelay = 60000)
+//    @Scheduled(fixedDelay = 30000)
     // 실제 운영시에는 매일 새벽 3시에 실행
 //    @Scheduled(cron = "0 0 3 * * *")
     @Transactional
@@ -264,33 +264,38 @@ public class QuestionGenerationSchedulerService {
 
     private void extractMultipleChoiceContent(String response, Question question) {
         try {
-            // 보기 섹션 추출 패턴 수정
             Pattern choicesSectionPattern = Pattern.compile("보기:(.*?)(?=정답:)", Pattern.DOTALL);
             Matcher sectionMatcher = choicesSectionPattern.matcher(response);
 
             if (sectionMatcher.find()) {
                 String choicesSection = sectionMatcher.group(1).trim();
 
-                // 선택지 추출 패턴 수정 - 숫자 무시하고 A, B, C, D만 매칭
-                Pattern choicesPattern = Pattern.compile("(?:^|\\n)\\s*(?:\\d+\\.)?\\s*([A-D])[.)]\\s*([^A-D\\n]*?)(?=(?:\\n\\s*(?:\\d+\\.)?\\s*[A-D][.)]|$))", Pattern.DOTALL);
+                // 보기 텍스트 추출 패턴 수정
+                Pattern choicesPattern = Pattern.compile(
+                        "(?:^|\\n)\\s*(?:\\d+\\.)?\\s*([A-D])[.:]\\s*([^\\n]*?)(?=\\n\\s*(?:\\d+\\.)?\\s*[A-D][.:]|$)",
+                        Pattern.DOTALL
+                );
                 Matcher choicesMatcher = choicesPattern.matcher(choicesSection);
 
                 while (choicesMatcher.find()) {
                     String label = choicesMatcher.group(1).trim();
-                    String text = cleanText(choicesMatcher.group(2));
+                    String text = choicesMatcher.group(2)
+                            .replaceAll("^\\s*[A-D][.:]\\s*", "") // 앞쪽 레이블 제거
+                            .replaceAll("\\s*[A-D][.:]\\s*$", "") // 뒤쪽 레이블 제거
+                            .trim();
 
                     if (!text.isEmpty()) {
                         Choices choice = new Choices();
                         choice.setQuestion(question);
                         choice.setChoiceLabel(label);
-                        choice.setChoiceText(text);
+                        choice.setChoiceText(text.trim());
                         question.getChoices().add(choice);
                     }
                 }
             }
 
             // 정답 추출
-            Pattern answerPattern = Pattern.compile("정답:\\s*(?:\\d+\\.)?\\s*([A-D])(?:\\s|$|\\.|,|\\n|해설:)", Pattern.DOTALL);
+            Pattern answerPattern = Pattern.compile("정답:\\s*([A-D])(?=\\s|$|\\.|,|\\n|해설:)", Pattern.DOTALL);
             Matcher answerMatcher = answerPattern.matcher(response);
 
             if (answerMatcher.find()) {
@@ -304,7 +309,6 @@ public class QuestionGenerationSchedulerService {
                 question.setCorrectAnswer(ANSWER_OPTIONS[random.nextInt(ANSWER_OPTIONS.length)]);
             }
 
-            // 선택지가 4개가 아닌 경우 보완
             if (question.getChoices().size() < 4) {
                 completeChoices(question);
             }
