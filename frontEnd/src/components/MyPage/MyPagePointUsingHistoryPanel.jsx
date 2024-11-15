@@ -28,7 +28,7 @@ const MyPagePointUsingHistoryPanel = () => {
     const fetchPointHistory = async () => {
       try {
         const userId = sessionStorage.getItem('id'); // 세션 스토리지에서 사용자 ID 가져오기
-        const response = await axios.get(`http://localhost:8085/api/points/history/${userId}`);
+        const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/points/history/${userId}`);
         setData(response.data); // 서버에서 받은 데이터를 상태에 설정
       } catch (error) {
         console.error('포인트 내역을 불러오는 중 에러 발생:', error);
