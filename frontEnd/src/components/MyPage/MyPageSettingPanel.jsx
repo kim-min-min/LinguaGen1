@@ -129,7 +129,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
         try {
             // 서버로 비밀번호 변경 요청
             const response = await axios.post(
-                'http://localhost:8085/api/users/change-password',
+                `${import.meta.env.VITE_APP_API_BASE_URL}/users/change-password`,
                 { id: email, password },
                 { withCredentials: true }
             );
@@ -156,7 +156,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
     const handlePhoneNumberChange = async () => {
         try {
             const response = await axios.post(
-                'http://localhost:8085/api/users/change-tell',
+                `${import.meta.env.VITE_APP_API_BASE_URL}/users/change-tell`,
                 { id: email, tell: phoneNumber },
                 { withCredentials: true }
             );
@@ -179,7 +179,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
     const handleNicknameChange = async () => {
         try {
             const response = await axios.post(
-                'http://localhost:8085/api/users/change-nickname',
+                `${import.meta.env.VITE_APP_API_BASE_URL}/users/change-nickname`,
                 { id: email, nickname: newNickname },
                 { withCredentials: true }
             );

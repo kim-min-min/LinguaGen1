@@ -104,7 +104,7 @@ const MyPagePostHistoryPanel = () => {
 
     useEffect(() => {
         // 페이지 번호와 크기를 포함해 API 요청
-        axios.get(`http://localhost:8085/api/community/user/${userId}`, {
+        axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/community/user/${userId}`, {
             params: {
                 page: page,
                 size: 12, // 한 페이지에 12개씩 표시
