@@ -218,6 +218,142 @@ const DailyQuiz = () => {
     });
     const [message, setMessage] = useState('');
     const [currentResult, setCurrentResult] = useState(null);
+    const [targetWord, setTargetWord] = useState("");
+    const [wordId, setWordId] = useState(null);
+    const [loggedInUserId, setLoggedInUserId] = useState(null);
+    const [hasPlayedToday, setHasPlayedToday] = useState(false);
+    const [loading, setLoading] = useState(true); // 데이터 로딩 상태
+    const [messageSet, setMessageSet] = useState(false);
+
+    const isToday = (dateString) => {
+        const today = new Date();
+        const targetDate = new Date(dateString);
+
+        return (
+            today.getFullYear() === targetDate.getFullYear() &&
+            today.getMonth() === targetDate.getMonth() &&
+            today.getDate() === targetDate.getDate()
+        );
+    };
+
+    // 정답 가져오는 함수
+    const fetchDailyQuiz = async () => {
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_APP_API_BASE_URL}/daily-quiz`,
+                { withCredentials: true }
+            );
+            setWordId(response.data.id);
+            setTargetWord(response.data.answer); // 서버에서 받아온 정답 저장
+        } catch (error) {
+            alert("데일리 퀴즈를 로드하는 데 실패했습니다.");
+        }
+    };
+
+    const processStats = (data) => {
+        const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+        let totalGames = 0;
+        let wins = 0;
+        let currentStreak = 0;
+        let maxStreak = 0;
+
+        data.forEach((log) => {
+            // 시도 횟수 분포 업데이트
+            if (log.attemptCount >= 1 && log.attemptCount <= 6) {
+                distribution[log.attemptCount] += 1;
+            }
+
+            // 전체 게임 증가
+            totalGames++;
+
+            // 승리 횟수
+            if (log.isCorrect === 1) {
+                wins++;
+            }
+
+            // 연속 승리, 최대 연속 승리 업데이트
+            if (log.recentStreak > currentStreak) {
+                currentStreak = log.recentStreak;
+            }
+            if (log.maxStreak > maxStreak) {
+                maxStreak = log.maxStreak;
+            }
+        });
+
+        const winRate = totalGames > 0 ? Math.round((wins / totalGames) * 100) : 0;
+
+        return {
+            distribution,
+            totalGames,
+            winRate,
+            currentStreak,
+            maxStreak,
+        };
+    };
+    useEffect(() => {
+        const userId = sessionStorage.getItem("id");
+        setLoggedInUserId(userId); // 사용자 ID 설정
+    }, []);
+
+    const fetchGameStats = async () => {
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_APP_API_BASE_URL}/daily_quiz/quizStats?userId=${loggedInUserId}`,
+                { withCredentials: true }
+            );
+
+            const data = response.data; // API 응답 데이터 (list 형태)
+            const stats = processStats(data); // 데이터 계산
+            setGameStats(stats);
+
+            // 오늘 날짜의 로그가 있는지 확인
+            const todayLogExists = data.some((log) => {
+                return isToday(log.createdAt); // createdAt 필드 확인
+            });
+            setHasPlayedToday(todayLogExists);
+
+            if (todayLogExists) {
+                // 오늘 이미 플레이한 경우 결과 팝업을 띄움
+                setShowResult(true);
+                if (!messageSet) { // 이미 메시지가 설정되지 않았다면
+                    setMessage("오늘 이미 데일리 퀴즈를 푸셨습니다!");
+                    setMessageSet(true); // 메시지가 설정되었음을 기록
+                }
+                return;
+            }
+            setLoading(true);
+        } catch (error) {
+            console.error("게임 통계 불러오기 실패:", error);
+            alert("게임 통계를 불러오는 데 실패했습니다.");
+        }
+    };
+
+    useEffect(() => {
+        if (loggedInUserId) {
+            const initializeGame = async () => {
+                await fetchDailyQuiz(); // 퀴즈 데이터 가져오기
+                await fetchGameStats(); // 통계 및 오늘 기록 확인
+            };
+            initializeGame();
+        }
+    }, [loggedInUserId]); // loggedInUserId가 설정되었을 때 실행
+
+    // hasPlayedToday 상태에 따라 결과 팝업을 띄움
+    useEffect(() => {
+        if (hasPlayedToday && !loading) {
+            setShowResult(true);
+            document.querySelectorAll('input[type="text"]').forEach((input) => {
+                input.setAttribute('readonly', true);
+            });
+            document.querySelectorAll('button').forEach((button) => {
+                button.setAttribute('disabled', true); // 버튼 비활성화
+            });
+            if (!messageSet) { // 이미 메시지가 설정되지 않았다면
+                setMessage("오늘 이미 데일리 퀴즈를 푸셨습니다!");
+                setMessageSet(true); // 메시지가 설정되었음을 기록
+            }
+        }
+    }, [hasPlayedToday, loading, messageSet]);
 
     const handleInputChange = (char, row, col) => {
         if (isGameOver || col >= 5) return;
@@ -322,6 +458,7 @@ const DailyQuiz = () => {
 
             if (result.every(status => status === "correct")) {
                 setMessage("정답입니다!");
+                setMessageSet(true);
                 // 승리 처리
                 const newStats = {
                     ...gameStats,
@@ -338,8 +475,19 @@ const DailyQuiz = () => {
                 setGameStats(newStats);
                 setIsGameOver(true);
                 setShowResult(true);
+
+                // 게임 결과 저장 호출
+                submitGameResult(
+                    loggedInUserId, // 사용자 ID (여기에 실제 사용자 ID를 전달)
+                    wordId, // 데일리 퀴즈 ID (적절한 값으로 대체)
+                    1, // 정답 여부
+                    currentAttempt, // 시도 횟수
+                    gameStats.currentStreak,
+                    gameStats.maxStreak
+                );
             } else if (currentAttempt >= 6) {
                 setMessage("게임 오버! 모든 시도를 사용하셨습니다.");
+                setMessageSet(true);
                 // 패배 처리
                 const newStats = {
                     ...gameStats,
@@ -351,6 +499,16 @@ const DailyQuiz = () => {
                 setGameStats(newStats);
                 setIsGameOver(true);
                 setShowResult(true);
+
+                // 게임 결과 저장 호출
+                submitGameResult(
+                    loggedInUserId, // 사용자 ID (여기에 실제 사용자 ID를 전달)
+                    wordId, // 데일리 퀴즈 ID (적절한 값으로 대체)
+                    0, // 정답 여부
+                    currentAttempt, // 시도 횟수
+                    gameStats.currentStreak,
+                    gameStats.maxStreak
+                );
             } else {
                 setCurrentAttempt(currentAttempt + 1);
                 setCurrentInputIndex(0);
@@ -409,7 +567,7 @@ const DailyQuiz = () => {
     }, [currentAttempt, isGameOver]);
 
     const handleKeyInput = (key) => {
-        if (isGameOver) return;
+        if (isGameOver || hasPlayedToday) return;
 
         if (key === "ENTER") {
             submitGuess();
@@ -461,6 +619,34 @@ const DailyQuiz = () => {
         }
     };
 
+    const submitGameResult = async (userId, quizId, isCorrect, attempts, recentStreak, maxStreak) => {
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_APP_API_BASE_URL}/daily_quiz/sendResult`,
+                {
+                    userId,
+                    dailyQuizIdx: quizId,
+                    isCorrect,
+                    attemptCount: attempts,
+                    recentStreak,
+                    maxStreak,
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    withCredentials: true, // 쿠키 인증을 사용 중일 경우 설정
+                }
+            );
+            console.log("게임 결과 저장 성공:", response.data);
+            fetchGameStats();
+        } catch (error) {
+            console.error("게임 결과 저장 실패:", error);
+            alert("게임 결과를 저장하는 데 실패했습니다.");
+        }
+    };
+
+
 
     return (
         <FadeInContainer className="h-full w-full relative">
@@ -470,10 +656,10 @@ const DailyQuiz = () => {
             <Header />
             <div className="flex flex-col justify-start items-center w-full h-full mb-12">
                 <h1 className="mb-12 font-bold">Daily Quiz</h1>
-                
+
                 {/* 메시지 표시 */}
                 {message && <GameMessage>{message}</GameMessage>}
-                
+
                 <GameBoard>
                     {inputs.map((row, rowIndex) => (
                         <GuessRow key={rowIndex}>
@@ -483,9 +669,12 @@ const DailyQuiz = () => {
                                     id={`input-${rowIndex}-${colIndex}`}
                                     value={input}
                                     disabled={rowIndex !== currentAttempt - 1}
-                                    onChange={(e) =>
-                                        handleInputChange(e.target.value, rowIndex, colIndex)
-                                    }
+                                    readOnly={hasPlayedToday || rowIndex !== currentAttempt - 1} // 읽기 전용 설정
+                                    onChange={(e) => {
+                                        if (!hasPlayedToday && rowIndex === currentAttempt - 1) {
+                                            handleInputChange(e.target.value, rowIndex, colIndex);
+                                        }
+                                    }}
                                     maxLength={1}
                                 />
                             ))}
@@ -505,6 +694,7 @@ const DailyQuiz = () => {
                                 <KeyboardItem
                                     key={`${char}-${index}`}
                                     onClick={() => handleKeyInput(char)}
+                                    disabled={hasPlayedToday}
                                     className={keyboardStatus[char] || ''}
                                 >
                                     {char}
@@ -517,6 +707,7 @@ const DailyQuiz = () => {
                             <KeyboardItem
                                 key={`${char}-${index}`}
                                 onClick={() => handleKeyInput(char)}
+                                disabled={hasPlayedToday}
                                 className={keyboardStatus[char] || ''}
                             >
                                 {char}
@@ -529,6 +720,7 @@ const DailyQuiz = () => {
                             <KeyboardItem
                                 key={`${char}-${index}`}
                                 onClick={() => handleKeyInput(char)}
+                                disabled={hasPlayedToday}
                                 className={keyboardStatus[char] || ''}
                             >
                                 {char}
@@ -540,9 +732,11 @@ const DailyQuiz = () => {
             </div>
 
             {/* 결과 팝업 */}
-            {showResult && currentResult && (
-                <GameResultPopup 
-                    isWin={currentResult.every(status => status === "correct")}
+            {/*{showResult && currentResult && (*/}
+            {showResult && (
+                <GameResultPopup
+                    /*isWin={currentResult.every(status => status === "correct")}*/
+                    isWin={true}
                     attempts={currentAttempt}
                     distribution={gameStats.distribution}
                     totalGames={gameStats.totalGames}
