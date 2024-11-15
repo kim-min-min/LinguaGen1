@@ -8,7 +8,7 @@ function UserRanking() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch('http://localhost:8085/api/users/all');
+                const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/users/all`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }

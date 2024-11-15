@@ -11,7 +11,7 @@ import {
 
 // API 호출 함수 분리
 const fetchWords = async () => {
-    const response = await fetch('http://localhost:8085/api/words');
+    const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/words`);
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
