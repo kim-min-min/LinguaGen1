@@ -15,7 +15,7 @@ import CustomLineChart from '../CustomLineChart.jsx'
 import CustomRadicalChart from '../CustomRadicalChart.jsx';
 
 import BronzeTier from "../../assets/imgs/Tiers/Bronze Tier.png";
-import SilverTier from "../../assets/imgs/Tiers/Silver TIer.png";
+import SilverTier from "../../assets/imgs/Tiers/Silver Tier.png";
 import GoldTier from "../../assets/imgs/Tiers/Gold Tier.png";
 import PlatinumTier from "../../assets/imgs/Tiers/Platinum Tier.png";
 import DiamondTier from "../../assets/imgs/Tiers/Diamond Tier.png";

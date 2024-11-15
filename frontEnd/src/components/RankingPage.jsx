@@ -119,7 +119,7 @@ const RankingPage = () => {
     // API 호출: 주간 전체 랭킹 데이터 가져오기
     const fetchWeeklyOverallRanking = async () => {
         try {
-            const response = await fetch('http://localhost:8085/api/ranking/weekly-overall');
+            const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/ranking/weekly-overall`);
             const data = await response.json();
             setWeeklyOverallData(data);
             setFilteredData(Array.isArray(data) ? data : []);
@@ -132,7 +132,7 @@ const RankingPage = () => {
     // API 호출: 주간 등급별 랭킹 데이터 가져오기
     const fetchWeeklyGradeRanking = async () => {
         try {
-            const response = await fetch('http://localhost:8085/api/ranking/weekly-grade');
+            const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/ranking/weekly-grade`);
             const data = await response.json();
             setWeeklyGradeData(data);
             setFilteredData(Array.isArray(data) ? data : []);
@@ -145,7 +145,7 @@ const RankingPage = () => {
     // API 호출: 개인 랭킹 데이터 가져오기
     const fetchPersonalRankingData = async (grade = 0) => {
         try {
-            const response = await fetch(`http://localhost:8085/api/ranking/personal?grade=${grade}`);
+            const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/ranking/personal?grade=${grade}`);
             const data = await response.json();
             setPersonalRankingData(data);
             setFilteredData(Array.isArray(data) ? data : []);
