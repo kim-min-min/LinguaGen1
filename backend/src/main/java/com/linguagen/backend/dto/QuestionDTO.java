@@ -25,9 +25,18 @@ public class QuestionDTO {
     private String correctAnswer;
     private String explanation;
     private List<ChoicesDTO> choices;
+    private String sessionIdentifier; // 추가된 필드
 
     @JsonIgnore
     private LocalDateTime createdAt;
+
+    // 첫 번째 문제의 특정 필드만 초기화하는 생성자 추가
+    public QuestionDTO(String sessionIdentifier, String type, Byte diffGrade, Byte diffTier) {
+        this.sessionIdentifier = sessionIdentifier;
+        this.type = type;
+        this.diffGrade = diffGrade;
+        this.diffTier = diffTier;
+    }
 
     // 추가할 필드
     private String setId;

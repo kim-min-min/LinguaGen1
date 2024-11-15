@@ -2,6 +2,8 @@ package com.linguagen.backend.repository;
 
 import com.linguagen.backend.dto.DailyPlayCountDto;
 import com.linguagen.backend.dto.IncorrectTypePercentageDto;
+import com.linguagen.backend.dto.MyPageDTO;
+import com.linguagen.backend.dto.QuestionDTO;
 import com.linguagen.backend.entity.StudentAnswer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -83,6 +85,26 @@ public interface StudentAnswerRepository extends JpaRepository<StudentAnswer, Lo
             "GROUP BY g.grade, sa.studentId " +
             "ORDER BY g.grade DESC, correctAnswers DESC, firstCorrectDate ASC")
     List<Object[]> findTopUsersByGradeAndCorrectAnswers(LocalDateTime fromDate);
+
+    // 학습 날짜, 경험치, 학습 일자 가져오기
+    @Query("SELECT new com.linguagen.backend.dto.MyPageDTO(" +
+            "s.sessionIdentifier, " +
+            "DATE(s.createdAt), " + // DATE()를 사용하여 년-월-일로 변환
+            "COUNT(s), " +
+            "SUM(CASE WHEN s.isCorrect = 1 THEN 1 ELSE 0 END), " +
+            "COALESCE(SUM(s.score), 0)) " +
+            "FROM StudentAnswer s " +
+            "WHERE s.studentId = :studentId " +
+            "GROUP BY s.sessionIdentifier, DATE(s.createdAt)")
+    List<MyPageDTO> findMyPageSummaries(@Param("studentId") String studentId);
+
+
+    // 학습한 타입, 등급, 티어 가져오기
+    @Query("SELECT new com.linguagen.backend.dto.QuestionDTO(sa.sessionIdentifier, q.type, q.diffGrade, q.diffTier) " +
+            "FROM StudentAnswer sa " +
+            "JOIN sa.question q " +
+            "WHERE sa.studentId = :studentId")
+    List<QuestionDTO> findQuestionsByStudentId(@Param("studentId") String studentId);
 }
 
 

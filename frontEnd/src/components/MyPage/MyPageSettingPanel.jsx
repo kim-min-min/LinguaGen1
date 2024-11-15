@@ -60,37 +60,37 @@ const Slider = styled.div`
   /* PC 버전 - 설정 탭만 있을 때 */
   @media (min-width: 952px) {
     left: ${({ activeTab }) => {
-      switch (activeTab) {
+    switch (activeTab) {
         case 'accountSettings':
-          return '0px';
+            return '0px';
         case 'notificationSettings':
-          return '120px';
+            return '120px';
         default:
-          return '0px';
-      }
-    }};
+            return '0px';
+    }
+}};
   }
 
   /* 모바일 버전 - 모든 탭이 있을 때 */
   @media (max-width: 951px) {
     left: ${({ activeTab }) => {
-      switch (activeTab) {
+    switch (activeTab) {
         case 'playHistory':
-          return '0px';
+            return '0px';
         case 'postHistory':
-          return '120px';
+            return '120px';
         case 'inquiryHistory':
-          return '240px';
+            return '240px';
         case 'pointUsingHistory':
-          return '360px';
+            return '360px';
         case 'accountSettings':
-          return '480px';
+            return '480px';
         case 'notificationSettings':
-          return '600px';
+            return '600px';
         default:
-          return '0px';
-      }
-    }};
+            return '0px';
+    }
+}};
   }
 `;
 
@@ -102,13 +102,16 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
     const [phone, setPhone] = useState(sessionStorage.getItem('tell') || '010-0000-0000'); // 상태로 관리
     const [isPhoneDialogOpen, setIsPhoneDialogOpen] = useState(false); // 전화번호 Dialog 상태 관리
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false); // 비밀번호 Dialog 상태
+    const [nickname, setNickname] = useState(sessionStorage.getItem('nickname') || 'unknown');
+    const [newNickname, setNewNickname] = useState(''); // 새 닉네임 입력 상태
+    const [isNicknameDialogOpen, setIsNicknameDialogOpen] = useState(false); // 닉네임 Dialog 상태 추가
+
 
 // 기본 URL 설정
     const BASE_URL = "http://localhost:8085";
     const defaultImageUrl = 'https://via.placeholder.com/60';
 
     // 세션 스토리지에서 값 가져오기
-    const nickname = sessionStorage.getItem('nickname') || 'Unknown';
     const email = sessionStorage.getItem('id') || 'example@example.com';
     const sessionImage = sessionStorage.getItem('profileImageUrl');
     const [selectedImage, setSelectedImage] = useState(sessionImage ? `${BASE_URL}${sessionImage}` : defaultImageUrl);
@@ -172,6 +175,28 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
         }
     };
 
+    // 닉네임 변경 함수
+    const handleNicknameChange = async () => {
+        try {
+            const response = await axios.post(
+                'http://localhost:8085/api/users/change-nickname',
+                { id: email, nickname: newNickname },
+                { withCredentials: true }
+            );
+
+            if (response.status === 200) {
+                alert('닉네임이 성공적으로 변경되었습니다.');
+                setNickname(newNickname); // 변경된 닉네임을 상태에 설정
+                sessionStorage.setItem('nickname', newNickname); // 세션에 저장
+                setIsNicknameDialogOpen(false); // 닉네임 변경 Dialog 닫기
+            } else {
+                alert('닉네임 변경에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
     const triggerFileInput = () => {
         document.getElementById('imageInput').click(); // 파일 선택 창 열기
     };
@@ -218,7 +243,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
 
     return (
         <div className='flex flex-col items-start justify-start h-full w-full ml-24 border-2 border-gray-300 rounded-lg max-lg:ml-0'
-            style={{ backdropFilter: 'blur(15px)', background: 'rgba(255, 255, 255, 0.2' }}
+             style={{ backdropFilter: 'blur(15px)', background: 'rgba(255, 255, 255, 0.2' }}
         >
             {/* 탭 부분 - 모바일에서만 모든 탭 표시 */}
             <TabContainer>
@@ -317,7 +342,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                     <p className='font-bold col-span-2'>닉네임</p>
                                     <p className='font-bold col-span-8'>{nickname}</p>
                                     <div className='col-span-2 flex justify-end'>
-                                        <Dialog>
+                                        <Dialog open={isNicknameDialogOpen} onOpenChange={setIsNicknameDialogOpen}>
                                             <DialogTrigger className='bg-transparent'>
                                                 <Button>설정</Button>
                                             </DialogTrigger>
@@ -333,13 +358,15 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                                         </Label>
                                                         <Input
                                                             id="nickname"
-                                                            placeholder='새로운 닉네임'
+                                                            value={newNickname}
+                                                            onChange={(e) => setNewNickname(e.target.value)}
+                                                            placeholder="새로운 닉네임"
                                                             className="col-span-3"
                                                         />
                                                     </div>
                                                 </div>
                                                 <DialogFooter>
-                                                    <Button type="submit">Save changes</Button>
+                                                    <Button onClick={handleNicknameChange}>Save changes</Button>
                                                 </DialogFooter>
                                             </DialogContent>
                                         </Dialog>
@@ -371,7 +398,7 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                                                 이메일
                                                             </Label>
                                                             <Input id="email" placeholder='example@example'
-                                                                className="col-span-3" />
+                                                                   className="col-span-3" />
                                                         </div>
                                                     </div>
                                                     <DialogFooter>
@@ -413,11 +440,11 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                                                 비밀번호 확인
                                                             </Label>
                                                             <Input id="confirmPassword"
-                                                                type="password"
-                                                                value={confirmPassword}
-                                                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                                                placeholder="비밀번호 재입력"
-                                                                className="col-span-3" />
+                                                                   type="password"
+                                                                   value={confirmPassword}
+                                                                   onChange={(e) => setConfirmPassword(e.target.value)}
+                                                                   placeholder="비밀번호 재입력"
+                                                                   className="col-span-3" />
                                                         </div>
                                                     </div>
                                                     <DialogFooter>
@@ -447,10 +474,10 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
                                                                 전화번호
                                                             </Label>
                                                             <Input type="tel"
-                                                                value={phoneNumber}
-                                                                onChange={(e) => setPhoneNumber(e.target.value)}
-                                                                id="phone" placeholder='- 없이 작성하세요'
-                                                                className="col-span-3" />
+                                                                   value={phoneNumber}
+                                                                   onChange={(e) => setPhoneNumber(e.target.value)}
+                                                                   id="phone" placeholder='- 없이 작성하세요'
+                                                                   className="col-span-3" />
                                                         </div>
                                                     </div>
                                                     <DialogFooter>
