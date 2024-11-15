@@ -14,7 +14,7 @@ public class LearningAnalysisController {
     
     @GetMapping("/{studentId}")
     public ResponseEntity<LearningAnalysisDTO> analyzeLearning(
-        @PathVariable String studentId
+        @PathVariable("studentId") String studentId
     ) {
         LearningAnalysisDTO analysis = learningAnalysisService.analyzeLearning(studentId);
         return ResponseEntity.ok(analysis);
