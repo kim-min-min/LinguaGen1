@@ -24,7 +24,7 @@ const ClubBoard = ({ setSelectedItem }) => {
 
   // 데이터 가져오기
   useEffect(() => {
-    fetch('http://localhost:8085/api/community/category/clubboard') // 백엔드 API URL
+    fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/community/category/clubboard`) // 백엔드 API URL
         .then(response => response.json())
         .then(data => setData(data))
         .catch(error => console.error('Error fetching data:', error));
