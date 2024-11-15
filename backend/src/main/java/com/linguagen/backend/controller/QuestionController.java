@@ -95,7 +95,15 @@ public class QuestionController {
         return ResponseEntity.ok(questions);
     }
 
-
+    @GetMapping("/questions/main-type/{mainType}/user/{userId}")
+    public ResponseEntity<List<QuestionDTO>> getQuestionsByMainTypeAndUser(
+            @PathVariable("mainType") String mainType,
+            @PathVariable("userId") String userId) {
+        log.info("Request received to fetch {} questions for userId: {}", mainType, userId);
+        List<QuestionDTO> questions = questionService.getQuestionsByMainTypeAndUserLevel(mainType, userId);
+        log.info("Number of {} questions fetched for userId {}: {}", mainType, userId, questions.size());
+        return ResponseEntity.ok(questions);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {

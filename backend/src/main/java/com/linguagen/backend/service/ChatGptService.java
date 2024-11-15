@@ -62,7 +62,7 @@ public class ChatGptService {
         LearningAnalysisDTO analysis = learningAnalysisService.analyzeLearning(studentId);
 
         // null 체크를 위한 기본값 설정
-        Double correctRate = analysis.getAverageCorrectRate() != null ? analysis.getAverageCorrectRate() : 0.0;
+        Double correctRate = analysis.getAverageCorrectRate() != null ? analysis.getAverageCorrectRate() * 100 : 0.0;
         String recommendedLevel = analysis.getRecommendedLevel() != null ? analysis.getRecommendedLevel() : "초급";
         String studyPattern = analysis.getStudyPattern() != null ? analysis.getStudyPattern() : "학습 시작 단계";
         Integer weeklyCount = analysis.getWeeklyStudyCount() != null ? analysis.getWeeklyStudyCount() : 0;
