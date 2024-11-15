@@ -60,7 +60,99 @@ const GameProgressPage = ({
     const [timeLeft, setTimeLeft] = useState(30 * 60);
     const [currentQuestion, setCurrentQuestion] = useState(null);
 
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [speechSynthesis, setSpeechSynthesis] = useState(null);
+    const [availableVoices, setAvailableVoices] = useState([]);
+    const [selectedVoice, setSelectedVoice] = useState(null);
+
     const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'];
+
+    // SpeechSynthesis 초기화
+    useEffect(() => {
+        const synth = window.speechSynthesis;
+        setSpeechSynthesis(synth);
+
+        const loadVoices = () => {
+            const voices = synth.getVoices();
+            const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
+            setSelectedVoice(englishVoices.find(voice => voice.lang === 'en-US') || englishVoices[0]);
+        };
+
+        synth.onvoiceschanged = loadVoices;
+        loadVoices();
+
+        return () => {
+            if (synth) {
+                synth.cancel();
+            }
+        };
+    }, []);
+
+    // TTS 실행 함수
+    const speak = useCallback((text) => {
+        if (!speechSynthesis || !selectedVoice || !text) return;
+
+        speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.voice = selectedVoice;
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+
+        utterance.onstart = () => setIsSpeaking(true);
+        utterance.onend = () => setIsSpeaking(false);
+        utterance.onerror = () => setIsSpeaking(false);
+
+        speechSynthesis.speak(utterance);
+    }, [speechSynthesis, selectedVoice]);
+
+    // TTS 정지 함수
+    const stopSpeaking = useCallback(() => {
+        if (speechSynthesis) {
+            speechSynthesis.cancel();
+            setIsSpeaking(false);
+        }
+    }, [speechSynthesis]);
+
+    // 대화형 지문 텍스트 추출
+    const extractDialogueText = useCallback((passage) => {
+        if (!passage) return '';
+        return passage
+            .split(/(?=[AB]:)/)
+            .map(line => {
+                const speaker = line.trim().startsWith('A:') ? 'Speaker A' : 'Speaker B';
+                const content = line.replace(/^[AB]:/, '').trim();
+                return `${speaker} says: ${content}`;
+            })
+            .join('. ');
+    }, []);
+
+    // TTS 버튼 컴포넌트
+    const TTSButton = ({ text, isPassage = false }) => (
+        <button
+            onClick={() => isSpeaking ? stopSpeaking() : speak(isPassage ? extractDialogueText(text) : text)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                isSpeaking
+                    ? 'bg-red-500 hover:bg-red-600'
+                    : 'bg-blue-500 hover:bg-blue-600'
+            } text-white`}
+        >
+            {isSpeaking ? (
+                <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 3a1 1 0 00-1 1v12a1 1 0 002 0V4a1 1 0 00-1-1z" />
+                    </svg>
+                    Stop Reading
+                </>
+            ) : (
+                <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                    </svg>
+                    Read Aloud
+                </>
+            )}
+        </button>
+    );
 
     // Lottie 옵션 설정
     const correctOptions = {
@@ -354,67 +446,120 @@ const GameProgressPage = ({
     const renderQuestion = () => {
         if (!currentQuestion) return null;
 
+         // TTS 컨트롤 버튼 컴포넌트
+        const TTSControl = () => (
+            <button
+                onClick={() => {
+                    if (isSpeaking) {
+                        stopSpeaking();
+                    } else {
+                        const text = currentQuestion.passage.includes('A:') || currentQuestion.passage.includes('B:')
+                            ? extractDialogueText(currentQuestion.passage)
+                            : currentQuestion.passage;
+                        speak(text);
+                    }
+                }}
+                className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg 
+                ${isSpeaking ? 'bg-red-500' : 'bg-blue-500'} 
+                text-white font-medium`}
+            >
+                {isSpeaking ? "Stop Audio" : "Play Audio"}
+            </button>
+        );
+
+        // QuestionPanel 컴포넌트 수정
+        const QuestionPanel = () => {
+            // 난이도 등급 매핑
+            const getDifficultyGrade = (grade, tier) => {
+                const grades = {
+                    1: 'Bronze',
+                    2: 'Silver',
+                    3: 'Gold',
+                    4: 'Platinum',
+                    5: 'Diamond',
+                    6: 'Challenger'
+                };
+                return `${grades[grade] || 'Unknown'}-${tier}`;
+            };
+
+            // 난이도 설명 매핑
+            const getDifficultyDescription = (grade) => {
+                const descriptions = {
+                    1: '기초',
+                    2: '초급',
+                    3: '중급',
+                    4: '상급',
+                    5: '최상급',
+                    6: '최고급'
+                };
+                return descriptions[grade] || '알 수 없음';
+            };
+
+            return (
+                <div className="bg-white p-4 rounded-lg shadow-sm flex flex-row justify-between">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                        {currentQuestion.question}
+                    </h2>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger className="bg-transparent m-0 p-0">
+                                <h2 className="text-xl font-semibold text-gray-800 hover:text-gray-500">
+                                    {getDifficultyGrade(currentQuestion.diffGrade, currentQuestion.diffTier)}
+                                </h2>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>{`${getDifficultyDescription(currentQuestion.diffGrade)} 난이도 (${getDifficultyGrade(currentQuestion.diffGrade, currentQuestion.diffTier)})`}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
+            );
+        };
+
+
+        // PassagePanel 컴포넌트
+        const PassagePanel = () => (
+            currentQuestion.passage && (
+                <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
+                    <div className="flex justify-between items-center mb-2">
+                        <h3 className="text-lg kanit-semibold text-gray-700">Passage</h3>
+                        <TTSControl />
+                    </div>
+                    {currentQuestion.passage.includes('A:') || currentQuestion.passage.includes('B:') ? (
+                        <div className="space-y-4">
+                            {currentQuestion.passage.split(/(?=[AB]:)/).map((line, index) => {
+                                const speaker = line.trim().startsWith('A:') ? 'A' : 'B';
+                                const content = line.replace(/^[AB]:/, '').trim();
+
+                                return (
+                                    <div key={index} className={`flex items-start gap-2 ${speaker === 'B' ? 'flex-row-reverse' : ''}`}>
+                                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${speaker === 'A' ? 'bg-blue-500' : 'bg-green-500'}`}>
+                                            <span className="text-white font-bold">{speaker}</span>
+                                        </div>
+                                        <div className={`max-w-[75%] p-3 rounded-lg ${speaker === 'A' ? 'bg-white shadow-sm rounded-tl-none border border-gray-100' : 'bg-white shadow-sm rounded-tr-none border border-gray-100'}`}>
+                                            <p className="kanit-regular text-lg leading-relaxed">{content}</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <p className="kanit-regular text-lg text-gray-600 leading-relaxed">
+                            {currentQuestion.passage}
+                        </p>
+                    )}
+                </div>
+            )
+        );
+
         switch (currentQuestion.type) {
             case 'multipleChoice':
                 return (
                     <div className="flex h-full w-full">
                         {/* 왼쪽 패널: 지문과 문제 */}
-                        <div
-                            className="w-1/2 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto custom-scrollbar">
-                            {/* 문제 */}
-                            <div className="bg-white p-4 rounded-lg shadow-sm flex flex-row justify-between">
-                                <h2 className="text-xl font-semibold text-gray-800">
-                                    {currentQuestion.question}
-                                </h2>
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger className="bg-transparent m-0 p-0">
-                                            <h2 className="text-xl font-semibold text-gray-800 hover:text-gray-500">
-                                                Bronze-4
-                                            </h2>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Bronze-4 의 난이도 입니다.</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </div>
-                            {/* Passage 섹션 */}
-                            {currentQuestion.passage && (
-                                <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
-                                    <h3 className="text-lg kanit-semibold mb-2 text-gray-700">Passage</h3>
-                                    {currentQuestion.passage.includes('A:') || currentQuestion.passage.includes('B:') ? (
-                                        // 대화형 passage인 경우
-                                        <div className="space-y-4">
-                                            {currentQuestion.passage.split(/(?=[AB]:)/).map((line, index) => {
-                                                const speaker = line.trim().startsWith('A:') ? 'A' : 'B';
-                                                const content = line.replace(/^[AB]:/, '').trim();
-
-                                                return (
-                                                    <div key={index}
-                                                         className={`flex items-start gap-2 ${speaker === 'B' ? 'flex-row-reverse' : ''}`}>
-                                                        <div
-                                                            className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${speaker === 'A' ? 'bg-blue-500' : 'bg-green-500'}`}>
-                                                            <span className="text-white font-bold">{speaker}</span>
-                                                        </div>
-                                                        <div
-                                                            className={`max-w-[75%] p-3 rounded-lg ${speaker === 'A' ? 'bg-white shadow-sm rounded-tl-none border border-gray-100' : 'bg-white shadow-sm rounded-tr-none border border-gray-100'}`}>
-                                                            <p className="kanit-regular text-lg leading-relaxed">
-                                                                {content}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    ) : (
-                                        // 일반 passage인 경우
-                                        <p className="kanit-regular text-lg text-gray-600 leading-relaxed">
-                                            {currentQuestion.passage}
-                                        </p>
-                                    )}
-                                </div>
-                            )}
+                        <div className="w-1/2 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto custom-scrollbar">
+                            <QuestionPanel />
+                            <PassagePanel />
                         </div>
 
                         {/* 오른쪽 패널: 선택지들 */}
@@ -435,11 +580,10 @@ const GameProgressPage = ({
                                         whileHover={!showFeedback || selectedAnswer === index ? {scale: 1.02} : {}}
                                         whileTap={!showFeedback || selectedAnswer === index ? {scale: 0.98} : {}}
                                     >
-
                                         <div className="w-full h-full flex flex-col items-center justify-start p-4">
-                                            <span className="text-2xl font-bold mb-2 text-white shrink-0">
-                                                {['A', 'B', 'C', 'D'][index]}
-                                            </span>
+                                        <span className="text-2xl font-bold mb-2 text-white shrink-0">
+                                            {['A', 'B', 'C', 'D'][index]}
+                                        </span>
                                             <p className="text-lg text-white w-full px-4 overflow-y-auto max-h-[120px] custom-scrollbar">
                                                 {option}
                                             </p>
@@ -456,8 +600,7 @@ const GameProgressPage = ({
                                                     onMouseLeave={() => setHoveredAnswer(null)}
                                                 >
                                                     {showAnimation && (
-                                                        <div
-                                                            className="absolute inset-0 flex items-center justify-center">
+                                                        <div className="absolute inset-0 flex items-center justify-center">
                                                             <Lottie
                                                                 options={feedback === true ? correctOptions : incorrectOptions}
                                                                 height={200}
@@ -508,67 +651,14 @@ const GameProgressPage = ({
                 return (
                     <div className="flex h-full w-full">
                         {/* 왼쪽 패널: 지문과 문제 */}
-                        <div
-                            className="w-1/2 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto custom-scrollbar">
-                            {/* 문제 */}
-                            <div
-                                className="bg-white p-4 rounded-lg shadow-sm flex flex-row justify-between items-center">
-                                <h2 className="text-xl font-semibold text-gray-800">
-                                    {currentQuestion.question}
-                                </h2>
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger className="bg-transparent m-0 p-0">
-                                            <h2 className="text-xl font-semibold text-gray-800 hover:text-gray-500">
-                                                Bronze-4
-                                            </h2>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Bronze-4 의 난이도 입니다.</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </div>
-
-                            {/* Passage 섹션 */}
-                            {currentQuestion.passage && (
-                                <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
-                                    <h3 className="text-lg kanit-semibold mb-2 text-gray-700">Passage</h3>
-                                    {currentQuestion.passage.includes('A:') || currentQuestion.passage.includes('B:') ? (
-                                        // 대화형 passage인 경우
-                                        <div className="space-y-4">
-                                            {currentQuestion.passage.split(/(?=[AB]:)/).map((line, index) => {
-                                                const speaker = line.trim().startsWith('A:') ? 'A' : 'B';
-                                                const content = line.replace(/^[AB]:/, '').trim();
-
-                                                return (
-                                                    <div key={index} className={`flex items-start gap-2 ${speaker === 'B' ? 'flex-row-reverse' : ''}`}>
-                                                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${speaker === 'A' ? 'bg-blue-500' : 'bg-green-500'}`}>
-                                                            <span className="text-white font-bold">{speaker}</span>
-                                                        </div>
-                                                        <div className={`max-w-[75%] p-3 rounded-lg ${speaker === 'A' ? 'bg-white shadow-sm rounded-tl-none border border-gray-100' : 'bg-white shadow-sm rounded-tr-none border border-gray-100'}`}>
-                                                            <p className="kanit-regular text-lg leading-relaxed">
-                                                                {content}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    ) : (
-                                        // 일반 passage인 경우
-                                        <p className="kanit-regular text-lg text-gray-600 leading-relaxed">
-                                            {currentQuestion.passage}
-                                        </p>
-                                    )}
-                                </div>
-                            )}
+                        <div className="w-1/2 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto custom-scrollbar">
+                            <QuestionPanel />
+                            <PassagePanel />
                         </div>
 
                         {/* 오른쪽 패널: 답안 입력 */}
                         <div className="w-1/2 h-full p-6 flex flex-col items-center justify-center relative">
                             <div className="w-full max-w-md">
-                                {/* 힌트 표시 */}
                                 <div className="text-center mb-4">
                                     <p className="text-2xl font-mono tracking-wider">
                                         {generateHint(currentQuestion.correctAnswer)}
@@ -656,6 +746,7 @@ const GameProgressPage = ({
                         </div>
                     </div>
                 );
+
             default:
                 return null;
         }
