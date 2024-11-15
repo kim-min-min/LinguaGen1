@@ -89,7 +89,7 @@ const WeeklyLearning = () => {
                 setIsLoggedIn(true);
                 const userData = JSON.parse(user);
                 try {
-                    const response = await axios.get(`http://localhost:8085/api/study-log/this-week/${userData.id}`, { withCredentials: true });
+                    const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/study-log/this-week/${userData.id}`, { withCredentials: true });
 
                     const koreanDays = response.data.map(day => englishToKoreanDayMap[day]);
                     setStudiedDays(koreanDays);

@@ -72,7 +72,7 @@ export function CustomLineChart() {
 
         try {
           // 사용자별 월별 랭킹 정보 가져오기
-          const response = await axios.get(`http://localhost:8085/api/ranking/${userData.id}`, {
+          const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/ranking/${userData.id}`, {
             withCredentials: true,
           });
 

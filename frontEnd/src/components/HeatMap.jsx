@@ -28,7 +28,7 @@ const HeatMap = () => {
             const userData = JSON.parse(user);
 
             try {
-                const response = await axios.get(`http://localhost:8085/api/study-log/daily-plays/${userData.id}`, {withCredentials: true});
+                const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/study-log/daily-plays/${userData.id}`, {withCredentials: true});
                 const playData = response.data.map(item => ({
                     date: item.date,
                     value: item.playCount,

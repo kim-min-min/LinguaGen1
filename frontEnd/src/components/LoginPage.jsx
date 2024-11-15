@@ -55,7 +55,7 @@ function LoginPage() {
 
       // 토큰을 서버로 전송해 세션 설정 요청 (withCredentials 사용)
       const response = await axios.post(
-          'http://localhost:8085/api/google-login',
+          `${import.meta.env.VITE_APP_API_BASE_URL}/google-login`,
           { token: credentialResponse.credential },
           { withCredentials: true } // 서버와의 세션 쿠키 포함 요청
       );
@@ -79,10 +79,10 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8085/api/users/login', { id, password }, { withCredentials: true });
+      const response = await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/users/login`, { id, password }, { withCredentials: true });
       if (response.status === 200 && response.data === '로그인 성공') {
 
-        const userResponse = await axios.get(`http://localhost:8085/api/users/${id}`, {withCredentials: true});
+        const userResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/users/${id}`, {withCredentials: true});
 
         const userInfo = userResponse.data; // 사용자 정보 저장
         // 세션 스토리지에 사용자 정보 저장
@@ -448,7 +448,7 @@ function SignupNext({ formData, onPreviousSignup }) {
       console.log("회원가입 정보:", completeFormData);
 
       // 첫 번째 POST 요청: 사용자 정보 전송
-      const userResponse = await axios.post('http://localhost:8085/api/users', completeFormData, {
+      const userResponse = await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/users`, completeFormData, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -459,7 +459,7 @@ function SignupNext({ formData, onPreviousSignup }) {
 
         if (selectedInterests.length > 0) {
           // 두 번째 POST 요청: 관심사 정보 전송
-          const interestResponse = await axios.post('http://localhost:8085/api/users/interests', {
+          const interestResponse = await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/users/interests`, {
             userId: formData.id,
             interestIdx: selectedInterests,
           }, {
@@ -481,7 +481,7 @@ function SignupNext({ formData, onPreviousSignup }) {
         const userTierLabel = getTierLabel();
         const { grade, tier } = getTierData();
         // 세 번째 POST 요청: 티어 정보 전송
-        const tierResponse = await axios.post('http://localhost:8085/api/users/gradeTest', {
+        const tierResponse = await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/users/gradeTest`, {
           userId: formData.id,
           tempGrade: grade,
           tempTier: tier,
