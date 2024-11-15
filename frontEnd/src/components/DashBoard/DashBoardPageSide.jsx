@@ -43,16 +43,16 @@ const DashBoardPageSide = ({ activePanel, setActivePanel }) => {
 
                 try {
                     // 사용자 정보 가져오기
-                    const userResponse = await axios.get(`http://localhost:8085/api/users/${userData.id}`, { withCredentials: true });
+                    const userResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/users/${userData.id}`, { withCredentials: true });
                     setUserInfo(userResponse.data);
                     setNickname(userResponse.data.nickname); // 닉네임 설정
 
                     // 게임 진행 수 가져오기
-                    const gradeResponse = await axios.get(`http://localhost:8085/api/study-log/game-count/${userData.id}`, { withCredentials: true });
+                    const gradeResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/study-log/game-count/${userData.id}`, { withCredentials: true });
                     setGameCount(gradeResponse.data); // 전체 객체 대신 특정 필드 사용 가능
 
                     // 평균 정답률 가져오기
-                    const correctRateResponse = await axios.get(`http://localhost:8085/api/study-log/average-correct-rate/${userData.id}`, { withCredentials: true });
+                    const correctRateResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/study-log/average-correct-rate/${userData.id}`, { withCredentials: true });
                     setAverageCorrectRate(correctRateResponse.data); // 평균 정답률 설정
 
                 } catch (error) {

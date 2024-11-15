@@ -22,7 +22,7 @@ const Notice = ({ handleTabClick, setSelectedItem }) => {
 
 // 공지사항 데이터 가져오기
   useEffect(() => {
-    fetch('http://localhost:8085/api/community/category/Notice') // 공지사항 데이터를 가져오는 백엔드 API URL
+    fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/community/category/Notice`) // 공지사항 데이터를 가져오는 백엔드 API URL
         .then(response => response.json())
         .then(data => {
           if (Array.isArray(data)) {

@@ -100,11 +100,11 @@ const DashBoardPanel = () => {
                 const userData = JSON.parse(user);
                 try {
                     // 사용자 정보 가져오기
-                    const userResponse = await axios.get(`http://localhost:8085/api/users/${userData.id}`, {withCredentials: true});
+                    const userResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/users/${userData.id}`, {withCredentials: true});
                     setUserInfo(userResponse.data);
 
                     // 사용자의 등급 정보 가져오기
-                    const gradeResponse = await axios.get(`http://localhost:8085/api/grade/${userData.id}`, {withCredentials: true});
+                    const gradeResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/grade/${userData.id}`, {withCredentials: true});
                     const numericGrade = gradeResponse.data.grade;
                     setUserGrade(numericGrade);
                     setUserGradeString(gradeNames[numericGrade] || "알 수 없음");
@@ -112,11 +112,11 @@ const DashBoardPanel = () => {
                     setUserExp(gradeResponse.data.exp);
 
                     // 최신 학습 정보 가져오기
-                    const studyLogResponse = await axios.get(`http://localhost:8085/api/study-log/latest/${userData.id}`, { withCredentials: true });
+                    const studyLogResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/study-log/latest/${userData.id}`, { withCredentials: true });
                     setLatestStudyInfo(studyLogResponse.data);
 
                     // 자주 틀린 유형 데이터 가져오기
-                    const mistakeTypeResponse = await axios.get(`http://localhost:8085/api/study-log/incorrect-type-percentage/${userData.id}`, { withCredentials: true });
+                    const mistakeTypeResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/study-log/incorrect-type-percentage/${userData.id}`, { withCredentials: true });
                     setMistakeTypes(mistakeTypeResponse.data.slice(0, 6)); // 최대 6개만 설정
 
                 } catch (error) {
