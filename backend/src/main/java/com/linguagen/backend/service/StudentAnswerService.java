@@ -1,6 +1,8 @@
 package com.linguagen.backend.service;
 
 import com.linguagen.backend.dto.AnswerStatus;
+import com.linguagen.backend.dto.MyPageDTO;
+import com.linguagen.backend.dto.QuestionDTO;
 import com.linguagen.backend.dto.SessionStatus;
 import com.linguagen.backend.entity.Question;
 import com.linguagen.backend.entity.StudentAnswer;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -129,5 +132,24 @@ public class StudentAnswerService {
             }
 
         }
+    }
+    // 학습 날짜, 경험치, 학습일자 가져오기
+    public List<MyPageDTO> getMyPageSummaries(String studentId) {
+        return studentAnswerRepository.findMyPageSummaries(studentId);
+    }
+
+
+    public List<QuestionDTO> getFirstQuestionBySession(String studentId) {
+        List<QuestionDTO> allQuestions = studentAnswerRepository.findQuestionsByStudentId(studentId);
+
+        // 각 sessionIdentifier 별 첫 번째 항목만 필터링
+        Map<String, QuestionDTO> firstQuestionsBySession = allQuestions.stream()
+                .collect(Collectors.toMap(
+                        QuestionDTO::getSessionIdentifier, // sessionIdentifier로 매핑
+                        question -> question,               // 해당 question을 값으로 사용
+                        (existing, replacement) -> existing // 중복된 sessionIdentifier가 있으면 기존 값을 유지
+                ));
+
+        return List.copyOf(firstQuestionsBySession.values());
     }
 }

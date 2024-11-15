@@ -112,6 +112,21 @@ public class UserService {
         return true;
     }
 
+    //닉네임 변경
+    @Transactional
+    public boolean changeNickname(String id, String newNickname) {
+        // 사용자 조회, 없으면 예외 발생
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 닉네임 업데이트
+        user.setNickname(newNickname);
+
+        // 변경 사항 저장
+        userRepository.save(user);
+        return true;
+    }
+
     // 로그아웃 로직: 세션 무효화
     public void logout(HttpSession session) {
         session.invalidate();  // 세션 무효화

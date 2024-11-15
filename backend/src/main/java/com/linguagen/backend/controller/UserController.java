@@ -171,6 +171,20 @@ public class UserController {
         }
     }
 
+    // 닉네임 변경
+    @PostMapping("/change-nickname")
+    public ResponseEntity<String> changeNickname(@RequestBody User user) {
+        boolean isChanged = userService.changeNickname(user.getId(), user.getNickname());
+
+        if (isChanged) {
+            return ResponseEntity.ok("닉네임이 성공적으로 변경되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("닉네임 변경에 실패했습니다.");
+        }
+    }
+
+
+
     // 특정 유저의 picture 값을 반환하는 API 엔드포인트
     @GetMapping("/picture/{id}")
     public ResponseEntity<Map<String, String>> getUserPicture(@PathVariable("id") String id) {
