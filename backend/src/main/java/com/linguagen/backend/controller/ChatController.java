@@ -35,7 +35,7 @@ public class ChatController {
     }
 
     @DeleteMapping("/room/{roomId}")
-    public ResponseEntity<Void> deleteChatHistory(@PathVariable String roomId) {
+    public ResponseEntity<Void> deleteChatHistory(@PathVariable("roomId") String roomId) {
         chatGptService.clearChatHistory(roomId);
         return ResponseEntity.noContent().build();
     }

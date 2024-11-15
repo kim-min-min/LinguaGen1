@@ -22,4 +22,8 @@ public class LearningAnalysisDTO {
     private List<String> weakPoints;
     private String studyPattern;
     private Integer weeklyStudyCount;
-} 
+    private List<DailyPlayCountDto> dailyPlayCounts;
+    private List<IncorrectTypePercentageDto> incorrectTypes;
+    private Byte currentDifficultyGrade;
+    private Byte currentDifficultyTier;
+}

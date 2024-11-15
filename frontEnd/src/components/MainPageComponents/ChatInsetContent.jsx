@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus } from 'lucide-react';
+import { ChatMessage } from '@/components/ui/chat-message';
+import { MessageContent } from '@/components/ui/message-content';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const ChatInsetContent = ({
                             activeRoomId,
@@ -13,22 +16,11 @@ const ChatInsetContent = ({
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
   const prevMessagesLengthRef = useRef({});
+  const typingTimeoutRef = useRef(null);
 
   // 자동 스크롤 함수
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  // 타이핑 애니메이션 효과
-  const typeMessage = (message, index = 0) => {
-    if (index <= message.length) {
-      setTypingText(message.slice(0, index));
-      setTimeout(() => {
-        typeMessage(message, index + 1);
-      }, 5); // 타이핑 속도 조절
-    } else {
-      setIsTyping(false);
-    }
   };
 
   // 새 메시지가 추가될 때마다 스크롤
@@ -40,6 +32,9 @@ const ChatInsetContent = ({
   useEffect(() => {
     setIsTyping(false);
     setTypingText('');
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
   }, [activeRoomId]);
 
   // 새 메시지 감지 및 타이핑 애니메이션
@@ -53,14 +48,40 @@ const ChatInsetContent = ({
     // 새 메시지가 추가되었고, 그것이 봇의 메시지인 경우에만 타이핑 애니메이션 시작
     if (currentLength > prevLength &&
         currentMessages[currentLength - 1].sender === 'bot') {
+      const message = currentMessages[currentLength - 1].text;
+      let index = 0;
+
       setIsTyping(true);
       setTypingText('');
-      typeMessage(currentMessages[currentLength - 1].text);
+
+      const typeNextChar = () => {
+        if (index < message.length) {
+          setTypingText(prev => prev + message[index]);
+          index++;
+          typingTimeoutRef.current = setTimeout(typeNextChar, 20);
+        } else {
+          setIsTyping(false);
+        }
+      };
+
+      typeNextChar();
     }
 
     // 현재 메시지 수 업데이트
     prevMessagesLengthRef.current[activeRoomId] = currentLength;
+
+    // 클린업 함수
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
   }, [chatRooms, activeRoomId]);
+
+  const formatTimestamp = () => {
+    const now = new Date();
+    return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+  };
 
   return (
       <div className="flex flex-col h-full p-4 overflow-y-auto custom-scrollbar">
@@ -81,39 +102,49 @@ const ChatInsetContent = ({
 
           {/* 채팅 메시지 영역 */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {chatRooms[activeRoomId]?.map((message, index) => (
-                <div
-                    key={index}
-                    className={`flex ${
-                        message.sender === 'user' ? 'justify-end' : 'justify-start'
-                    }`}
-                >
-                  <div className="flex flex-col max-w-[80%]">
-                    <div
-                        className={`inline-block rounded-lg p-3 ${
-                            message.sender === 'user'
-                                ? 'bg-blue-500 text-white'
-                                : 'bg-gray-100'
-                        }`}
-                        style={{ width: 'fit-content', wordBreak: 'break-word' }}
-                    >
-                      {message.sender === 'bot' &&
-                      index === chatRooms[activeRoomId].length - 1 &&
-                      isTyping ? typingText : message.text}
-                      {message.sender === 'bot' &&
-                          index === chatRooms[activeRoomId].length - 1 &&
-                          isTyping && (
-                              <span className="inline-block w-1 h-4 ml-1 bg-gray-500 animate-blink"></span>
-                          )}
-                    </div>
-                    <span className={`text-xs text-gray-500 mt-1 ${
-                        message.sender === 'user' ? 'text-right' : 'text-left'
+            {chatRooms[activeRoomId]?.map((message, index) => {
+              const isLastBotMessage =
+                  index === chatRooms[activeRoomId].length - 1 &&
+                  message.sender === 'bot';
+
+              return (
+                  <div
+                      key={index}
+                      className={`flex ${
+                          message.sender === 'user' ? 'justify-end' : 'justify-start'
+                      }`}
+                  >
+                    {message.sender === 'bot' && (
+                        <Avatar className="w-8 h-8 shrink-0">
+                          <AvatarImage src="/bot-avatar.png" />
+                          <AvatarFallback>AI</AvatarFallback>
+                        </Avatar>
+                    )}
+
+                    <div className={`max-w-[70%] p-3 rounded-lg ${
+                        message.sender === 'user'
+                            ? 'bg-primary text-white rounded-br-none'
+                            : 'bg-muted rounded-bl-none'
                     }`}>
-                  {message.timestamp}
-                </span>
+                      <MessageContent
+                          text={isLastBotMessage ? (isTyping ? typingText : message.text) : message.text}
+                          isTyping={isTyping && isLastBotMessage}
+                          typingText={typingText}
+                      />
+                      <span className="text-xs opacity-70 mt-2 block">
+                                        {formatTimestamp()}
+                                    </span>
+                    </div>
+
+                    {message.sender === 'user' && (
+                        <Avatar className="w-8 h-8 shrink-0">
+                          <AvatarImage src="/user-avatar.png" />
+                          <AvatarFallback>ME</AvatarFallback>
+                        </Avatar>
+                    )}
                   </div>
-                </div>
-            ))}
+              );
+            })}
             <div ref={messagesEndRef} />
           </div>
 
@@ -123,7 +154,7 @@ const ChatInsetContent = ({
                 onSubmit={async (e) => {
                   e.preventDefault();
                   const input = e.target.elements.message;
-                  if (input.value.trim()) {
+                  if (input.value.trim() && !isTyping) {
                     try {
                       await sendMessage(input.value);
                       input.value = '';

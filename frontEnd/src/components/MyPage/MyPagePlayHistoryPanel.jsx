@@ -138,10 +138,10 @@ const MyPagePlayHistoryPanel = ({ activePanel, setActivePanel }) => {
                 const userData = JSON.parse(user);
                 try {
                     // 첫 번째 API 호출
-                    const response1 = await axios.get(`http://localhost:8085/api/mypage-summary/${userData.id}`, { withCredentials: true });
+                    const response1 = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/mypage-summary/${userData.id}`, { withCredentials: true });
 
                     // 두 번째 API 호출
-                    const response2 = await axios.get(`http://localhost:8085/api/mypage-summary/question/${userData.id}`, { withCredentials: true });
+                    const response2 = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/mypage-summary/question/${userData.id}`, { withCredentials: true });
 
                     // 응답 데이터를 병합하여 새로운 배열 생성
                     const combinedData = response1.data.map((item, index) => ({

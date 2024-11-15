@@ -69,7 +69,7 @@ const ListCustom = () => {
   useEffect(() => {
     const fetchQuestionSets = async () => {
       try {
-        const response = await fetch('http://localhost:8085/api/user-questions/sets', {
+        const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/user-questions/sets`, {
           credentials: 'include'
         });
         if (!response.ok) throw new Error('Failed to fetch question sets');
@@ -101,7 +101,7 @@ const ListCustom = () => {
       setSelectedQuestionSet(null);
       storeSetSelectedQuestionSet(null);  // store 상태 업데이트
       try {
-        await fetch('http://localhost:8085/api/user-questions/deselect-set', {
+        await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/user-questions/deselect-set`, {
           method: 'POST',
           credentials: 'include'
         });
@@ -112,7 +112,7 @@ const ListCustom = () => {
       setSelectedQuestionSet(set);
       storeSetSelectedQuestionSet(set);  // store 상태 업데이트
       try {
-        const response = await fetch('http://localhost:8085/api/user-questions/select-set', {
+        const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/user-questions/select-set`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ const ListCustom = () => {
 
     try {
       // 문제 세트 가져오기
-      const response = await fetch(`http://localhost:8085/api/user-questions/sets/${selectedQuestionSet.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/user-questions/sets/${selectedQuestionSet.id}`, {
         credentials: 'include'
       });
 

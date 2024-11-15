@@ -22,7 +22,7 @@ const ExchangeLearningTips = ({ setSelectedItem }) => {
 
   // 데이터 가져오기
   useEffect(() => {
-    fetch('http://localhost:8085/api/community/category/exchangelearningtips') // 해당 카테고리 데이터만 가져오는 API 호출
+    fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/community/category/exchangelearningtips`) // 해당 카테고리 데이터만 가져오는 API 호출
         .then(response => response.json())
         .then(data => setData(data))
         .catch(error => console.error('Error fetching data:', error));

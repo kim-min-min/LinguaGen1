@@ -61,7 +61,7 @@ const Writing = ({ handleTabClick, currentBoard }) => {
                 setIsLoggedIn(true);
                 const userData = JSON.parse(user);
                 try {
-                    const userResponse = await axios.get(`http://localhost:8085/api/users/${userData.id}`, { withCredentials: true });
+                    const userResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/users/${userData.id}`, { withCredentials: true });
                     setId(userResponse.data.id);
                 } catch (error) {
                     console.error('사용자 정보를 가져오는 중 오류 발생:', error);
@@ -75,7 +75,7 @@ const Writing = ({ handleTabClick, currentBoard }) => {
     const onSubmit = (data) => {
         const formData = { ...data, userId: id };
         console.log('Submitting data:', formData);
-        fetch('http://localhost:8085/api/community', {
+        fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/community`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

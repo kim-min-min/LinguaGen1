@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class LatestStudyInfoDto {
 
     private String questionType;
-    private byte difficultyGrade;
-    private byte difficultyTier;
+    private Byte difficultyGrade;
+    private Byte difficultyTier;
 
 }

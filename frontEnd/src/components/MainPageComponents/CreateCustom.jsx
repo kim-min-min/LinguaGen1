@@ -119,7 +119,7 @@ const CreateCustom = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8085/api/user-questions/generate', {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/user-questions/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
