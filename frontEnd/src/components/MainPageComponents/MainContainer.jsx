@@ -21,7 +21,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
   DropdownMenuGroup,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarProvider, SidebarTrigger, SidebarMenuItem, SidebarMenuButton, SidebarMenu, SidebarHeader,SidebarMenuAction , SidebarMenuSub , SidebarMenuSubItem , SidebarFooter , SidebarInset, SidebarMenuSubButton} from '@/components/ui/sidebar';
 import {
   BadgeCheck,
@@ -212,6 +212,8 @@ const MainContainer = ({ selectedGame }) => {
   const [newRoomName, setNewRoomName] = useState('');
   const playerRef = useRef(null);
   const [showFatiguePopup, setShowFatiguePopup] = useState(false);
+  const [selectedGameType, setSelectedGameType] = useState('Listening'); // 현재 선택된 게임 타입
+
 
   // 예시 단어 목록 (실제로는 API나 상태에서 가져와야 합니다)
   const wrongWords = [
@@ -357,7 +359,7 @@ const MainContainer = ({ selectedGame }) => {
 
   const handleRenameRoom = (roomId, newName) => {
     if (!newName.trim()) return;
-    
+
     setChatRooms(prev => {
       const messages = prev[roomId];
       const newRooms = { ...prev };
@@ -367,7 +369,7 @@ const MainContainer = ({ selectedGame }) => {
         [newName]: messages
       };
     });
-    
+
     if (activeRoomId === roomId) {
       setActiveRoomId(newName);
     }
@@ -384,6 +386,8 @@ const MainContainer = ({ selectedGame }) => {
   useEffect(() => {
     setVisibleCards(cards.slice(0, 3)); // 초기 카드 3개 설정
   }, [cards]);
+
+
 
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -428,49 +432,75 @@ const MainContainer = ({ selectedGame }) => {
     };
   }, []);
 
+  // 게임 시작 핸들러 수정
+// handleStartGame 함수 내부 수정
   const handleStartGame = useCallback(async () => {
     try {
       const userId = sessionStorage.getItem("id");
 
-      // 피로도 5 증가 API 호출
-      const response = await axios.post(
-          `${import.meta.env.VITE_APP_API_BASE_URL}/game/start`,
-          { userId, amount: 5 },
+      // API 경로 수정
+      const questionsResponse = await axios.get(
+          `${import.meta.env.VITE_APP_API_BASE_URL}/questions/main-type/${selectedMenu.toLowerCase()}/user/${userId}`,
           { withCredentials: true }
       );
 
-      if (response.status === 200) {
-        const randomCanvas = canvases[Math.floor(Math.random() * canvases.length)];
-        setCanvasValue(randomCanvas);
-
-        // 상태 초기화
-        setShowAnimation(false);
-        setIsExiting(false);
-        setAnimationPosition({ x: 0, y: 0 });
-
-        navigate('/loading');
-
-        const timer = setTimeout(() => {
-          if (randomCanvas === DungeonCanvas) {
-            navigate('/dungeon');
-          } else if (randomCanvas === MountainCanvas) {
-            navigate('/mountain');
-          } else if (randomCanvas === RuinsCanvas) {
-            navigate('/ruins');
-          }
-        }, 3000);
-
-        return () => clearTimeout(timer);
-      } else {
-        console.error('Failed to increase fatigue:', response.statusText);
+      if (questionsResponse.data.length === 0) {
+        alert('현재 레벨에 해당하는 문제가 없습니다.');
+        return;
       }
-    } catch (error) {
-      console.error('Error starting game:', error);
-    }
-  }, [navigate]);
 
+      // 캔버스 랜덤 선택
+      const randomIndex = Math.floor(Math.random() * canvases.length);
+      const selectedCanvas = canvases[randomIndex];
+      setCanvasValue(selectedCanvas);
+
+      // store에 문제 데이터 저장
+      useStore.setState({
+        currentQuestions: questionsResponse.data,
+        currentGameType: selectedMenu,
+        selectedCanvas: selectedCanvas,
+        gameState: {
+          currentHp: 100,
+          score: 0,
+          timeRemaining: 300,
+          isComplete: false
+        }
+      });
+
+      // 게임 시작 및 라우팅
+      setShowAnimation(false);
+      setIsExiting(false);
+      setAnimationPosition({ x: 0, y: 0 });
+
+      navigate('/loading');
+      setTimeout(() => {
+        const canvasRoutes = {
+          [DungeonCanvas]: '/dungeon',
+          [RuinsCanvas]: '/ruins',
+          [MountainCanvas]: '/mountain'
+        };
+        navigate(canvasRoutes[selectedCanvas]);
+      }, 3000);
+
+    } catch (error) {
+      console.error('Error:', error.response || error);
+      if (error.response?.data?.message) {
+        alert(error.response.data.message);
+      } else {
+        alert('게임 시작 중 오류가 발생했습니다.');
+      }
+    }
+  }, [selectedMenu, navigate]);
+
+
+
+  // 메뉴 클릭 핸들러 수정
   const handleMenuClick = (title) => {
     setSelectedMenu(title);
+    // Learning 메뉴 아이템 클릭 시 게임 타입도 업데이트
+    if (title === 'Listening' || title === 'Reading' || title === 'ETC') {
+      setSelectedGameType(title);
+    }
   };
 
   const renderInsetContent = () => {
@@ -526,7 +556,7 @@ const MainContainer = ({ selectedGame }) => {
     setTimeout(() => {
       setShowAnimation(false);
       setIsExiting(true);
-      
+
       setTimeout(() => {
         handleStartGame();
       }, 500);
@@ -539,74 +569,9 @@ const MainContainer = ({ selectedGame }) => {
       >
         {isLoggedIn ? (
             <>
-              <div className="w-full grid grid-cols-7 gap-4 py-4 pb-0">
-                <div className='w-40 h-14 col-span-2'></div>
-                <div className="relative w-40 h-14 col-span-1 col-start-4">
-                  <Button
-                      onClick={handleButtonClick}
-                      className="w-full h-full text-white rounded-md font-bold text-xl hover:scale-125 transition-all duration-500 jua-regular"
-                      disabled={showAnimation || isExiting}
-                  >
-                    게임 시작하기
-                  </Button>
 
-                  {showAnimation && (
-                      <div
-                          className="fixed pointer-events-none"
-                          style={{
-                            left: animationPosition.x - 100,
-                            top: animationPosition.y - 100,
-                            width: '200px',
-                            height: '200px',
-                            zIndex: 100
-                          }}
-                      >
-                        <Player
-                          ref={playerRef}
-                          autoplay
-                          keepLastFrame={false}
-                          src={ClickAnimation}
-                          style={{ width: '200px', height: '200px' }}
-                          onComplete={() => {
-                            setShowAnimation(false);
-                          }}
-                        />
-                      </div>
-                  )}
-                </div>
-                <div className='col-start-5 col-span-1 flex items-start justify-start pl-6'>
-                  <TooltipProvider delayDuration={0}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <img src="src/assets/imgs/info.png" alt="info" className="w-6 h-6" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>게임을 진행할 때 마다 5의 피로도가 증가합니다.</p>
-                        <p>게임에서 승리할 경우 5의 피로도가 더 증가합니다.</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-                <div className='w-40 col-start-6 flex items-center justify-center'>
-                  <DropdownMenu className='mr-4 w-40'>
-                    <DropdownMenuTrigger asChild className='mr-4'>
-                      <Button variant="outline" className='kanit-regular'>{position}</Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56">
-                      <DropdownMenuLabel className='kanit-regular'>Selected Game</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuRadioGroup className='jua-regular' value={position} onValueChange={setPosition}>
-                        <DropdownMenuRadioItem value="Listening">리스닝</DropdownMenuRadioItem>
-                        <DropdownMenuRadioItem value="Reading">리딩</DropdownMenuRadioItem>
-                        <DropdownMenuRadioItem value="ETC">기타</DropdownMenuRadioItem>
-                      </DropdownMenuRadioGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </div>
-
+              {/* 사이드바 및 메인 컨텐츠 영역 */}
               <div ref={containerRef} className="w-full h-[calc(100vh-150px)] relative flex">
-                {/* 메인 컨텐츠 영역 */}
                 <div className="flex-1 p-4 overflow-hidden h-full">
                   <SidebarProvider>
                     <Sidebar variant="inset">
@@ -629,10 +594,7 @@ const MainContainer = ({ selectedGame }) => {
                       </SidebarHeader>
                       <SidebarContent>
                         <SidebarGroup>
-                          
-                          <SidebarGroupLabel>
-                            Learning
-                          </SidebarGroupLabel>
+                          <SidebarGroupLabel>Learning</SidebarGroupLabel>
                           <SidebarMenu>
                             {data.navMain[0].items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
@@ -643,7 +605,7 @@ const MainContainer = ({ selectedGame }) => {
                                   >
                                     <a href={item.url}>
                                       <item.icon />
-                                      <span className='ml-2'>{item.title}</span>
+                                      <span className="ml-2">{item.title}</span>
                                     </a>
                                   </SidebarMenuButton>
                                 </SidebarMenuItem>
@@ -659,22 +621,22 @@ const MainContainer = ({ selectedGame }) => {
                                     <a href="#" className="flex items-center">
                                       <BotMessageSquare className="h-4 w-4 mr-2" />
                                       {editingRoomId === roomId ? (
-                                        <input
-                                          type="text"
-                                          value={newRoomName}
-                                          onChange={(e) => setNewRoomName(e.target.value)}
-                                          onBlur={() => handleRenameRoom(roomId, newRoomName)}
-                                          onKeyPress={(e) => {
-                                            if (e.key === 'Enter') {
-                                              handleRenameRoom(roomId, newRoomName);
-                                            }
-                                          }}
-                                          onClick={(e) => e.stopPropagation()}
-                                          autoFocus
-                                          className="bg-background border rounded px-1 py-0.5 text-sm"
-                                        />
+                                          <input
+                                              type="text"
+                                              value={newRoomName}
+                                              onChange={(e) => setNewRoomName(e.target.value)}
+                                              onBlur={() => handleRenameRoom(roomId, newRoomName)}
+                                              onKeyPress={(e) => {
+                                                if (e.key === 'Enter') {
+                                                  handleRenameRoom(roomId, newRoomName);
+                                                }
+                                              }}
+                                              onClick={(e) => e.stopPropagation()}
+                                              autoFocus
+                                              className="bg-background border rounded px-1 py-0.5 text-sm"
+                                          />
                                       ) : (
-                                        <span>{roomId}</span>
+                                          <span>{roomId}</span>
                                       )}
                                     </a>
                                   </SidebarMenuButton>
@@ -706,7 +668,6 @@ const MainContainer = ({ selectedGame }) => {
                                   </DropdownMenu>
                                 </SidebarMenuItem>
                             ))}
-
                             <SidebarMenuItem>
                               <SidebarMenuButton onClick={addNewChatRoom}>
                                 <Plus className="h-4 w-4 mr-2" />
@@ -723,7 +684,6 @@ const MainContainer = ({ selectedGame }) => {
                                   asChild
                                   isActive={selectedMenu === 'Create'}
                                   onClick={() => handleMenuClick('Create')}
-                                  data-button-id="create-button" // 식별자 추가
                               >
                                 <a href="#">
                                   <BookCheck className="h-4 w-4 mr-2" />
@@ -733,9 +693,9 @@ const MainContainer = ({ selectedGame }) => {
                             </SidebarMenuItem>
                             <SidebarMenuItem>
                               <SidebarMenuButton
-                                asChild
-                                isActive={selectedMenu === 'List'}
-                                onClick={() => handleMenuClick('List')}
+                                  asChild
+                                  isActive={selectedMenu === 'List'}
+                                  onClick={() => handleMenuClick('List')}
                               >
                                 <a href="#">
                                   <BookOpen className="h-4 w-4 mr-2" />
@@ -779,12 +739,12 @@ const MainContainer = ({ selectedGame }) => {
                                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                                   </Avatar>
                                   <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-semibold">
-                                  {data.user.name}
-                                </span>
+                              <span className="truncate font-semibold">
+                                {data.user.name}
+                              </span>
                                     <span className="truncate text-xs">
-                                  {data.user.email}
-                                </span>
+                                {data.user.email}
+                              </span>
                                   </div>
                                   <ChevronsUpDown className="ml-auto size-4" />
                                 </SidebarMenuButton>
@@ -795,54 +755,7 @@ const MainContainer = ({ selectedGame }) => {
                                   align="end"
                                   sideOffset={4}
                               >
-                                <DropdownMenuLabel className="p-0 font-normal">
-                                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                                    <Avatar className="h-8 w-8 rounded-lg">
-                                      <AvatarImage
-                                          src={data.user.avatar}
-                                          alt={data.user.name}
-                                      />
-                                      <AvatarFallback className="rounded-lg">
-                                        CN
-                                      </AvatarFallback>
-                                    </Avatar>
-                                    <div className="grid flex-1 text-left text-sm leading-tight">
-                                  <span className="truncate font-semibold">
-                                    {data.user.name}
-                                  </span>
-                                      <span className="truncate text-xs">
-                                    {data.user.email}
-                                  </span>
-                                    </div>
-                                  </div>
-                                </DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuGroup>
-                                  <DropdownMenuItem>
-                                    <Sparkles />
-                                    Upgrade to Pro
-                                  </DropdownMenuItem>
-                                </DropdownMenuGroup>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuGroup>
-                                  <DropdownMenuItem>
-                                    <BadgeCheck />
-                                    Account
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <CreditCard />
-                                    Billing
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <Bell />
-                                    Notifications
-                                  </DropdownMenuItem>
-                                </DropdownMenuGroup>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                  <LogOut />
-                                  Log out
-                                </DropdownMenuItem>
+                                {/* ... 드롭다운 메뉴 컨텐츠 ... */}
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </SidebarMenuItem>
@@ -850,16 +763,16 @@ const MainContainer = ({ selectedGame }) => {
                       </SidebarFooter>
                     </Sidebar>
                     <SidebarInset>
-                      <header className="flex h-16 shrink-0 items-center gap-2">
-                        <div className="flex items-center gap-2 px-4">
+                      <header className="flex h-16 shrink-0 items-center justify-between px-4">
+                        <div className="flex items-center gap-2">
                           <SidebarTrigger className="-ml-1" />
                           <Separator orientation="vertical" className="mr-2 h-4" />
                           <Breadcrumb>
                             <BreadcrumbList>
                               <BreadcrumbItem className="hidden md:block">
                                 <BreadcrumbLink href="#" onClick={() => handleMenuClick('Reading')}>
-                                  {selectedMenu === 'ChatBot' ? 'ChatBot' : 
-                                   (selectedMenu === 'Create' || selectedMenu === 'List') ? 'Custom' : 'Learning'}
+                                  {selectedMenu === 'ChatBot' ? 'ChatBot' :
+                                      (selectedMenu === 'Create' || selectedMenu === 'List') ? 'Custom' : 'Learning'}
                                 </BreadcrumbLink>
                               </BreadcrumbItem>
                               {selectedMenu && (
@@ -867,9 +780,9 @@ const MainContainer = ({ selectedGame }) => {
                                     <BreadcrumbSeparator className="hidden md:block" />
                                     <BreadcrumbItem>
                                       <BreadcrumbPage>
-                                        {selectedMenu === 'ChatBot' ? activeRoomId : 
-                                         selectedMenu === 'Create' ? 'Create Question' :
-                                         selectedMenu === 'List' ? 'My Questions' : selectedMenu}
+                                        {selectedMenu === 'ChatBot' ? activeRoomId :
+                                            selectedMenu === 'Create' ? 'Create Question' :
+                                                selectedMenu === 'List' ? 'My Questions' : selectedMenu}
                                       </BreadcrumbPage>
                                     </BreadcrumbItem>
                                   </>
@@ -877,6 +790,31 @@ const MainContainer = ({ selectedGame }) => {
                             </BreadcrumbList>
                           </Breadcrumb>
                         </div>
+
+                        {/* Learning 섹션의 메뉴가 선택되었을 때만 버튼들을 표시 */}
+                        {(selectedMenu === 'Reading' || selectedMenu === 'Listening' || selectedMenu === 'ETC') && (
+                            <div className="flex items-center gap-4">
+                              <TooltipProvider delayDuration={0}>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <img src="src/assets/imgs/info.png" alt="info" className="w-6 h-6" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>게임을 진행할 때 마다 5의 피로도가 증가합니다.</p>
+                                    <p>게임에서 승리할 경우 5의 피로도가 더 증가합니다.</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+
+                              <Button
+                                  onClick={handleStartGame}
+                                  className="h-10 text-white rounded-md font-bold text-xl hover:scale-110 transition-all duration-500 jua-regular"
+                                  disabled={showAnimation || isExiting}
+                              >
+                                게임 시작하기
+                              </Button>
+                            </div>
+                        )}
                       </header>
                       {renderInsetContent()}
                     </SidebarInset>
@@ -885,13 +823,14 @@ const MainContainer = ({ selectedGame }) => {
               </div>
 
               {showFatiguePopup && (
-                <FatiguePopup onClose={() => setShowFatiguePopup(false)} />
+                  <FatiguePopup onClose={() => setShowFatiguePopup(false)} />
               )}
-
             </>
         ) : (
             <div className="w-full h-[calc(100vh-200px)] flex flex-col items-center justify-center">
-              <h2 className="text-sm font-bold mb-8 mt-12 text-gray-400">* 로그인을 해야 게임을 할 수 있습니다 *</h2>
+              <h2 className="text-sm font-bold mb-8 mt-12 text-gray-400">
+                * 로그인을 해야 게임을 할 수 있습니다 *
+              </h2>
               <div className="w-[800px] h-[800px] bg-transparent flex items-center justify-center">
                 <Word3D />
               </div>
