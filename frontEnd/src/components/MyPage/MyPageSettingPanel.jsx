@@ -108,13 +108,12 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
 
 
 // 기본 URL 설정
-    const BASE_URL = "http://localhost:8085";
     const defaultImageUrl = 'https://via.placeholder.com/60';
 
     // 세션 스토리지에서 값 가져오기
     const email = sessionStorage.getItem('id') || 'example@example.com';
     const sessionImage = sessionStorage.getItem('profileImageUrl');
-    const [selectedImage, setSelectedImage] = useState(sessionImage ? `${BASE_URL}${sessionImage}` : defaultImageUrl);
+    const [selectedImage, setSelectedImage] = useState(sessionImage ? `${import.meta.env.VITE_APP_BASE_URL}${sessionImage}` : defaultImageUrl);
 
     const handlePasswordChange = async () => {
         if (password !== confirmPassword) {
@@ -222,12 +221,12 @@ const MyPageSettingPanel = ({ activePanel, setActivePanel }) => {
 
 
             try {
-                const response = await axios.post(`${BASE_URL}/api/users/upload-profile-image/${email}`, formData, {
+                const response = await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/users/upload-profile-image/${email}`, formData, {
                     withCredentials: true
                 });
 
                 if (response.status === 200) {
-                    const newImageUrl = `${BASE_URL}${response.data}`;
+                    const newImageUrl = `${import.meta.env.VITE_APP_BASE_URL}${response.data}`;
                     sessionStorage.setItem('profileImageUrl', response.data);
                     setSelectedImage(newImageUrl);
                     alert('이미지가 성공적으로 업로드되었습니다.');
