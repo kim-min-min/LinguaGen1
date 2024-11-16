@@ -75,7 +75,7 @@ public class RankingLogService {
     }
 
     // 개인 랭킹 조회 메서드 (전체 및 특정 등급 사용자)
-    public List<RankingLogDTO> getPersonalRanking(int grade) {
+/*    public List<RankingLogDTO> getPersonalRanking(int grade) {
         String todayDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         return repository.findPersonalRankingByGradeOrAll(grade, todayDate).stream()
                 .map(log -> {
@@ -100,6 +100,12 @@ public class RankingLogService {
                     );
                 })
                 .collect(Collectors.toList());
+    }*/
+
+    public List<RankingLogDTO> getPersonalRanking(int grade) {
+        LocalDateTime startDate = LocalDate.now().atStartOfDay();
+        LocalDateTime endDate = startDate.plusDays(1);
+        return repository.findPersonalRankingByGradeOrAll(grade, startDate, endDate);
     }
 
     // 랭킹 로그 저장 메서드
