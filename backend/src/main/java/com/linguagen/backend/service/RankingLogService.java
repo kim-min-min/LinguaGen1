@@ -77,7 +77,7 @@ public class RankingLogService {
     // 개인 랭킹 조회 메서드 (전체 및 특정 등급 사용자)
 /*    public List<RankingLogDTO> getPersonalRanking(int grade) {
         String todayDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        return repository.findPersonalRankingByGradeOrAll(grade, todayDate).stream()
+        List<RankingLogDTO> list = repository.findPersonalRankingByGradeOrAll(grade, todayDate).stream()
                 .map(log -> {
                     Optional<Grade> gradeEntity = gradeRepository.findByUserId(log.getUser().getId());
 

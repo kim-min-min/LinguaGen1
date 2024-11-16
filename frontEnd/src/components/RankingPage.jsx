@@ -299,7 +299,7 @@ const RankingPage = () => {
     return (
         <FadeInContainer className='flex flex-col items-center justify-start h-screen w-full relative overflow-y-auto custom-scrollbar'>
             <BackgroundVideo autoPlay muted loop>
-                <source src='src/assets/video/MainBackground.mp4' type='video/mp4' />
+                <source src='/assets/video/MainBackground.mp4' type='video/mp4' />
             </BackgroundVideo>
             <Header />
 
