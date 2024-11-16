@@ -2,91 +2,91 @@
     {
       "title": "첫 발걸음",
       "description": "첫 로그인 시 얻을 수 있는 뱃지",
-      "src": "src/assets/BadgeImage/39.png",
+      "src": "/assets/BadgeImage/39.png",
       "unlocked": false
     },
     {
       "title": "꾸준한 학습자",
       "description": "7일 연속 로그인 달성",
-      "src": "src/assets/BadgeImage/40.png",
+      "src": "/assets/BadgeImage/40.png",
       "unlocked": false
     },
     {
       "title": "학습의 길잡이",
       "description": "30일 연속 로그인 달성",
-      "src": "src/assets/BadgeImage/41.png",
+      "src": "/assets/BadgeImage/41.png",
       "unlocked": false
     },
     {
       "title": "지치지 않는 탐구자",
       "description": "100일 연속 로그인 달성",
-      "src": "src/assets/BadgeImage/42.png",
+      "src": "/assets/BadgeImage/42.png",
       "unlocked": false
     },
     {
       "title": "정점에 오른 자",
       "description": "개인 랭킹에서 1위 달성",
-      "src": "src/assets/BadgeImage/43.png",
+      "src": "/assets/BadgeImage/43.png",
       "unlocked": false
     },
     {
       "title": "최강 팀원",
       "description": "단체 랭킹에서 소속된 팀이 1위를 차지",
-      "src": "src/assets/BadgeImage/44.png",
+      "src": "/assets/BadgeImage/44.png",
       "unlocked": false
     },
     {
       "title": "상위 10% 달성자",
       "description": "개인 랭킹에서 상위 10위 내 진입",
-      "src": "src/assets/BadgeImage/45.png",
+      "src": "/assets/BadgeImage/45.png",
       "unlocked": false
     },
     {
       "title": "급상승하는 별",
       "description": "개인 랭킹에서 큰 상승폭 기록",
-      "src": "src/assets/BadgeImage/46.png",
+      "src": "/assets/BadgeImage/46.png",
       "unlocked": false
     },
     {
       "title": "퀴즈 초심자",
       "description": "첫 데일리 퀴즈 정답",
-      "src": "src/assets/BadgeImage/47.png",
+      "src": "/assets/BadgeImage/47.png",
       "unlocked": false
     },
     {
       "title": "퀴즈 마스터",
       "description": "연속 5일 데일리 퀴즈 성공",
-      "src": "src/assets/BadgeImage/48.png",
+      "src": "/assets/BadgeImage/48.png",
       "unlocked": false
     },
     {
       "title": "퀴즈 정복자",
       "description": "한 달간 모든 데일리 퀴즈 성공",
-      "src": "src/assets/BadgeImage/49.png",
+      "src": "/assets/BadgeImage/49.png",
       "unlocked": false
     },
     {
       "title": "시작하는 이야기꾼",
       "description": "첫 게시글 작성",
-      "src": "src/assets/BadgeImage/50.png",
+      "src": "/assets/BadgeImage/50.png",
       "unlocked": false
     },
     {
       "title": "소통하는 자",
       "description": "커뮤니티에 글 10개 작성",
-      "src": "src/assets/BadgeImage/51.png",
+      "src": "/assets/BadgeImage/51.png",
       "unlocked": false
     },
     {
       "title": "소문난 이야기꾼",
       "description": "커뮤니티에 글 50개 작성",
-      "src": "src/assets/BadgeImage/52.png",
+      "src": "/assets/BadgeImage/52.png",
       "unlocked": false
     },
     {
       "title": "커뮤니티의 일꾼",
       "description": "커뮤니티에서 100개의 댓글 달성",
-      "src": "src/assets/BadgeImage/53.png",
+      "src": "/assets/BadgeImage/53.png",
       "unlocked": false
     }
   ]

@@ -328,7 +328,7 @@ const Community = () => {
 
         <BackgroundVideoWrapper>
           <BackgroundVideo ref={videoRef} autoPlay muted loop>
-            <source src='/src/assets/video/CommunityBackground.mp4' type='video/mp4' />
+            <source src='/assets/video/CommunityBackground.mp4' type='video/mp4' />
           </BackgroundVideo>
         </BackgroundVideoWrapper>
         <Header />

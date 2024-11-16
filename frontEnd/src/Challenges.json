@@ -2,229 +2,229 @@
     {
       "title": "책갈피 마스터",
       "description": "주제/제목 찾기 유형을 100회 달성",
-      "src": "src/assets/BadgeImage/1.png",
+      "src": "/assets/BadgeImage/1.png",
       "unlocked": false
     },
     {
       "title": "핵심 요약 전문가",
       "description": "주제/제목 찾기 유형을 500회 달성",
-      "src": "src/assets/BadgeImage/2.png",
+      "src": "/assets/BadgeImage/2.png",
       "unlocked": false
     },
     {
       "title": "주제의 달인",
       "description": "주제/제목 찾기 유형을 1000회 달성",
-      "src": "src/assets/BadgeImage/3.png",
+      "src": "/assets/BadgeImage/3.png",
       "unlocked": true
     },
     {
       "title": "핵심 파악의 달인",
       "description": "요지 파악 유형을 100회 달성",
-      "src": "src/assets/BadgeImage/4.png",
+      "src": "/assets/BadgeImage/4.png",
       "unlocked": true
     },
     {
       "title": "논지 분석가",
       "description": "요지 파악 유형을 500회 달성",
-      "src": "src/assets/BadgeImage/5.png",
+      "src": "/assets/BadgeImage/5.png",
       "unlocked": false
     },
     {
       "title": "문장 해석 마스터",
       "description": "요지 파악 유형을 1000회 달성",
-      "src": "src/assets/BadgeImage/6.png",
+      "src": "/assets/BadgeImage/6.png",
       "unlocked": false
     },
     {
       "title": "탐정급 세부 찾기",
       "description": "세부 정보 찾기 유형을 100회 달성",
-      "src": "src/assets/BadgeImage/7.png",
+      "src": "/assets/BadgeImage/7.png",
       "unlocked": false
     },
     {
       "title": "텍스트 분석가",
       "description": "세부 정보 찾기 유형을 500회 달성",
-      "src": "src/assets/BadgeImage/8.png",
+      "src": "/assets/BadgeImage/8.png",
       "unlocked": true
     },
     {
       "title": "세부 사항 전문가",
       "description": "세부 정보 찾기 유형을 1000회 달성",
-      "src": "src/assets/BadgeImage/9.png",
+      "src": "/assets/BadgeImage/9.png",
       "unlocked": true
     },
     {
       "title": "추론의 시작",
       "description": "지칭 추론 유형을 100회 달성",
-      "src": "src/assets/BadgeImage/10.png",
+      "src": "/assets/BadgeImage/10.png",
       "unlocked": false
     },
     {
       "title": "참조 탐정",
       "description": "지칭 추론 유형을 500회 달성",
-      "src": "src/assets/BadgeImage/11.png",
+      "src": "/assets/BadgeImage/11.png",
       "unlocked": true
     },
     {
       "title": "텍스트 탐정 마스터",
       "description": "지칭 추론 유형을 1000회 달성",
-      "src": "src/assets/BadgeImage/12.png",
+      "src": "/assets/BadgeImage/12.png",
       "unlocked": false
     },
     {
       "title": "단어의 달인",
       "description": "어휘 추론 유형을 100회 달성",
-      "src": "src/assets/BadgeImage/13.png",
+      "src": "/assets/BadgeImage/13.png",
       "unlocked": false
     },
     {
       "title": "어휘 추론 전문가",
       "description": "어휘 추론 유형을 500회 달성",
-      "src": "src/assets/BadgeImage/14.png",
+      "src": "/assets/BadgeImage/14.png",
       "unlocked": true
     },
     {
       "title": "어휘 마스터",
       "description": "어휘 추론 유형을 1000회 달성",
-      "src": "src/assets/BadgeImage/15.png",
+      "src": "/assets/BadgeImage/15.png",
       "unlocked": true
     },
     {
       "title": "청취의 시작",
       "description": "주제/제목 파악 유형을 100회 달성",
-      "src": "src/assets/BadgeImage/16.png",
+      "src": "/assets/BadgeImage/16.png",
       "unlocked": false
     },
     {
       "title": "핵심 청취 전문가",
       "description": "주제/제목 파악 유형을 500회 달성",
-      "src": "src/assets/BadgeImage/17.png",
+      "src": "/assets/BadgeImage/17.png",
       "unlocked": true
     },
     {
       "title": "귀로 주제를 잡다",
       "description": "주제/제목 파악 유형을 1000회 달성",
-      "src": "src/assets/BadgeImage/18.png",
+      "src": "/assets/BadgeImage/18.png",
       "unlocked": true
     },
     {
       "title": "세부 청취 마스터",
       "description": "세부 정보 듣기 유형을 100회 달성",
-      "src": "src/assets/BadgeImage/19.png",
+      "src": "/assets/BadgeImage/19.png",
       "unlocked": false
     },
     {
       "title": "세부사항 청취 전문가",
       "description": "세부 정보 듣기 유형을 500회 달성",
-      "src": "src/assets/BadgeImage/20.png",
+      "src": "/assets/BadgeImage/20.png",
       "unlocked": true
     },
     {
       "title": "전문 청취자",
       "description": "세부 정보 듣기 유형을 1000회 달성",
-      "src": "src/assets/BadgeImage/21.png",
+      "src": "/assets/BadgeImage/21.png",
       "unlocked": true
     },
     {
       "title": "화자의 마음을 읽다",
       "description": "화자의 태도/의견 추론 유형을 100회 달성",
-      "src": "src/assets/BadgeImage/22.png",
+      "src": "/assets/BadgeImage/22.png",
       "unlocked": true
     },
     {
       "title": "의도 파악 전문가",
       "description": "화자의 태도/의견 추론 유형을 500회 달성",
-      "src": "src/assets/BadgeImage/23.png",
+      "src": "/assets/BadgeImage/23.png",
       "unlocked": false
     },
     {
       "title": "심리학자급 청취자",
       "description": "화자의 태도/의견 추론 유형을 1000회 달성",
-      "src": "src/assets/BadgeImage/24.png",
+      "src": "/assets/BadgeImage/24.png",
       "unlocked": false
     },
     {
       "title": "강의 구조 이해의 달인",
       "description": "대화/강의 구조 파악 유형을 100회 달성",
-      "src": "src/assets/BadgeImage/25.png",
+      "src": "/assets/BadgeImage/25.png",
       "unlocked": true
     },
     {
       "title": "대화 분석가",
       "description": "대화/강의 구조 파악 유형을 500회 달성",
-      "src": "src/assets/BadgeImage/26.png",
+      "src": "/assets/BadgeImage/26.png",
       "unlocked": false
     },
     {
       "title": "논리적 청취자",
       "description": "대화/강의 구조 파악 유형을 1000회 달성",
-      "src": "src/assets/BadgeImage/27.png",
+      "src": "/assets/BadgeImage/27.png",
       "unlocked": false
     },
     {
       "title": "청취의 미묘한 차이",
       "description": "함축적 의미 추론 유형을 100회 달성",
-      "src": "src/assets/BadgeImage/28.png",
+      "src": "/assets/BadgeImage/28.png",
       "unlocked": true
     },
     {
       "title": "함축적 의미 마스터",
       "description": "함축적 의미 추론 유형을 500회 달성",
-      "src": "src/assets/BadgeImage/29.png",
+      "src": "/assets/BadgeImage/29.png",
       "unlocked": false
     },
     {
       "title": "문법의 기본",
       "description": "문법 문제 유형을 100회 달성",
-      "src": "src/assets/BadgeImage/30.png",
+      "src": "/assets/BadgeImage/30.png",
       "unlocked": true
     },
     {
       "title": "문법 마스터",
       "description": "문법 문제 유형을 500회 달성",
-      "src": "src/assets/BadgeImage/31.png",
+      "src": "/assets/BadgeImage/31.png",
       "unlocked": false
     },
     {
       "title": "문법 달인",
       "description": "문법 문제 유형을 1000회 달성",
-      "src": "src/assets/BadgeImage/32.png",
+      "src": "/assets/BadgeImage/32.png",
       "unlocked": true
     },
     {
       "title": "단어 탐색자",
       "description": "어휘 문제 유형을 100회 달성",
-      "src": "src/assets/BadgeImage/33.png",
+      "src": "/assets/BadgeImage/33.png",
       "unlocked": false
     },
     {
       "title": "어휘 챔피언",
       "description": "어휘 문제 유형을 500회 달성",
-      "src": "src/assets/BadgeImage/34.png",
+      "src": "/assets/BadgeImage/34.png",
       "unlocked": true
     },
     {
       "title": "어휘 거장",
       "description": "어휘 문제 유형을 1000회 달성",
-      "src": "src/assets/BadgeImage/35.png",
+      "src": "/assets/BadgeImage/35.png",
       "unlocked": true
     },
     {
       "title": "스피킹 도전자",
       "description": "말하기 문제 유형을 100회 달성",
-      "src": "src/assets/BadgeImage/36.png",
+      "src": "/assets/BadgeImage/36.png",
       "unlocked": false
     },
     {
       "title": "영어 말하기 전문가",
       "description": "말하기 문제 유형을 500회 달성",
-      "src": "src/assets/BadgeImage/37.png",
+      "src": "/assets/BadgeImage/37.png",
       "unlocked": false
     },
     {
       "title": "영어 토론의 달인",
       "description": "말하기 문제 유형을 1000회 달성",
-      "src": "src/assets/BadgeImage/38.png",
+      "src": "/assets/BadgeImage/38.png",
       "unlocked": true
     }
   ]
