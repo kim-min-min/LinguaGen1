@@ -432,8 +432,7 @@ const MainContainer = ({ selectedGame }) => {
     };
   }, []);
 
-  // 게임 시작 핸들러 수정
-// handleStartGame 함수 내부 수정
+// handleStartGame 함수 수정
   const handleStartGame = useCallback(async () => {
     try {
       const userId = sessionStorage.getItem("id");
@@ -449,41 +448,52 @@ const MainContainer = ({ selectedGame }) => {
         return;
       }
 
-      // 캔버스 랜덤 선택
-      const randomIndex = Math.floor(Math.random() * canvases.length);
-      const selectedCanvas = canvases[randomIndex];
-      setCanvasValue(selectedCanvas);
+      // 피로도 5 증가 API 호출
+      const fatigueResponse = await axios.post(
+          `${import.meta.env.VITE_APP_API_BASE_URL}/game/start`,
+          { userId, amount: 5 },
+          { withCredentials: true }
+      );
 
-      // store에 문제 데이터 저장
-      useStore.setState({
-        currentQuestions: questionsResponse.data,
-        currentGameType: selectedMenu,
-        selectedCanvas: selectedCanvas,
-        gameState: {
-          currentHp: 100,
-          score: 0,
-          timeRemaining: 300,
-          isComplete: false
-        }
-      });
+      if (fatigueResponse.status === 200) {
+        // 캔버스 랜덤 선택
+        const randomIndex = Math.floor(Math.random() * canvases.length);
+        const selectedCanvas = canvases[randomIndex];
+        setCanvasValue(selectedCanvas);
 
-      // 게임 시작 및 라우팅
-      setShowAnimation(false);
-      setIsExiting(false);
-      setAnimationPosition({ x: 0, y: 0 });
+        // store에 문제 데이터 저장
+        useStore.setState({
+          currentQuestions: questionsResponse.data,
+          currentGameType: selectedMenu,
+          selectedCanvas: selectedCanvas,
+          gameState: {
+            currentHp: 100,
+            score: 0,
+            timeRemaining: 300,
+            isComplete: false
+          }
+        });
 
-      navigate('/loading');
-      setTimeout(() => {
-        const canvasRoutes = {
-          [DungeonCanvas]: '/dungeon',
-          [RuinsCanvas]: '/ruins',
-          [MountainCanvas]: '/mountain'
-        };
-        navigate(canvasRoutes[selectedCanvas]);
-      }, 3000);
+        // 로딩 화면으로 이동
+        navigate('/loading');
 
+        // 3초 후 게임 화면으로 이동
+        const timer = setTimeout(() => {
+          const canvasRoutes = {
+            [DungeonCanvas]: '/dungeon',
+            [RuinsCanvas]: '/ruins',
+            [MountainCanvas]: '/mountain'
+          };
+
+          navigate(canvasRoutes[selectedCanvas]);
+        }, 3000);
+
+        return () => clearTimeout(timer);
+      } else {
+        console.error('Failed to increase fatigue:', fatigueResponse.statusText);
+      }
     } catch (error) {
-      console.error('Error:', error.response || error);
+      console.error('Error starting game:', error);
       if (error.response?.data?.message) {
         alert(error.response.data.message);
       } else {
@@ -507,22 +517,22 @@ const MainContainer = ({ selectedGame }) => {
     switch (selectedMenu) {
       case 'Reading':
         return (
-          <LearningInsetContent
-            scrollContainerRef={scrollContainerRef}
-            overscrollShadow={overscrollShadow}
-            visibleCards={visibleCards}
-            wrongWords={wrongWords}
-            loading={loading}
-          />
+            <LearningInsetContent
+                scrollContainerRef={scrollContainerRef}
+                overscrollShadow={overscrollShadow}
+                visibleCards={visibleCards}
+                wrongWords={wrongWords}
+                loading={loading}
+            />
         );
       case 'ChatBot':
         return (
-          <ChatInsetContent
-            activeRoomId={activeRoomId}
-            chatRooms={chatRooms}
-            addNewChatRoom={addNewChatRoom}
-            sendMessage={sendMessage}
-          />
+            <ChatInsetContent
+                activeRoomId={activeRoomId}
+                chatRooms={chatRooms}
+                addNewChatRoom={addNewChatRoom}
+                sendMessage={sendMessage}
+            />
         );
       case 'Create':
         return <CreateCustom />;
@@ -533,10 +543,11 @@ const MainContainer = ({ selectedGame }) => {
     }
   };
 
+// 버튼 클릭 핸들러
   const handleButtonClick = (e) => {
     const userPlan = sessionStorage.getItem("plan");
 
-    // 피로도가 100%일 때
+    // 피로도가 100%일 때 (pro 플랜이 아닌 경우)
     if (fatigue >= 100 && userPlan !== "pro") {
       setShowFatiguePopup(true);
       return;
@@ -791,7 +802,7 @@ const MainContainer = ({ selectedGame }) => {
                           </Breadcrumb>
                         </div>
 
-                        {/* Learning 섹션의 메뉴가 선택되었을 때만 버튼들을 표시 */}
+                        {/* 게임 시작 버튼 영역 */}
                         {(selectedMenu === 'Reading' || selectedMenu === 'Listening' || selectedMenu === 'ETC') && (
                             <div className="flex items-center gap-4">
                               <TooltipProvider delayDuration={0}>
@@ -807,7 +818,7 @@ const MainContainer = ({ selectedGame }) => {
                               </TooltipProvider>
 
                               <Button
-                                  onClick={handleStartGame}
+                                  onClick={handleButtonClick}
                                   className="h-10 text-white rounded-md font-bold text-xl hover:scale-110 transition-all duration-500 jua-regular"
                                   disabled={showAnimation || isExiting}
                               >
@@ -815,6 +826,38 @@ const MainContainer = ({ selectedGame }) => {
                               </Button>
                             </div>
                         )}
+
+                        {/* 애니메이션 컴포넌트 */}
+                        {showAnimation && (
+                            <div
+                                className="fixed pointer-events-none"
+                                style={{
+                                  left: animationPosition.x - 100,
+                                  top: animationPosition.y - 100,
+                                  width: '200px',
+                                  height: '200px',
+                                  zIndex: 100
+                                }}
+                            >
+                              <Player
+                                  ref={playerRef}
+                                  autoplay
+                                  keepLastFrame={false}
+                                  src={ClickAnimation}
+                                  style={{width: '200px', height: '200px'}}
+                                  onComplete={() => {
+                                    setShowAnimation(false);
+                                  }}
+                              />
+                            </div>
+                        )}
+
+                        {/* 피로도 팝업 */}
+                        {showFatiguePopup && (
+                            <FatiguePopup onClose={() => setShowFatiguePopup(false)} />
+                        )}
+
+
                       </header>
                       {renderInsetContent()}
                     </SidebarInset>
@@ -822,9 +865,7 @@ const MainContainer = ({ selectedGame }) => {
                 </div>
               </div>
 
-              {showFatiguePopup && (
-                  <FatiguePopup onClose={() => setShowFatiguePopup(false)} />
-              )}
+
             </>
         ) : (
             <div className="w-full h-[calc(100vh-200px)] flex flex-col items-center justify-center">
