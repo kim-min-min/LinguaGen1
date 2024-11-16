@@ -61,7 +61,33 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("SELECT q FROM Question q WHERE (q.diffGrade = :grade AND q.diffTier < :tier) OR (q.diffGrade > :grade) ORDER BY q.diffGrade ASC, q.diffTier DESC")
     List<Question> findHigherQuestions(@Param("grade") Byte grade, @Param("tier") Byte tier, Pageable pageable);
 
+    @Query("SELECT q FROM Question q WHERE q.type = :type AND" +
+            " q.diffGrade = :grade AND q.diffTier = :tier ORDER BY FUNCTION('RAND')")
+    List<Question> findSameGradeQuestionsByType(
+            @Param("type") String type,
+            @Param("grade") Byte grade,
+            @Param("tier") Byte tier,
+            Pageable pageable);
 
+    @Query("SELECT q FROM Question q WHERE q.type = :type AND" +
+            " ((q.diffGrade = :grade AND q.diffTier < :tier) OR" +
+            " (q.diffGrade > :grade AND q.diffTier = 1))" +
+            " ORDER BY q.diffGrade ASC, q.diffTier DESC")
+    List<Question> findHigherQuestionsByType(
+            @Param("type") String type,
+            @Param("grade") Byte grade,
+            @Param("tier") Byte tier,
+            Pageable pageable);
+
+    @Query("SELECT q FROM Question q WHERE q.type = :type AND" +
+            " ((q.diffGrade = :grade AND q.diffTier > :tier) OR" +
+            " (q.diffGrade < :grade AND q.diffTier = 4))" +
+            " ORDER BY q.diffGrade DESC, q.diffTier ASC")
+    List<Question> findLowerQuestionsByType(
+            @Param("type") String type,
+            @Param("grade") Byte grade,
+            @Param("tier") Byte tier,
+            Pageable pageable);
 
 
 

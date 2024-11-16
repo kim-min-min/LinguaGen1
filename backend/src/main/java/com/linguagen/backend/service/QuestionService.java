@@ -305,6 +305,70 @@ public class QuestionService {
             .collect(Collectors.toList());
     }
 
+    public List<QuestionDTO> getQuestionsByMainTypeAndUserLevel(String mainType, String userId) {
+        Grade grade = gradeRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User grade not found with userId: " + userId));
+
+        String type = switch (mainType.toLowerCase()) {
+            case "reading" -> "리딩";
+            case "listening" -> "리스닝";
+            case "etc" -> "기타 유형";
+            default -> throw new ResourceNotFoundException("Invalid main type: " + mainType);
+        };
+
+        return getQuestionsInOrderByType(type, (byte) grade.getGrade(), (byte) grade.getTier());
+    }
+
+    private List<QuestionDTO> getQuestionsInOrderByType(String type, Byte grade, Byte tier) {
+        final int TOTAL_QUESTIONS = 15;
+        final int QUESTIONS_PER_DIFFICULTY = 5;
+        Pageable pageable = PageRequest.of(0, QUESTIONS_PER_DIFFICULTY * 2);
+
+        List<Question> sameGradeQuestions = questionRepository.findSameGradeQuestionsByType(type, grade, tier, pageable);
+        int currentLevelCount = (grade == 1 && tier == 4) ? 10 : QUESTIONS_PER_DIFFICULTY;
+        sameGradeQuestions = new ArrayList<>(sameGradeQuestions.subList(0,
+                Math.min(currentLevelCount, sameGradeQuestions.size())));
+
+        List<Question> higherQuestions = new ArrayList<>(questionRepository.findHigherQuestionsByType(type, grade, tier, pageable));
+        List<Question> lowerQuestions = new ArrayList<>(questionRepository.findLowerQuestionsByType(type, grade, tier, pageable));
+
+        higherQuestions = new ArrayList<>(higherQuestions.subList(0,
+                Math.min(QUESTIONS_PER_DIFFICULTY, higherQuestions.size())));
+        lowerQuestions = new ArrayList<>(lowerQuestions.subList(0,
+                Math.min(QUESTIONS_PER_DIFFICULTY, lowerQuestions.size())));
+
+        List<Question> finalQuestions = new ArrayList<>();
+
+        if (grade == 1 && tier == 4) {
+            addQuestions(finalQuestions, sameGradeQuestions, 3);
+            addQuestions(finalQuestions, higherQuestions, 1);
+            addQuestions(finalQuestions, sameGradeQuestions, 1);
+            addQuestions(finalQuestions, higherQuestions, 2);
+            addQuestions(finalQuestions, sameGradeQuestions, 3);
+            addQuestions(finalQuestions, sameGradeQuestions, 3);
+            addQuestions(finalQuestions, higherQuestions, 2);
+        } else {
+            addQuestions(finalQuestions, sameGradeQuestions, 1);
+            addQuestions(finalQuestions, higherQuestions, 2);
+            addQuestions(finalQuestions, lowerQuestions, 1);
+            addQuestions(finalQuestions, sameGradeQuestions, 1);
+            addQuestions(finalQuestions, higherQuestions, 1);
+            addQuestions(finalQuestions, lowerQuestions, 2);
+            addQuestions(finalQuestions, sameGradeQuestions, 2);
+            addQuestions(finalQuestions, higherQuestions, 2);
+            addQuestions(finalQuestions, lowerQuestions, 2);
+            addQuestions(finalQuestions, sameGradeQuestions, 1);
+        }
+
+        while (finalQuestions.size() < TOTAL_QUESTIONS && !sameGradeQuestions.isEmpty()) {
+            finalQuestions.add(sameGradeQuestions.remove(0));
+        }
+
+        return finalQuestions.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
 
 
 
