@@ -4,7 +4,15 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - '8085:8085' # Spring Boot 기본 포트
+      - '8085:8085'
+    depends_on:
+      - redis
+    environment:
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    env_file:
+      - ./frontend/.env.production
     networks:
       - linguagen-net
 
@@ -13,9 +21,36 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - '5173:5173' # React 기본 포트
+      - '5173:5173'
+    env_file:
+      - ./frontend/.env.production
     networks:
       - linguagen-net
 
+  redis:
+    image: redis:alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - linguagen-net
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    networks:
+      - linguagen-net
+
+volumes:
+  redis-data:
+
 networks:
   linguagen-net:
+    driver: bridge
+

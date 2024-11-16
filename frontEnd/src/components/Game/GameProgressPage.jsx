@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback, useEffect, useMemo} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {motion, AnimatePresence} from 'framer-motion';
 import axios from 'axios';
@@ -14,10 +14,9 @@ import {
 
 axios.defaults.withCredentials = true;
 
-
-// axios 인스턴스 생성
+// axios 인스턴스 수정
 const api = axios.create({
-    baseURL: 'http://localhost:5173',
+    baseURL: import.meta.env.VITE_APP_API_BASE_URL,
     headers: {
         'Content-Type': 'application/json'
     }
@@ -184,7 +183,7 @@ const GameProgressPage = ({
             let response;
             if (isCustomSet) {
                 // 나만의 문제 답안 제출
-                response = await axios.post("http://localhost:8085/api/user-questions/submit-answer", {
+                response = await axios.post("/user-questions/submit-answer", {
                     sessionIdentifier: sessionIdentifier, // 세션 식별자 추가
                     questionIdx: submitData.questionId,
                     answer: submitData.studentAnswer
@@ -193,7 +192,7 @@ const GameProgressPage = ({
                 });
             } else {
                 // 기존 일반 문제 답안 제출
-                response = await api.post("/api/answers/submit", {
+                response = await api.post("/answers/submit", {
                     sessionIdentifier: sessionIdentifier,
                     idx: submitData.questionId,
                     studentId: userId,
@@ -276,7 +275,7 @@ const GameProgressPage = ({
     // 시간 초과 처리
     const handleTimeExpired = async () => {
         try {
-            await api.post(`/api/answers/session/${sessionIdentifier}/complete`);
+            await api.post(`/answers/session/${sessionIdentifier}/complete`);
             setIsTimeExpired(true);
             setIsGameOver(true);
         } catch (error) {
@@ -287,7 +286,7 @@ const GameProgressPage = ({
     // 세션 시작 함수
     const startSession = async () => {
         try {
-            const response = await api.post('/api/answers/start-session', {
+            const response = await api.post('/answers/start-session', {
                 userId: userId
             });
             setSessionIdentifier(response.data.sessionIdentifier);
@@ -321,7 +320,7 @@ const GameProgressPage = ({
 
         setTimeout(() => {
             if (currentQuestionIndex + 1 >= questions.length) {
-                api.post(`/api/answers/session/${sessionIdentifier}/complete`)
+                api.post(`/answers/session/${sessionIdentifier}/complete`)
                     .catch(error => console.error('Failed to complete session:', error));
             } else {
                 onNextQuestion(); // 부모 컴포넌트의 현재 문제 번호 업데이트
@@ -347,7 +346,7 @@ const GameProgressPage = ({
                 if (!userId) throw new Error("User ID not found in sessionStorage.");
 
                 // 새로운 세션 항상 생성
-                const newSessionResponse = await api.post('/api/answers/start-session', { userId });
+                const newSessionResponse = await api.post('/answers/start-session', { userId });
                 const currentSessionId = newSessionResponse.data.sessionIdentifier;
                 setSessionIdentifier(currentSessionId);
 
@@ -356,7 +355,7 @@ const GameProgressPage = ({
                 // 커스텀 세트 모드와 일반 모드 구분
                 if (isCustomSet && customQuestions && setId) {
                     console.log("Using custom set mode with setId:", setId);
-                    const response = await api.get(`/api/user-questions/sets/${setId}`);
+                    const response = await api.get(`/user-questions/sets/${setId}`);
                     questionsData = response.data.map(q => ({
                         idx: q.idx,
                         type: q.questionFormat === 'MULTIPLE_CHOICE' ? 'multipleChoice' : 'shortAnswer',
@@ -373,7 +372,7 @@ const GameProgressPage = ({
                     console.log("Formatted custom questions:", questionsData);
                 } else {
                     console.log("Using default mode");
-                    const response = await api.get(`/api/questions/user/${userId}`);
+                    const response = await api.get(`/questions/user/${userId}`);
                     questionsData = response.data.map(q => ({
                         idx: q.idx,
                         type: q.questionFormat === 'MULTIPLE_CHOICE' ? 'multipleChoice' : 'shortAnswer',
@@ -432,7 +431,7 @@ const GameProgressPage = ({
         const completeSession = async () => {
             if (sessionIdentifier && (isGameOver || isGameClear)) {
                 try {
-                    await api.post(`/api/answers/session/${sessionIdentifier}/complete`);
+                    await api.post(`/answers/session/${sessionIdentifier}/complete`);
                 } catch (error) {
                     console.error('Failed to complete session:', error);
                 }
@@ -442,30 +441,72 @@ const GameProgressPage = ({
         completeSession();
     }, [isGameOver, isGameClear, sessionIdentifier]);
 
+    // 텍스트 처리 메모이제이션
+    const passageText = useMemo(() => {
+        if (!currentQuestion?.passage) return '';
+        return currentQuestion.passage.includes('A:') || currentQuestion.passage.includes('B:')
+            ? extractDialogueText(currentQuestion.passage)
+            : currentQuestion.passage;
+    }, [currentQuestion?.passage, extractDialogueText]);
+
+    // TTSControl 메모이제이션
+    const TTSControl = useCallback(() => (
+        <button
+            onClick={() => {
+                if (isSpeaking) {
+                    stopSpeaking();
+                } else {
+                    speak(passageText);
+                }
+            }}
+            className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg 
+            ${isSpeaking ? 'bg-red-500' : 'bg-blue-500'} 
+            text-white font-medium`}
+        >
+            {isSpeaking ? "Stop Audio" : "Play Audio"}
+        </button>
+    ), [isSpeaking, stopSpeaking, speak, passageText]);
+
+    // PassagePanel 메모이제이션
+    const PassagePanel = useMemo(() => {
+        if (!currentQuestion?.passage) return null;
+        
+        return (
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
+                <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-lg kanit-semibold text-gray-700">Passage</h3>
+                    <TTSControl />
+                </div>
+                {currentQuestion.passage.includes('A:') || currentQuestion.passage.includes('B:') ? (
+                    <div className="space-y-4">
+                        {currentQuestion.passage.split(/(?=[AB]:)/).map((line, index) => {
+                            const speaker = line.trim().startsWith('A:') ? 'A' : 'B';
+                            const content = line.replace(/^[AB]:/, '').trim();
+
+                            return (
+                                <div key={index} className={`flex items-start gap-2 ${speaker === 'B' ? 'flex-row-reverse' : ''}`}>
+                                    <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${speaker === 'A' ? 'bg-blue-500' : 'bg-green-500'}`}>
+                                        <span className="text-white font-bold">{speaker}</span>
+                                    </div>
+                                    <div className={`max-w-[75%] p-3 rounded-lg ${speaker === 'A' ? 'bg-white shadow-sm rounded-tl-none border border-gray-100' : 'bg-white shadow-sm rounded-tr-none border border-gray-100'}`}>
+                                        <p className="kanit-regular text-lg leading-relaxed">{content}</p>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <p className="kanit-regular text-lg text-gray-600 leading-relaxed">
+                        {currentQuestion.passage}
+                    </p>
+                )}
+            </div>
+        );
+    }, [currentQuestion?.passage, TTSControl]);
+
     // 문제 렌더링 함수
     const renderQuestion = () => {
         if (!currentQuestion) return null;
-
-         // TTS 컨트롤 버튼 컴포넌트
-        const TTSControl = () => (
-            <button
-                onClick={() => {
-                    if (isSpeaking) {
-                        stopSpeaking();
-                    } else {
-                        const text = currentQuestion.passage.includes('A:') || currentQuestion.passage.includes('B:')
-                            ? extractDialogueText(currentQuestion.passage)
-                            : currentQuestion.passage;
-                        speak(text);
-                    }
-                }}
-                className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg 
-                ${isSpeaking ? 'bg-red-500' : 'bg-blue-500'} 
-                text-white font-medium`}
-            >
-                {isSpeaking ? "Stop Audio" : "Play Audio"}
-            </button>
-        );
 
         // QuestionPanel 컴포넌트 수정
         const QuestionPanel = () => {
@@ -516,42 +557,6 @@ const GameProgressPage = ({
             );
         };
 
-
-        // PassagePanel 컴포넌트
-        const PassagePanel = () => (
-            currentQuestion.passage && (
-                <div className="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
-                    <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-lg kanit-semibold text-gray-700">Passage</h3>
-                        <TTSControl />
-                    </div>
-                    {currentQuestion.passage.includes('A:') || currentQuestion.passage.includes('B:') ? (
-                        <div className="space-y-4">
-                            {currentQuestion.passage.split(/(?=[AB]:)/).map((line, index) => {
-                                const speaker = line.trim().startsWith('A:') ? 'A' : 'B';
-                                const content = line.replace(/^[AB]:/, '').trim();
-
-                                return (
-                                    <div key={index} className={`flex items-start gap-2 ${speaker === 'B' ? 'flex-row-reverse' : ''}`}>
-                                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${speaker === 'A' ? 'bg-blue-500' : 'bg-green-500'}`}>
-                                            <span className="text-white font-bold">{speaker}</span>
-                                        </div>
-                                        <div className={`max-w-[75%] p-3 rounded-lg ${speaker === 'A' ? 'bg-white shadow-sm rounded-tl-none border border-gray-100' : 'bg-white shadow-sm rounded-tr-none border border-gray-100'}`}>
-                                            <p className="kanit-regular text-lg leading-relaxed">{content}</p>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ) : (
-                        <p className="kanit-regular text-lg text-gray-600 leading-relaxed">
-                            {currentQuestion.passage}
-                        </p>
-                    )}
-                </div>
-            )
-        );
-
         switch (currentQuestion.type) {
             case 'multipleChoice':
                 return (
@@ -559,7 +564,7 @@ const GameProgressPage = ({
                         {/* 왼쪽 패널: 지문과 문제 */}
                         <div className="w-1/2 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto custom-scrollbar">
                             <QuestionPanel />
-                            <PassagePanel />
+                            {PassagePanel}
                         </div>
 
                         {/* 오른쪽 패널: 선택지들 */}
@@ -653,7 +658,7 @@ const GameProgressPage = ({
                         {/* 왼쪽 패널: 지문과 문제 */}
                         <div className="w-1/2 h-full border-r-2 border-gray-200 p-6 flex flex-col overflow-auto custom-scrollbar">
                             <QuestionPanel />
-                            <PassagePanel />
+                            {PassagePanel}
                         </div>
 
                         {/* 오른쪽 패널: 답안 입력 */}

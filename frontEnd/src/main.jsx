@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import './index.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -8,14 +9,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5분
-      cacheTime: 30 * 60 * 1000, // 30분
+      staleTime: 5 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
       retry: 1,
     },
   },
 });
 
-// root 엘리먼트에 직접 스타일 적용
 const rootElement = document.getElementById('root');
 if (rootElement) {
   rootElement.style.width = '100%';
@@ -24,8 +24,23 @@ if (rootElement) {
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    </BrowserRouter>
   </React.StrictMode>,
 )
+
+// 서비스 워커는 렌더링과 분리
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('SW registered: ', registration);
+      })
+      .catch(registrationError => {
+        console.log('SW registration failed: ', registrationError);
+      });
+  });
+}

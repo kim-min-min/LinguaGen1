@@ -69,7 +69,7 @@ function Effects() {
   )
 }
 
-export const LandingPage = () => {
+const LandingPage = () => {
   const navigate = useNavigate()
   const {
     isLeaving,

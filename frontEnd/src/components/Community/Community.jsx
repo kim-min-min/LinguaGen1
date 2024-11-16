@@ -12,6 +12,8 @@ import Writing from './Writing';
 import DetailView from './DetailView';
 import axios from 'axios';
 import {format} from "date-fns";
+import { SquareArrowLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const TruncatedText = styled.div`
   display: -webkit-box;
@@ -259,6 +261,15 @@ const DefaultBoard = ({ handleTabClick, setSelectedItem }) => {
   );
 };
 
+// BackButton 스타일 추가
+const BackButton = styled(motion.div)`
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  z-index: 100;
+`;
+
 const Community = () => {
   const { board, idx } = useParams();
   const navigate = useNavigate();
@@ -299,9 +310,22 @@ const Community = () => {
     navigate(`/community/${activeTab.toLowerCase()}/detailview`);
   };
 
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
   return (
     <FadeInContainer>
       <CommunityContainer className='overflow-y-auto custom-scrollbar'>
+        <BackButton
+          onClick={handleGoBack}
+          style={{ zIndex: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <SquareArrowLeft size={48} color="#333" />
+        </BackButton>
+
         <BackgroundVideoWrapper>
           <BackgroundVideo ref={videoRef} autoPlay muted loop>
             <source src='/src/assets/video/CommunityBackground.mp4' type='video/mp4' />

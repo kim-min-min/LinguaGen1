@@ -111,9 +111,7 @@ const MyPageInquiryHistoryPanel = ({ activePanel, setActivePanel }) => {
               </div>
             </div>
           </div>
-          <div className='h-[320px]'>
 
-          </div>
         </>
       )}
     </>

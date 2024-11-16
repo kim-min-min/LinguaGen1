@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { SquareArrowLeft  } from 'lucide-react';
+import { motion } from 'framer-motion';
 import Header from '../Header';
 import styled, { keyframes } from 'styled-components';
 import MyPageSettingPanel from './MyPageSettingPanel'; // 계정 설정 패널
@@ -75,7 +77,17 @@ const FadeInContainer = styled.div`
   animation: ${fadeIn} 1s ease-in-out;
 `;
 
+// 뒤로가기 버튼 스타일
+const BackButton = styled(motion.div)`
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  z-index: 100;
+`;
+
 const MyPage = () => {
+  const navigate = useNavigate(); // useNavigate 훅 사용
   const location = useLocation(); // useLocation으로 URL 정보 가져오기
   const queryParams = new URLSearchParams(location.search);
   const tabFromQuery = queryParams.get('tab'); // URL에서 'tab' 파라미터 읽기
@@ -92,15 +104,28 @@ const MyPage = () => {
     setInquiryDetails({ title, content });
   };
 
+  const handleGoBack = () => {
+    navigate(-1); // 이전 페이지로 이동
+  };
+
   return (
-    <FadeInContainer className='flex flex-col items-center justify-start h-screen w-full relative overflow-y-auto custom-scrollbar '>
+    <FadeInContainer className='flex flex-col items-center justify-start h-screen w-full relative overflow-y-auto custom-scrollbar'>
+      <BackButton
+        onClick={handleGoBack}
+        style={{ zIndex: 1 }}
+        whileHover={{ scale: 1.1 }} // hover시 팝 애니메이션
+        whileTap={{ scale: 0.95 }} // 클릭시 애니메이션
+      >
+        <SquareArrowLeft size={48} color="#333" />
+      </BackButton>
+      
       <BackgroundVideo autoPlay muted loop>
         <source src='src/assets/video/MainBackground.mp4' type='video/mp4' />
       </BackgroundVideo>
       <Header />
       
       {/* 메인 컨텐츠 영역을 grid로 구성 */}
-      <main className='w-full h-min-screen grid grid-cols-12 gap-4 p-4 pt-0 mt-4 flex flex-col justify-start items-start'>
+      <main className='w-full h-[calc(100vh+4500px)] grid grid-cols-12 p-4 pt-0 mt-4 flex flex-col justify-start items-start'>
         {/* 왼쪽 사이드바 */}
         <div className='col-span-3 col-start-2 flex flex-col gap-8 items-center'>
           <div className='flex items-center justify-center mt-16'>

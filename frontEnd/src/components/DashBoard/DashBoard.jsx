@@ -5,6 +5,9 @@ import DashBoardPanel from './DashBoardPanel.jsx'
 import AchievementPanel from './AchievementPanel.jsx'
 import BadgePanel from './BadgePanel.jsx'
 import styled, { keyframes } from 'styled-components'
+import { useNavigate } from 'react-router-dom';
+import { SquareArrowLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const BackgroundVideo = styled.video`
   position: fixed;
@@ -45,12 +48,35 @@ const DashBoardContainer = styled.div`
   align-items: center;
 `;
 
+// BackButton 스타일 추가
+const BackButton = styled(motion.div)`
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  z-index: 100;
+`;
+
 const DashBoard = () => {
+  const navigate = useNavigate();
   const [activePanel, setActivePanel] = useState('dashboard')
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
 
   return (
     <FadeInContainer>
       <DashBoardContainer className='custom-scrollbar'>
+        <BackButton
+          onClick={handleGoBack}
+          style={{ zIndex: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <SquareArrowLeft size={48} color="#333" />
+        </BackButton>
+        
         <BackgroundVideo autoPlay muted loop>
           <source src='/assets/video/DashBoardBackground.mp4' type='video/mp4' />
         </BackgroundVideo>
