@@ -39,11 +39,10 @@ function ProfileCard() {
   const [userGrade, setUserGrade] = useState(null);
   const [userGradeString, setUserGradeString] = useState(null);
   const [userTier, setUserTier] = useState(null);
-  const BASE_URL = "http://localhost:8085"; //
   const defaultImageUrl = 'https://via.placeholder.com/60';
 
   const [profileImagePath, setProfileImagePath] = useState(
-      sessionStorage.getItem('profileImageUrl') ? `${BASE_URL}${sessionStorage.getItem('profileImageUrl')}` : defaultImageUrl
+      sessionStorage.getItem('profileImageUrl') ? `${import.meta.env.VITE_APP_BASE_URL}${sessionStorage.getItem('profileImageUrl')}` : defaultImageUrl
   );
 
   const gradeNames = {
@@ -136,7 +135,7 @@ function ProfileCard() {
           sessionStorage.setItem('fatigue', userInfo.fatigue);
 
           // 프로필 이미지 상태 업데이트
-          setProfileImagePath(`${BASE_URL}${userInfo.picture}`);
+          setProfileImagePath(`${import.meta.env.VITE_APP_API_BASE_URL}${userInfo.picture}`);
           setUserInfo(userInfo);
 
           const gradeResponse = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/grade/${id}`, { withCredentials: true });
