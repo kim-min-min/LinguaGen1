@@ -95,8 +95,10 @@ public interface StudentAnswerRepository extends JpaRepository<StudentAnswer, Lo
             "COALESCE(SUM(s.score), 0)) " +
             "FROM StudentAnswer s " +
             "WHERE s.studentId = :studentId " +
-            "GROUP BY s.sessionIdentifier, DATE(s.createdAt)")
+            "GROUP BY s.sessionIdentifier, DATE(s.createdAt) " +
+            "ORDER BY MAX(s.createdAt) DESC") // 가장 최신 createdAt 기준 내림차순 정렬
     List<MyPageDTO> findMyPageSummaries(@Param("studentId") String studentId);
+
 
 
     // 학습한 타입, 등급, 티어 가져오기
