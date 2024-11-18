@@ -20,6 +20,6 @@ public class DailyWordController {
 
     @GetMapping
     public List<DailyWord> getWords() {
-        return wordService.getAllWords();
+        return wordService.getRandomWords();
     }
 }
