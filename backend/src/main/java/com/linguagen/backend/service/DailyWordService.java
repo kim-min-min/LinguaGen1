@@ -17,4 +17,8 @@ public class DailyWordService {
     public List<DailyWord> getAllWords() {
         return repository.findAll();
     }
+
+    public List<DailyWord> getRandomWords() {
+        return repository.findRandomWords();
+    }
 }
