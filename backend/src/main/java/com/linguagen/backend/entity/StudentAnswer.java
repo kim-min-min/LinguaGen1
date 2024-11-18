@@ -28,7 +28,7 @@ public class StudentAnswer {
     private String studentAnswer;
 
     @Column(name = "is_correct")
-    private Integer isCorrect = 2;  // 2: 미응답, 1: 정답, 0: 오답
+    private Integer isCorrect = 0;  // 2: 미응답, 1: 정답, 0: 오답
 
     @Column(name = "feedback")
     private String feedback;

@@ -151,6 +151,7 @@ const MyPagePlayHistoryPanel = ({ activePanel, setActivePanel }) => {
                         diffTier: response2.data[index]?.diffTier
                     }));
 
+
                     // 병합된 데이터를 상태에 설정
                     setData(combinedData);
                 } catch (error) {
