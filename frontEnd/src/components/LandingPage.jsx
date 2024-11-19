@@ -115,7 +115,13 @@ const LandingPage = () => {
         <p className='text-white text-xl kanit-semibold'>{"</"}Korean{">"}</p>
       </div>
 
-      <div className="absolute top-1/2 right-20 transform -translate-y-1/2 bg-transparent p-6 rounded-lg flex flex-col justify-start items-center gap-6 w-[30rem] h-auto z-10">
+      <div className="absolute lg:right-20 lg:top-1/2 lg:-translate-y-1/2 
+                      w-full lg:w-[30rem] h-auto z-10
+                      top-0 flex flex-col justify-center items-center 
+                      min-h-screen lg:min-h-0
+                      px-4 lg:px-0
+                      bg-gradient-to-b from-black/70 to-black/70 lg:bg-none
+                      backdrop-blur-sm lg:backdrop-blur-none">
         <TypeAnimation
           sequence={[
             'LinguaGen', 1000,
@@ -138,10 +144,29 @@ const LandingPage = () => {
             width: '100%',
           }}
         />
-        <div className='mt-10 bg-zinc-800 p-8 rounded-lg shadow-lg flex flex-col justify-start items-center gap-8 w-[24rem] h-auto z-10 shadow-lg'>
-          <button onClick={handleStartClick} className="custom-btn btn-12 flex justify-center items-center text-xl w-64 h-16"><span>Tutorial</span><span>튜토리얼</span></button>
-          <button onClick={handleLoginClick} className="custom-btn btn-12 flex justify-center items-center text-xl w-64 h-16"><span>Login</span><span>로그인 하러 가기</span></button>
-          <button onClick={handleLoginClick} className="custom-btn btn-12 flex justify-center items-center text-xl w-64 h-16"><span>Readme!!</span><span>Documentation</span></button>
+        <div className='mt-10 bg-zinc-800/90 lg:bg-zinc-800 p-8 rounded-lg 
+                        shadow-lg flex flex-col justify-start items-center 
+                        gap-8 w-full lg:w-[24rem] h-auto z-10 
+                        backdrop-blur-sm lg:backdrop-blur-none
+                        max-w-[24rem]'>
+          <button onClick={handleStartClick} 
+                  className="custom-btn btn-12 flex justify-center items-center 
+                            text-xl w-full lg:w-64 h-16">
+            <span>Tutorial</span>
+            <span>튜토리얼</span>
+          </button>
+          <button onClick={handleLoginClick} 
+                  className="custom-btn btn-12 flex justify-center items-center 
+                            text-xl w-full lg:w-64 h-16">
+            <span>Login</span>
+            <span>로그인 하러 가기</span>
+          </button>
+          <button onClick={handleLoginClick} 
+                  className="custom-btn btn-12 flex justify-center items-center 
+                            text-xl w-full lg:w-64 h-16">
+            <span>Readme!!</span>
+            <span>Documentation</span>
+          </button>
         </div>
       </div>
     </div>
