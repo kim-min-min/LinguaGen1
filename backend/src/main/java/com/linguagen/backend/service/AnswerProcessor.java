@@ -15,6 +15,7 @@ public class AnswerProcessor {
 
     private final QuestionService questionService;
     private final GradeRepository gradeRepository; // GradeRepository 추가
+    private final GradeService gradeService;
 
     // 학생의 grade 조회
     public int getStudentGrade(String userId) {
@@ -69,6 +70,10 @@ public class AnswerProcessor {
             // 점수를 StudentAnswer에 설정
             answer.setScore(scoreToAdd);
 
+            // 별도 트랜잭션으로 exp 업데이트
+            gradeService.updateGradeExp(answer.getStudentId(), scoreToAdd);
+
+
         } else {
             String correctAnswerText = question.getChoices().stream()
                     .filter(c -> c.getChoiceLabel().equalsIgnoreCase(correctLabel))
@@ -108,6 +113,9 @@ public class AnswerProcessor {
 
             // 점수를 StudentAnswer에 설정
             answer.setScore(scoreToAdd);
+
+            // 별도 트랜잭션으로 exp 업데이트
+            gradeService.updateGradeExp(answer.getStudentId(), scoreToAdd);
 
         } else {
             answer.setFeedback("오답입니다. 정답은 '" + correctAnswer + "' 입니다.");

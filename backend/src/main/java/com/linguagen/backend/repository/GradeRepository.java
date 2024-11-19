@@ -3,6 +3,7 @@ package com.linguagen.backend.repository;
 import com.linguagen.backend.dto.GradeDTO;
 import com.linguagen.backend.entity.Grade;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -28,4 +29,9 @@ public interface GradeRepository extends JpaRepository<Grade, Integer> {
             "JOIN User u ON g.userId = u.id " +
             "ORDER BY g.grade DESC, g.tier ASC, g.exp DESC, g.updatedAt ASC")
     List<Object[]> findUsersOrderedByGradeTierAndExp();
+
+    @Modifying
+    @Query(value = "UPDATE grade SET exp = exp + :scoreToAdd, updated_at = NOW() WHERE user_id = :userId", nativeQuery = true)
+    void incrementExp(@Param("userId") String userId, @Param("scoreToAdd") int scoreToAdd);
+
 }
