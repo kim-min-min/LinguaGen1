@@ -44,7 +44,7 @@ const BillingContainer = styled.div`
   border-radius: 1rem;
 `;
 
-const impKey = import.meta.env.VITE_IMP_KEY;
+const impKey = import.meta.env.VITE_APP_IMP_KEY;
 
 function UpgradeBilling({ onClose }) {
   useEffect(() => {
