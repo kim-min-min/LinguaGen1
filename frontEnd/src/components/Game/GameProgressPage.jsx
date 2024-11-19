@@ -2,6 +2,7 @@ import React, {useState, useCallback, useEffect, useMemo} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {motion, AnimatePresence} from 'framer-motion';
 import axios from 'axios';
+import useStore from '../../store/useStore'; // useStore import 추가
 import Lottie from 'react-lottie';
 import CorrectAnimation from '../../assets/LottieAnimation/Correct.json';
 import IncorrectAnimation from '../../assets/LottieAnimation/Incorrect.json';
@@ -34,11 +35,11 @@ const GameProgressPage = ({
                               isGameClear,
                               onRestart,
                               onMainMenu,
-                              onNextQuestion, // 추가
-
+                              onNextQuestion,
                           }) => {
     const navigate = useNavigate();
     const userId = sessionStorage.getItem('id');
+    const { currentGameType } = useStore(); // useStore에서 현재 게임 타입 가져오기
 
     // State 선언들
     const [questions, setQuestions] = useState([]);
@@ -64,17 +65,38 @@ const GameProgressPage = ({
     const [availableVoices, setAvailableVoices] = useState([]);
     const [selectedVoice, setSelectedVoice] = useState(null);
 
+    // 화자별 음성 설정을 위한 새로운 state
+    const [speakerAVoice, setSpeakerAVoice] = useState(null);
+    const [speakerBVoice, setSpeakerBVoice] = useState(null);
+
+
     const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'];
 
-    // SpeechSynthesis 초기화
+    // 음성 초기화 수정
     useEffect(() => {
         const synth = window.speechSynthesis;
         setSpeechSynthesis(synth);
 
         const loadVoices = () => {
             const voices = synth.getVoices();
-            const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
-            setSelectedVoice(englishVoices.find(voice => voice.lang === 'en-US') || englishVoices[0]);
+            const englishVoices = voices.filter(voice => voice.lang.startsWith('en-US'));
+
+            // 남성과 여성 목소리 구분
+            const maleVoices = englishVoices.filter(voice => voice.name.toLowerCase().includes('male'));
+            const femaleVoices = englishVoices.filter(voice => voice.name.toLowerCase().includes('female'));
+
+            // 기본값 설정
+            setSpeakerAVoice({
+                voice: femaleVoices[0] || englishVoices[0],
+                pitch: 1.2,
+                rate: 0.9
+            });
+
+            setSpeakerBVoice({
+                voice: maleVoices[0] || englishVoices[1] || englishVoices[0],
+                pitch: 0.8,
+                rate: 0.9
+            });
         };
 
         synth.onvoiceschanged = loadVoices;
@@ -87,24 +109,87 @@ const GameProgressPage = ({
         };
     }, []);
 
-    // TTS 실행 함수
-    const speak = useCallback((text) => {
-        if (!speechSynthesis || !selectedVoice || !text) return;
+    // speak 함수 수정
+    const speak = useCallback((text, onComplete) => {
+        if (!speechSynthesis) return;
 
         speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.voice = selectedVoice;
-        utterance.rate = 0.9;
-        utterance.pitch = 1;
+        setIsSpeaking(true);
 
-        utterance.onstart = () => setIsSpeaking(true);
-        utterance.onend = () => setIsSpeaking(false);
-        utterance.onerror = () => setIsSpeaking(false);
+        if (typeof text === 'string') {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = speakerAVoice.voice;
+            utterance.rate = speakerAVoice.rate;
+            utterance.pitch = speakerAVoice.pitch;
+            utterance.onend = () => {
+                setIsSpeaking(false);
+                onComplete?.();
+            };
+            utterance.onerror = () => {
+                setIsSpeaking(false);
+                onComplete?.();
+            };
+            speechSynthesis.speak(utterance);
+        } else if (Array.isArray(text)) {
+            let currentIndex = 0;
+            const totalUtterances = text.length;
 
-        speechSynthesis.speak(utterance);
-    }, [speechSynthesis, selectedVoice]);
+            const speakNext = () => {
+                if (currentIndex < text.length) {
+                    const { speaker, content } = text[currentIndex];
 
-    // TTS 정지 함수
+                    // 화자 안내 발화 생성
+                    const speakerAnnouncement = new SpeechSynthesisUtterance(`Speaker ${speaker}:`);
+                    speakerAnnouncement.voice = speaker === 'A' ? speakerAVoice.voice : speakerBVoice.voice;
+                    speakerAnnouncement.pitch = speaker === 'A' ? speakerAVoice.pitch : speakerBVoice.pitch;
+                    speakerAnnouncement.rate = 1.0; // 화자 안내는 기본 속도로
+
+                    // 실제 대화 내용 발화 생성
+                    const contentUtterance = new SpeechSynthesisUtterance(content);
+                    if (speaker === 'A') {
+                        contentUtterance.voice = speakerAVoice.voice;
+                        contentUtterance.pitch = speakerAVoice.pitch;
+                        contentUtterance.rate = speakerAVoice.rate;
+                    } else {
+                        contentUtterance.voice = speakerBVoice.voice;
+                        contentUtterance.pitch = speakerBVoice.pitch;
+                        contentUtterance.rate = speakerBVoice.rate;
+                    }
+
+                    // 화자 안내 후 대화 내용 발화
+                    speakerAnnouncement.onend = () => {
+                        speechSynthesis.speak(contentUtterance);
+                    };
+
+                    contentUtterance.onend = () => {
+                        currentIndex++;
+                        // 잠시 멈춤을 주어 대화 간 구분을 더 명확하게 함
+                        setTimeout(() => {
+                            if (currentIndex >= totalUtterances) {
+                                setIsSpeaking(false);
+                                onComplete?.();
+                            } else {
+                                speakNext();
+                            }
+                        }, 500); // 0.5초 간격
+                    };
+
+                    contentUtterance.onerror = () => {
+                        setIsSpeaking(false);
+                        onComplete?.();
+                        console.error('Speech synthesis error');
+                    };
+
+                    // 화자 안내부터 시작
+                    speechSynthesis.speak(speakerAnnouncement);
+                }
+            };
+
+            speakNext();
+        }
+    }, [speechSynthesis, speakerAVoice, speakerBVoice]);
+
+    // stopSpeaking 함수 수정
     const stopSpeaking = useCallback(() => {
         if (speechSynthesis) {
             speechSynthesis.cancel();
@@ -112,17 +197,15 @@ const GameProgressPage = ({
         }
     }, [speechSynthesis]);
 
-    // 대화형 지문 텍스트 추출
+    // 대화 텍스트 추출 함수 수정 - 화자 구분을 위한 추가 텍스트 포함
     const extractDialogueText = useCallback((passage) => {
-        if (!passage) return '';
-        return passage
-            .split(/(?=[AB]:)/)
-            .map(line => {
-                const speaker = line.trim().startsWith('A:') ? 'Speaker A' : 'Speaker B';
-                const content = line.replace(/^[AB]:/, '').trim();
-                return `${speaker} says: ${content}`;
-            })
-            .join('. ');
+        if (!passage) return [];
+        return passage.split(/(?=[AB]:)/).map(line => {
+            const isSpeakerA = line.trim().startsWith('A:');
+            const speaker = isSpeakerA ? 'A' : 'B';
+            const content = line.replace(/^[AB]:/, '').trim();
+            return { speaker, content };
+        });
     }, []);
 
     // TTS 버튼 컴포넌트
@@ -338,21 +421,20 @@ const GameProgressPage = ({
         }, 1000);
     }, [currentQuestionIndex, questions.length, sessionIdentifier, onNextQuestion]);
 
-    // 문제 초기화 및 세션 설정
+    // 문제 초기화 및 세션 설정 함수 수정
     useEffect(() => {
         const initializeGame = async () => {
             try {
                 setLoading(true);
                 if (!userId) throw new Error("User ID not found in sessionStorage.");
 
-                // 새로운 세션 항상 생성
+                // 새로운 세션 생성
                 const newSessionResponse = await api.post('/answers/start-session', { userId });
                 const currentSessionId = newSessionResponse.data.sessionIdentifier;
                 setSessionIdentifier(currentSessionId);
 
                 let questionsData;
 
-                // 커스텀 세트 모드와 일반 모드 구분
                 if (isCustomSet && customQuestions && setId) {
                     console.log("Using custom set mode with setId:", setId);
                     const response = await api.get(`/user-questions/sets/${setId}`);
@@ -371,8 +453,12 @@ const GameProgressPage = ({
                     }));
                     console.log("Formatted custom questions:", questionsData);
                 } else {
-                    console.log("Using default mode");
-                    const response = await api.get(`/questions/user/${userId}`);
+                    // 일반 모드에서 메인 타입에 따른 문제 가져오기
+                    const mainType = currentGameType.toLowerCase(); // 'listening', 'reading', 'etc' 중 하나
+                    const response = await api.get(
+                        `${import.meta.env.VITE_APP_API_BASE_URL}/questions/main-type/${mainType}/user/${userId}`
+                    );
+
                     questionsData = response.data.map(q => ({
                         idx: q.idx,
                         type: q.questionFormat === 'MULTIPLE_CHOICE' ? 'multipleChoice' : 'shortAnswer',
@@ -384,12 +470,13 @@ const GameProgressPage = ({
                         diffGrade: q.diffGrade,
                         diffTier: q.diffTier,
                         correctAnswer: q.correctAnswer,
-                        options: q.choices?.map(choice => choice.choiceText) || []
+                        options: q.choices?.map(choice => choice.choiceText) || [],
+                        mainType: q.mainType, // 메인 타입 추가
                     }));
-                    console.log("Formatted default questions:", questionsData);
                 }
 
-                console.log("Final questions data:", questionsData);
+                console.log("Loaded questions for type:", currentGameType);
+                console.log("Questions data:", questionsData);
                 setQuestions(questionsData);
                 setLoading(false);
             } catch (err) {
@@ -400,7 +487,7 @@ const GameProgressPage = ({
         };
 
         initializeGame();
-    }, [userId, isCustomSet, customQuestions, setId]);
+    }, [userId, isCustomSet, customQuestions, setId, currentGameType]);
 
     // 현재 문제 업데이트
     useEffect(() => {
@@ -449,23 +536,51 @@ const GameProgressPage = ({
             : currentQuestion.passage;
     }, [currentQuestion?.passage, extractDialogueText]);
 
-    // TTSControl 메모이제이션
-    const TTSControl = useCallback(() => (
-        <button
-            onClick={() => {
-                if (isSpeaking) {
-                    stopSpeaking();
-                } else {
-                    speak(passageText);
-                }
-            }}
-            className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg 
-            ${isSpeaking ? 'bg-red-500' : 'bg-blue-500'} 
-            text-white font-medium`}
-        >
-            {isSpeaking ? "Stop Audio" : "Play Audio"}
-        </button>
-    ), [isSpeaking, stopSpeaking, speak, passageText]);
+    // TTSControl 컴포넌트 수정
+    const TTSControl = useCallback(() => {
+        const [isPlaying, setIsPlaying] = useState(false);
+
+        const handleSpeech = () => {
+            if (isPlaying) {
+                stopSpeaking();
+                setIsPlaying(false);
+            } else {
+                const dialogueContent = currentQuestion?.passage
+                    ? extractDialogueText(currentQuestion.passage)
+                    : null;
+
+                setIsPlaying(true);
+                speak(dialogueContent || currentQuestion?.passage, () => {
+                    setIsPlaying(false);  // 모든 대화가 끝났을 때 상태 변경
+                });
+            }
+        };
+
+        return (
+            <button
+                onClick={handleSpeech}
+                className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg 
+            ${isPlaying ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'} 
+            text-white font-medium transition-colors duration-200`}
+            >
+                {isPlaying ? (
+                    <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 002 0V8a1 1 0 00-1-1zm4 0a1 1 0 00-1 1v4a1 1 0 002 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        Stop Audio
+                    </>
+                ) : (
+                    <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                        </svg>
+                        Play Audio
+                    </>
+                )}
+            </button>
+        );
+    }, [currentQuestion, speak, stopSpeaking, extractDialogueText]);
 
     // PassagePanel 메모이제이션
     const PassagePanel = useMemo(() => {
