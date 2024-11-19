@@ -254,7 +254,6 @@ public class UserGeneratedQuestionService {
 
     @Transactional
     public String generateQuestion(QuestionGenerationRequestDTO request, String userId) {
-
         logGenerationStart(request, userId);
 
         User user = userRepository.findById(userId)
@@ -266,30 +265,46 @@ public class UserGeneratedQuestionService {
             : String.format("%s %d티어", request.getGrade(), request.getTier());
 
         List<UserGeneratedQuestion> generatedQuestions = new ArrayList<>();
+        int maxAttempts = 30; // 최대 시도 횟수 설정
+        int currentAttempt = 0;
+        int questionOrder = 1;
 
-        for (int i = 0; i < 15; i++) {
+        while (generatedQuestions.size() < 15 && currentAttempt < maxAttempts) {
             try {
-                log.info("====== 문제 생성 시작: {} / 15 ======", i + 1);
+                log.info("====== 문제 생성 시도: {} / 15 (시도 횟수: {}) ======", 
+                    generatedQuestions.size() + 1, currentAttempt + 1);
+                    
                 UserGeneratedQuestion question = generateSingleQuestion(
-                    request, user, setId, i + 1, tierString
+                    request, user, setId, questionOrder, tierString
                 );
                 generatedQuestions.add(question);
-                logGeneratedQuestionDetails(question, i + 1);
+                logGeneratedQuestionDetails(question, questionOrder);
+                questionOrder++;
             } catch (Exception e) {
-                log.error("문제 생성 실패 ({}/15): {}", i + 1, e.getMessage());
-                if (i == 0) {
-                    throw new QuestionParsingException("첫 번째 문제 생성 실패");
-                }
+                log.error("문제 생성 실패 (시도 {}/{}): {}", 
+                    currentAttempt + 1, maxAttempts, e.getMessage());
             }
+            currentAttempt++;
         }
 
-        if (generatedQuestions.isEmpty()) {
-            throw new QuestionParsingException("문제 생성 실패");
+        if (generatedQuestions.size() < 15) {
+            String errorMsg = String.format(
+                "문제 생성 실패: %d개의 문제만 생성됨 (목표: 15개, 시도: %d회)", 
+                generatedQuestions.size(), currentAttempt
+            );
+            log.error(errorMsg);
+            throw new QuestionParsingException(errorMsg);
         }
 
-        log.info("====== 문제 세트 생성 완료 ======");
-        log.info("세트 ID: {}", setId);
-        log.info("생성된 문제 수: {}", generatedQuestions.size());
+        log.info("""
+            ====== 문제 세트 생성 완료 ======
+            세트 ID: {}
+            생성된 문제 수: {}
+            총 시도 횟수: {}
+            """,
+            setId, generatedQuestions.size(), currentAttempt
+        );
+        
         return setId;
     }
 
@@ -875,7 +890,7 @@ public class UserGeneratedQuestionService {
             """);
         }
 
-        // 해설 지침 추가
+        // 해 지침 추가
         promptBuilder.append("""
         5. **해설**:
            다음 내용을 포함하여 **한글로** 상세하게 작성하세요:
@@ -917,7 +932,7 @@ public class UserGeneratedQuestionService {
             entry("요지 파악", "지문의 요지를 묻는 질문을 **한글로** 작성하세요."),
             entry("세부 정보 찾기", "지문의 세부 정보를 묻는 질문을 **한글로** 작성하세요."),
             entry("지칭 추론", "지문에서 특정 대명사나 표현이 지칭하는 것을 묻는 질문을 **한글로** 작성하세요."),
-            entry("어휘 추론", "지문에서 특정 단어나 구의 의미를 묻는 질문을 **한글로** ���성하세요."),
+            entry("어휘 추론", "지문에서 특정 단어나 구의 의미를 묻는 질문을 **한글로** 작성하세요."),
             entry("주제/목적 파악", "대화나 강의의 주제나 목적을 묻는 질문을 **한글로** 작성하세요."),
             entry("세부 정보 듣기", "대화나 강의에서 언급된 세부 정보를 묻는 질문을 **한글로** 작성하세요."),
             entry("화자의 태도/의견 추론", "화자의 태도나 의견을 추론하는 질문을 **한글로** 작성하세요."),
