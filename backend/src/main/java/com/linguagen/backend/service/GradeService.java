@@ -5,6 +5,9 @@ import com.linguagen.backend.entity.Grade;
 import com.linguagen.backend.repository.GradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 
@@ -44,4 +47,11 @@ public class GradeService {
     public List<Grade> getAllUsersByRanking() {
         return gradeRepository.findAllByOrderByGradeAscExpDesc();
     }
+
+    // exp 업데이트
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateGradeExp(String userId, int scoreToAdd) {
+        gradeRepository.incrementExp(userId, scoreToAdd);
+    }
+
 }
