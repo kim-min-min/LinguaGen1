@@ -168,7 +168,7 @@ const MyPagePostHistoryPanel = () => {
                             </NotepadDiv>
                         </CardContent>
                         <CardFooter style={{ position: 'relative', display: 'inline-block' }}>
-                            <IconImage src="src/assets/imgs/comments.png" alt="comments icon" />
+                            <IconImage src="/assets/imgs/comments.png" alt="comments icon" />
                             <Tooltip>댓글 달린 갯수: {card.commentsCount}</Tooltip>
                         </CardFooter>
                     </Card>

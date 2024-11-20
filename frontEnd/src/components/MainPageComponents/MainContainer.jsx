@@ -808,7 +808,7 @@ const MainContainer = ({ selectedGame }) => {
                               <TooltipProvider delayDuration={0}>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <img src="src/assets/imgs/info.png" alt="info" className="w-6 h-6" />
+                                    <img src="/assets/imgs/info.png" alt="info" className="w-6 h-6" />
                                   </TooltipTrigger>
                                   <TooltipContent>
                                     <p>게임을 진행할 때 마다 5의 피로도가 증가합니다.</p>
