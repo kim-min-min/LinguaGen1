@@ -28,10 +28,9 @@ const DashBoardPageSide = ({ activePanel, setActivePanel }) => {
     const [averageCorrectRate, setAverageCorrectRate] = useState(null); // 평균 정답률 상태 정의
 
     // 세션 스토리지에 있는 profileImageUrl을 초기값으로 설정. 없을 경우 기본 이미지 사용
-    const BASE_URL = "http://localhost:8085";
     const defaultImageUrl = 'https://via.placeholder.com/60';
     const [profileImagePath, setProfileImagePath] = useState(
-        sessionStorage.getItem('profileImageUrl') ? `${BASE_URL}${sessionStorage.getItem('profileImageUrl')}` : defaultImageUrl
+        sessionStorage.getItem('profileImageUrl') ? `${import.meta.env.VITE_APP_BASE_URL}${sessionStorage.getItem('profileImageUrl')}` : defaultImageUrl
     );
 
     useEffect(() => {

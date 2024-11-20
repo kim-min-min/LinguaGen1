@@ -516,11 +516,13 @@ const MainContainer = ({ selectedGame }) => {
   const renderInsetContent = () => {
     switch (selectedMenu) {
       case 'Reading':
+      case 'Listening':
+      case 'ETC':
         return (
             <LearningInsetContent
                 scrollContainerRef={scrollContainerRef}
                 overscrollShadow={overscrollShadow}
-                visibleCards={visibleCards}
+                selectedMenu={selectedMenu} // 선택된 메뉴를 전달
                 wrongWords={wrongWords}
                 loading={loading}
             />
