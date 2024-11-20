@@ -29,12 +29,6 @@ public class RankingLogService {
     @Autowired
     private WeeklyGradeRankingRepository gradeRankingRepository;
 
-    // 테스트용 데이터 생성
-    @PostConstruct
-    public void initializeData() {
-        generatePersonalRanking();
-    }
-    
     // 개인 랭킹 생성 메서드 - 매일 자정에 실행
     @Scheduled(cron = "0 0 0 * * *")
     public void generatePersonalRanking() {
@@ -73,34 +67,6 @@ public class RankingLogService {
             overallRank++;
         }
     }
-
-    // 개인 랭킹 조회 메서드 (전체 및 특정 등급 사용자)
-/*    public List<RankingLogDTO> getPersonalRanking(int grade) {
-        String todayDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        List<RankingLogDTO> list = repository.findPersonalRankingByGradeOrAll(grade, todayDate).stream()
-                .map(log -> {
-                    Optional<Grade> gradeEntity = gradeRepository.findByUserId(log.getUser().getId());
-
-                    // Grade 정보가 있을 경우에만 설정
-                    Integer gradeValue = gradeEntity.map(Grade::getGrade).orElse(null);
-                    Integer tier = gradeEntity.map(Grade::getTier).orElse(null);
-                    Integer exp = gradeEntity.map(Grade::getExp).orElse(null);
-
-                    return new RankingLogDTO(
-                            log.getIdx(),
-                            log.getUser().getId(),
-                            log.getUser().getNickname(),
-                            log.getType(),
-                            log.getGradeRank(),
-                            log.getOverallRank(),
-                            log.getLogDate(),
-                            gradeValue,
-                            tier,
-                            exp
-                    );
-                })
-                .collect(Collectors.toList());
-    }*/
 
     public List<RankingLogDTO> getPersonalRanking(int grade) {
         LocalDateTime startDate = LocalDate.now().atStartOfDay();

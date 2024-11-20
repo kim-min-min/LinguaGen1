@@ -6,12 +6,14 @@ import com.linguagen.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface RankingLogRepository extends JpaRepository<RankingLog, Long> {
 
     // 특정 등급의 개인 랭킹 로그를 최신순으로 조회하고, logDate가 오늘 날짜인 데이터만 필터링 (grade가 0이면 전체 조회)
