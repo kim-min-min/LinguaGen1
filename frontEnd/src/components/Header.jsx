@@ -122,7 +122,7 @@ const Header = () => {
                   <HoverCard>
                     <HoverCardTrigger>
                       <img
-                        src='src/assets/imgs/notification-bell.png'
+                        src='/assets/imgs/notification-bell.png'
                         alt="alarm"
                         className='w-[35px] h-[35px] cursor-pointer'
                       />

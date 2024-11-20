@@ -132,7 +132,7 @@ const MyPageInquiryDetails = ({ inquiry, setSelectedInquiry, showAnswer, handleC
         </div>
         <div className="w-24 h-96 flex justify-center items-center mt-8">
           <img
-            src={inquiry.answered === 'Yes' ? 'src/assets/imgs/check.png' : 'src/assets/imgs/unchecked.png'}
+            src={inquiry.answered === 'Yes' ? '/assets/imgs/check.png' : '/assets/imgs/unchecked.png'}
             alt=""
             className="w-8 h-8 cursor-pointer"
             onClick={handleCheckClick} // 체크 이미지 클릭 시 이벤트

@@ -137,7 +137,7 @@ const BadgePanel = () => {
   const { data: challengesBadges = [] } = useQuery({
     queryKey: ['badges', 'challenges'],
     queryFn: async () => {
-      const response = await fetch('src/Challenges.json');
+      const response = await fetch('/Challenges.json');
       const data = await response.json();
       return data;
     },
@@ -149,7 +149,7 @@ const BadgePanel = () => {
   const { data: activitiesBadges = [] } = useQuery({
     queryKey: ['badges', 'activities'],
     queryFn: async () => {
-      const response = await fetch('src/Activities.json');
+      const response = await fetch('/Activities.json');
       const data = await response.json();
       return data;
     },

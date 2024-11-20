@@ -52,7 +52,7 @@ const GameProgressPage = ({ onCorrectAnswer, onWrongAnswer, currentQuestion: cur
         const fetchQuestions = async () => {
             try {
                 setLoading(true);
-                const { data } = await axios.get('http://localhost:5173/api/questions/difficulty?grade=1&tier=4&count=10', {
+                const { data } = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/questions/difficulty?grade=1&tier=4&count=10`, {
                     params: {
                         count: 10
                     },
