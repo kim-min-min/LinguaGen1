@@ -3,7 +3,7 @@ English Learning Platform Utilizing Generative AI (생성형AI를 활용한 영�
 
 ![1](https://github.com/user-attachments/assets/d3e37e88-35e9-4d4c-aef3-8dd9f2a4ba79)
 
-![3](https://github.com/user-attachments/assets/e221c8c5-1274-46e8-a476-98a3338be02d)
+![링구1](https://github.com/user-attachments/assets/fb918953-2626-40bb-8991-c98c4357e1b7)
 
 ![4](https://github.com/user-attachments/assets/3fc61e67-8427-4977-b057-039858114aba)
 
