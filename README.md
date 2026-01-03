@@ -1,5 +1,5 @@
 # LinguaGen
-English Learning Platform Utilizing Generative AI (생성형AI를 활용한 영어 학습 플랫폼)
+English Learning Platform Utilizing Generative AI 
 
 ![1](https://github.com/user-attachments/assets/d3e37e88-35e9-4d4c-aef3-8dd9f2a4ba79)
 
